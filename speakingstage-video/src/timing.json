@@ -1,0 +1,48 @@
+{
+  "fps": 30,
+  "total": 900,
+  "phone": { "start": 90, "end": 420 },
+  "search": {
+    "query": "Keynote Speaker Zukunft der Arbeit",
+    "typeStart": 110,
+    "charFrames": 2,
+    "suggest": 182,
+    "results": 196,
+    "placeholder": 210
+  },
+  "form": {
+    "start": 240,
+    "charFrames": 1.5,
+    "fields": [
+      { "label": "Name", "start": 255, "text": "Dr. Anna Berger" },
+      { "label": "Thema", "start": 285, "text": "Zukunft der Arbeit" },
+      { "label": "Videoreferenz", "start": 318, "text": "youtube.com/@anna" }
+    ],
+    "press": 358,
+    "progressEnd": 386,
+    "stamp": 392
+  },
+  "map": {
+    "start": 420,
+    "end": 630,
+    "cities": [
+      { "name": "Hamburg", "lon": 10.0, "lat": 53.55, "at": 456 },
+      { "name": "Berlin", "lon": 13.4, "lat": 52.52, "at": 490 },
+      { "name": "Frankfurt", "lon": 8.68, "lat": 50.11, "at": 524 },
+      { "name": "Zürich", "lon": 8.54, "lat": 47.37, "at": 556 },
+      { "name": "München", "lon": 11.58, "lat": 48.14, "at": 588 },
+      { "name": "Wien", "lon": 16.37, "lat": 48.21, "at": 616 }
+    ],
+    "steps": { "pruefung": 420, "live": 500, "anfrage": 590 }
+  },
+  "stage": { "start": 630, "landing": 652, "notify": 688, "end": 750 },
+  "claim": {
+    "start": 750,
+    "lines": [750, 776, 802],
+    "chips": [824, 834, 844],
+    "wordmark": 854,
+    "button": 864,
+    "url": 874,
+    "chime": 880
+  }
+}

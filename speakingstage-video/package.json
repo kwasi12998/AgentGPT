@@ -1,0 +1,21 @@
+{
+  "name": "speakingstage-video",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "studio": "remotion studio",
+    "audio": "node scripts/make-audio.mjs",
+    "render": "remotion render src/index.ts Speaker out/speakingstage-speaker.mp4 --browser-executable=/opt/pw-browsers/chromium",
+    "still": "remotion still src/index.ts Speaker --browser-executable=/opt/pw-browsers/chromium"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.539",
+    "@remotion/fonts": "^4.0.539",
+    "@remotion/google-fonts": "^4.0.539",
+    "@types/react": "^18.3.31",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.539",
+    "typescript": "^7.0.2"
+  }
+}
