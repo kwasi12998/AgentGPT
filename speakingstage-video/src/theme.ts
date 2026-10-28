@@ -16,14 +16,16 @@ export const C = {
 
 export const FONT = "Inter, system-ui, -apple-system, 'Segoe UI', sans-serif";
 
-[
-  ['Medium', 500],
-  ['SemiBold', 600],
-  ['Bold', 700],
-  ['ExtraBold', 800]
-].forEach(([name, weight]) => {
-  loadFont({family: 'Inter', url: staticFile(`fonts/Inter-${name}.otf`), weight: String(weight)});
-});
+export const fontsReady = Promise.all(
+  (
+    [
+      ['Medium', 500],
+      ['SemiBold', 600],
+      ['Bold', 700],
+      ['ExtraBold', 800]
+    ] as const
+  ).map(([name, weight]) => loadFont({family: 'Inter', url: staticFile(`fonts/Inter-${name}.otf`), weight: String(weight)}))
+);
 
 export const FPS = 30;
 
