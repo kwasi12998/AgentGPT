@@ -23,15 +23,15 @@ import {loadImage, rr, useTexture} from '../three/tex';
 import {roundedRectShape} from '../three/PhoneModel';
 
 // ------------------------------------------------------------------ deterministic helpers
-const lcg = (seed: number) => {
+export const lcg = (seed: number) => {
   let s = seed >>> 0;
   return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
 };
-const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
-const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+export const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
+export const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 // ------------------------------------------------------------------ hero objects as lists of parts (rendered AND point-sampled)
-type Part = {geo: BufferGeometry; pos: [number, number, number]; rot?: [number, number, number]; color: string; metal: number; rough: number; n: number};
+export type Part = {geo: BufferGeometry; pos: [number, number, number]; rot?: [number, number, number]; color: string; metal: number; rough: number; n: number};
 
 const CHAIR = (): Part[] => [
   {geo: new RoundedBoxGeometry(1.0, 0.1, 0.95, 4, 0.04), pos: [0, 1.0, 0], color: '#efe8de', metal: 0.05, rough: 0.55, n: 1700},
@@ -51,7 +51,7 @@ const MIC = (): Part[] => [
 const partMatrix = (p: Part) => new Matrix4().compose(new Vector3(...p.pos), new Quaternion().setFromEuler(new Euler(...(p.rot ?? [0, 0, 0]))), new Vector3(1, 1, 1));
 
 type Sampled = {pos: Float32Array; col: Float32Array};
-const sampleParts = (parts: Part[], rng: () => number, group?: Matrix4): Sampled => {
+export const sampleParts = (parts: Part[], rng: () => number, group?: Matrix4): Sampled => {
   const total = parts.reduce((s, p) => s + p.n, 0);
   const pts: {x: number; y: number; z: number; r: number; g: number; b: number}[] = [];
   const v = new Vector3();

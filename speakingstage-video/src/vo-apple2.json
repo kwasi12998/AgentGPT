@@ -1,0 +1,50 @@
+{
+  "placeholder": false,
+  "provider": "openrouter",
+  "model": "elevenlabs/eleven-v4",
+  "voice": "alice",
+  "segments": {
+    "a1": {
+      "file": "vo-apple2/a1.mp3",
+      "dur": 1.802449,
+      "hash": "09c82fb4ae4ac526e54b96bbe1f739160ad84cc8",
+      "text": "Wer nimmt diesen Platz ein?"
+    },
+    "a2": {
+      "file": "vo-apple2/a2.mp3",
+      "dur": 2.037551,
+      "hash": "adfb0b1edb8bd300b0287424cf55e2201fada138",
+      "text": "Eine Stimme mit Haltung."
+    },
+    "a3": {
+      "file": "vo-apple2/a3.mp3",
+      "dur": 3.160816,
+      "hash": "84ac6abd7ec0141632480972e91f6e6e2b223ad1",
+      "text": "Chris-Aike Spring. Keynote-Speakerin."
+    },
+    "a4a": {
+      "file": "vo-apple2/a4a.mp3",
+      "dur": 1.227755,
+      "hash": "d79141c2c0c91c196f26eaf3aefc4cf6b1b8a2c8",
+      "text": "Klartext."
+    },
+    "a4b": {
+      "file": "vo-apple2/a4b.mp3",
+      "dur": 1.07102,
+      "hash": "f1707946ac3cef0ca575d55b275d938cfbc86666",
+      "text": "Substanz."
+    },
+    "a4c": {
+      "file": "vo-apple2/a4c.mp3",
+      "dur": 0.914286,
+      "hash": "bb9d6b0fba7d1950a24812250f964d36593c90d3",
+      "text": "Haltung."
+    },
+    "a5": {
+      "file": "vo-apple2/a5.mp3",
+      "dur": 1.410612,
+      "hash": "ba40392317ca93add4d3fd3184526beeb07fedc1",
+      "text": "Jetzt anfragen."
+    }
+  }
+}

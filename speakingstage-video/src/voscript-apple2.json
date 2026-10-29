@@ -1,0 +1,15 @@
+{
+  "provider": "openrouter",
+  "model": "elevenlabs/eleven-v4",
+  "voice": "alice",
+  "voiceSettings": {"stability": 0.45, "similarity_boost": 0.75, "style": 0.3, "speed": 1.06},
+  "scenes": [
+    {"id": "a1", "pre": 8, "tail": 3, "min": 60, "text": "Wer nimmt diesen Platz ein?"},
+    {"id": "a2", "pre": 22, "tail": 6, "min": 70, "text": "Eine Stimme mit Haltung."},
+    {"id": "a3", "pre": 30, "tail": 10, "min": 90, "text": "Chris-Aike Spring. Keynote-Speakerin."},
+    {"id": "a4a", "pre": 4, "tail": 3, "min": 34, "text": "Klartext."},
+    {"id": "a4b", "pre": 3, "tail": 3, "min": 34, "text": "Substanz."},
+    {"id": "a4c", "pre": 3, "tail": 8, "min": 40, "text": "Haltung."},
+    {"id": "a5", "pre": 10, "tail": 50, "min": 110, "text": "Jetzt anfragen."}
+  ]
+}
