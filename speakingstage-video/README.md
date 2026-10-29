@@ -6,6 +6,7 @@ Motion Graphic für `speakingstage.com/speaker-werden`, gebaut mit [Remotion](ht
 |---|---|
 | `SpeakerV2` (aktuell, 40 s, 1080×1920) | Durchgehende 3D-Kamerafahrt: Logo, 3D-Handy mit echter Screenrecord der KI-Suche, Speaker-Slalom mit bekannten, gelisteten Namen, Formular-Screenrecord, Karte DACH, Bühne, Claim und Aufruf |
 | `ShowreelChris` (40 s, 1080×1080) | Showreel für ein Speaker-Profil (Chris-Aike Spring) im LinkedIn-Quadrat: Intro, Porträt, Karrierestationen, Foto-Ring, Handy mit echter Profil-Aufnahme, Keynotes, Zitat, Karte, Aufruf |
+| `PitchChris` (74 s, 1080×1080) | Pitch-Video für Chris-Aike Spring: kinetischer Hook, Schmerzpunkte der Zielgruppe, Lösung durch ihre Keynotes, Aufruf. Zeitachse folgt der Sprache (`src/timeline.ts`), kein Dehnen von Szenen |
 | `Speaker` (v1, 30 s) | Erste, rein 2D-basierte Version |
 
 Fertige Videos: `speakingstage-speaker.mp4` (v1), `speakingstage-speaker-v2.mp4` (v2, 9:16), `speakingstage-speaker-v2-16x9.mp4` (v2, 16:9), mit Voice-over: `speakingstage-speaker-v2-vo.mp4` (9:16) und `speakingstage-speaker-v2-vo-16x9.mp4` (16:9)
@@ -37,6 +38,16 @@ npm run render:showreel-vo                                     # Komposition Sho
 ```
 
 Inhalte (Texte, Keynotes, Stationen, Fotos) stammen ausschließlich aus dem öffentlichen Profil und stehen in `src/showreel/worlds.tsx` und `src/showreel/Showreel.tsx`. Sensible private Angaben aus der Biografie sind bewusst nicht enthalten.
+
+## Pitch-Video (Hook, Schmerzpunkte, Lösung)
+
+```bash
+npm run vo:pitch       # Sprechtext src/voscript-pitch.json -> Alice (eleven-v4) -> src/vo-pitch.json
+npm run audio:pitch    # Musik und SFX auf die Sprach-Zeitachse legen
+npm run render:pitch   # rendert mit 1,5-facher Auflösung und rechnet auf 1080x1080 herunter (glättet Kanten)
+```
+
+Jeder Abschnitt dauert so lange, wie sein Sprachsegment braucht. Szenen werden nie gedehnt oder verlangsamt. Die Kamera bewegt sich ohne Wackeln, Karten schweben nicht und liegen vollständig im Bild.
 
 ## Voice-over (ElevenLabs über OpenRouter)
 
