@@ -416,8 +416,8 @@ const Ring: React.FC<{rect: number[] | null; p: number}> = ({rect, p}) =>
 const P2: React.FC<{t: number; words: number[]; f: number}> = ({words, f, t}) => {
   const tabs = ['Profile', 'Videos', 'Themen'];
   const act = (i: number) => prog(f, words[i], 6, out3) * (1 - (i < 2 ? prog(f, words[i + 1], 6, out3) : 0));
-  const recF = t < 30 ? 1 : 1 + (t - 30) * 1.4;
-  const view: View = [640, 560, 0.62];
+  const recF = 1 + Math.max(0, t - 18) * 1.3;
+  const view: View = [760, 560, 0.55];
   const W = 704;
   const H = 444;
   const inner = (
@@ -425,7 +425,7 @@ const P2: React.FC<{t: number; words: number[]; f: number}> = ({words, f, t}) =>
       <Ring rect={interpRect('thumb', recF)} p={act(1)} />
       <Ring rect={interpRect('chips', recF)} p={act(2)} />
       <Ring rect={interpRect('keynotes', recF)} p={act(2)} />
-      <Ring rect={[66, 315, 804, 760]} p={recF < 30 ? act(0) : 0} />
+      <Ring rect={[66, 315, 804, 760]} p={recF < 46 ? act(0) : 0} />
     </>
   );
   return (
