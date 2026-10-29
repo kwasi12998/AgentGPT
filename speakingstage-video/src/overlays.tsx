@@ -1,12 +1,13 @@
 import React from 'react';
-import {Img, staticFile, useCurrentFrame} from 'remotion';
+import {Img, staticFile} from 'remotion';
+import {useLF} from './warp-ctx';
 import T from './timing2.json';
 import {C, FONT, prog, sp} from './theme';
 import {SPEAKERS} from './three/cards';
 import {useLayout} from './layout';
 
 export const Tracker: React.FC = () => {
-  const f = useCurrentFrame();
+  const f = useLF();
   const {wide} = useLayout();
   const W = wide ? 820 : 920;
   const s4 = T.s4;
@@ -39,7 +40,7 @@ export const Tracker: React.FC = () => {
 };
 
 export const Notification: React.FC = () => {
-  const f = useCurrentFrame();
+  const f = useLF();
   const {wide} = useLayout();
   const {notify, end} = T.s5;
   if (f < notify - 2 || f > end + 8) return null;
@@ -65,7 +66,7 @@ export const Notification: React.FC = () => {
 const CHIPS = ['Keine Exklusivität', 'Keine Umsatzbeteiligung', 'Andere Plattformen erlaubt'];
 
 export const ClaimOverlay: React.FC = () => {
-  const f = useCurrentFrame();
+  const f = useLF();
   const {wide} = useLayout();
   const c = T.s6;
   if (f < c.chips[0] - 6) return null;
@@ -96,7 +97,7 @@ export const ClaimOverlay: React.FC = () => {
 
 /** Trust strip for the speaker corridor: counter + scrolling names. */
 export const TrustStrip: React.FC = () => {
-  const f = useCurrentFrame();
+  const f = useLF();
   const {wide} = useLayout();
   const {start, end} = T.s2;
   if (f < start + 30 || f > end + 4) return null;

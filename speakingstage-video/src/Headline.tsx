@@ -1,5 +1,5 @@
 import React from 'react';
-import {useCurrentFrame} from 'remotion';
+import {useLF} from './warp-ctx';
 import {C, FONT, prog, sp} from './theme';
 import {useLayout} from './layout';
 
@@ -11,7 +11,7 @@ export const Headline: React.FC<{
   top?: number;
   size?: number;
 }> = ({lines, from, to, sub, top = 190, size = 104}) => {
-  const f = useCurrentFrame();
+  const f = useLF();
   const {wide} = useLayout();
   if (f < from || f > to) return null;
   const exit = prog(f, to - 9, 9);

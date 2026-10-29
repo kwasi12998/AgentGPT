@@ -1,5 +1,5 @@
 import React from 'react';
-import {AbsoluteFill, Audio, Img, interpolate, staticFile, useCurrentFrame} from 'remotion';
+import {AbsoluteFill, Audio, Img, interpolate, Sequence, staticFile, useCurrentFrame} from 'remotion';
 import {ThreeCanvas} from '@remotion/three';
 import T from './timing2.json';
 import {C, FONT, prog} from './theme';
@@ -14,6 +14,8 @@ import {StageWorld, STAGE_Z} from './three/stage';
 import {ClaimWorld} from './three/claim';
 import {ClaimOverlay, Notification, SpeedLines, Tracker, TrustStrip} from './overlays';
 import {LayoutCtx, PORTRAIT, WIDE} from './layout';
+import {WarpCtx} from './warp-ctx';
+import {VO_WARP} from './vo-warp';
 
 const keysAC: Key[] = [
   {f: 0, pos: [1.6, 0.8, 26], target: [0, 0.5, 0], roll: 8, fov: 34},
@@ -110,8 +112,14 @@ const shiftAt = (f: number) => {
   return -300;
 };
 
-export const SpeakerV2: React.FC<{wide?: boolean}> = ({wide = false}) => {
-  const f = useCurrentFrame();
+/** 0..1 while a voice-over segment is speaking (with short ramps), used to duck music and effects. */
+const speaking = (frame: number) =>
+  VO_WARP.vo.reduce((m, v) => Math.max(m, Math.min(1, Math.max(0, (frame - (v.from - 6)) / 6)) * (1 - Math.min(1, Math.max(0, (frame - (v.from + v.frames)) / 10)))), 0);
+
+export const SpeakerV2: React.FC<{wide?: boolean; vo?: boolean}> = ({wide = false, vo = false}) => {
+  const raw = useCurrentFrame();
+  const warp = vo ? VO_WARP : null;
+  const f = warp ? warp.logical(raw) : raw;
   const L = wide ? WIDE : PORTRAIT;
   const pose = cameraAt(f, wide);
   const speed = speedOf(f, wide);
@@ -120,6 +128,7 @@ export const SpeakerV2: React.FC<{wide?: boolean}> = ({wide = false}) => {
   const flash = Math.max(prog(f, 282, 7, (t) => t) * (1 - prog(f, 289, 8, (t) => t)), 0);
   const impact = Math.max(1 - prog(f, 1046, 10, (t) => t), 0) * (f >= 1046 ? 1 : 0);
   return (
+    <WarpCtx.Provider value={warp}>
     <LayoutCtx.Provider value={L}>
     <AbsoluteFill style={{background: '#fff'}}>
       <AbsoluteFill style={{filter: blur > 0.5 ? `blur(${blur}px)` : undefined}}>
@@ -173,11 +182,28 @@ export const SpeakerV2: React.FC<{wide?: boolean}> = ({wide = false}) => {
       <ClaimOverlay />
 
       <AbsoluteFill style={{background: '#ffffff', opacity: Math.min(1, flash * 1.1 + impact * 0.35), pointerEvents: 'none'}} />
-      <Audio src={staticFile('audio/music2.wav')} volume={0.55} />
-      <Audio src={staticFile('audio/sfx2.wav')} volume={0.9} />
+      {vo ? (
+        <>
+          <Audio src={staticFile('audio/music2vo.wav')} volume={(fr) => 0.55 * (1 - 0.55 * speaking(fr))} />
+          <Audio src={staticFile('audio/sfx2vo.wav')} volume={(fr) => 0.9 * (1 - 0.35 * speaking(fr))} />
+          {VO_WARP.vo.map((v) => (
+            <Sequence key={v.id} from={v.from} durationInFrames={v.frames + 4}>
+              <Audio src={staticFile(v.file)} volume={1} />
+            </Sequence>
+          ))}
+        </>
+      ) : (
+        <>
+          <Audio src={staticFile('audio/music2.wav')} volume={0.55} />
+          <Audio src={staticFile('audio/sfx2.wav')} volume={0.9} />
+        </>
+      )}
     </AbsoluteFill>
     </LayoutCtx.Provider>
+    </WarpCtx.Provider>
   );
 };
 
 export const SpeakerV2Wide: React.FC = () => <SpeakerV2 wide />;
+export const SpeakerV2VO: React.FC = () => <SpeakerV2 vo />;
+export const SpeakerV2VOWide: React.FC = () => <SpeakerV2 vo wide />;

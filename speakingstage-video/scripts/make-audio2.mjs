@@ -4,10 +4,18 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createSynth, mtof, SR} from './synth.mjs';
 
+import {buildWarp} from '../src/warp.ts';
+
+// `--vo` renders the soundtrack for the voice-over cut: every event is mapped through the same time warp as the picture.
 const here = path.dirname(fileURLToPath(import.meta.url));
 const T = JSON.parse(fs.readFileSync(path.join(here, '../src/timing2.json'), 'utf8'));
-const DUR = T.total / T.fps;
-const f2t = (f) => f / T.fps;
+const VO = process.argv.includes('--vo');
+const W = VO
+  ? buildWarp(T.total, JSON.parse(fs.readFileSync(path.join(here, '../src/voscript.json'), 'utf8')).scenes, JSON.parse(fs.readFileSync(path.join(here, '../src/vo.json'), 'utf8')))
+  : {total: T.total, out: (l) => l};
+const DUR = W.total / T.fps;
+const f2t = (f) => W.out(f) / T.fps;
+const span = (a, b) => (W.out(b) - W.out(a)) / T.fps;
 const S = createSynth(DUR);
 const {track, tone, noise, kick, click, pop, bell, whoosh, boom, sparkle, writeWav, N, rnd} = S;
 
@@ -35,7 +43,7 @@ T.s1.chips.forEach((f, i) => {
 });
 
 // dive into the screen -> flash cut
-noise(sfx, f2t(254), f2t(289 - 254), {gain: 0.28, lp0: 300, lp1: 9000, shape: 'rise'});
+noise(sfx, f2t(254), span(254, 289), {gain: 0.28, lp0: 300, lp1: 9000, shape: 'rise'});
 tone(sfx, f2t(256), 1.1, 110, {f1: 880, gain: 0.14, decay: 0.2, attack: 0.5, harmonics: [1, 2, 3]});
 boom(sfx, f2t(289), 0.85);
 sparkle(sfx, f2t(290), 0.16);
@@ -57,7 +65,7 @@ whoosh(sfx, f2t(T.s2.gap - 20), 0.7, 0.14, true);
 T.s2.gap && [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].forEach((i) => pop(sfx, f2t(T.s2.gap + 4 + i * 5), 420 + i * 40, 0.1));
 
 // card flies out and snaps into the roster wall
-whoosh(sfx, f2t(T.s3.launch - 2), f2t(T.s3.snap - T.s3.launch + 2), 0.22, true);
+whoosh(sfx, f2t(T.s3.launch - 2), span(T.s3.launch - 2, T.s3.snap), 0.22, true);
 sparkle(sfx, f2t(T.s3.launch + 4), 0.08);
 boom(sfx, f2t(T.s3.snap), 0.8);
 sparkle(sfx, f2t(T.s3.snap + 1), 0.18);
@@ -77,7 +85,7 @@ T.s4.cities.forEach((c, i) => {
   bell(sfx, f2t(c.at), mtof(penta[i]), 0.2, pan(i));
   sparkle(sfx, f2t(c.at) + 0.02, 0.05);
   tone(sfx, f2t(c.at), 0.25, 140, {f1: 70, gain: 0.3, decay: 10});
-  if (i > 0) whoosh(sfx, f2t(T.s4.cities[i - 1].at) + 0.03, f2t(c.at - T.s4.cities[i - 1].at) - 0.03, 0.12, true, pan(i));
+  if (i > 0) whoosh(sfx, f2t(T.s4.cities[i - 1].at) + 0.03, span(T.s4.cities[i - 1].at, c.at) - 0.03, 0.12, true, pan(i));
 });
 bell(sfx, f2t(T.s4.steps.pruefung), mtof(79), 0.12);
 bell(sfx, f2t(T.s4.steps.live), mtof(83), 0.14);
@@ -97,7 +105,7 @@ for (let i = 0; i < 300; i++) {
 [91, 95, 100].forEach((m, i) => bell(sfx, f2t(T.s5.notify) + i * 0.1, mtof(m), 0.2, i - 1 > 0 ? 0.3 : -0.3, 1.2));
 
 // flight to the claim, impact, lines
-noise(sfx, f2t(1022), f2t(1046 - 1022), {gain: 0.26, lp0: 300, lp1: 9000, shape: 'rise'});
+noise(sfx, f2t(1022), span(1022, 1046), {gain: 0.26, lp0: 300, lp1: 9000, shape: 'rise'});
 boom(sfx, f2t(1046), 0.95);
 T.s6.lines.forEach((f, i) => {
   if (i > 0) kick(sfx, f2t(f), 0.7);
@@ -182,5 +190,6 @@ for (let i = d; i < N; i++) {
 
 const out = path.join(here, '../public/audio');
 fs.mkdirSync(out, {recursive: true});
-writeWav(path.join(out, 'music2.wav'), music, 0.8);
-writeWav(path.join(out, 'sfx2.wav'), sfx, 0.85);
+const suffix = VO ? 'vo' : '';
+writeWav(path.join(out, `music2${suffix}.wav`), music, 0.8);
+writeWav(path.join(out, `sfx2${suffix}.wav`), sfx, 0.85);

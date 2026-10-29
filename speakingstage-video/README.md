@@ -22,6 +22,25 @@ npm run render:wide # 16:9 rendern (Komposition SpeakerV2Wide)
 npm run stills -- out/review 0.4 100 300 700   # einzelne Frames zur schnellen Kontrolle
 ```
 
+## Voice-over (ElevenLabs über OpenRouter)
+
+Zusätzliche Kompositionen `SpeakerV2VO` (9:16) und `SpeakerV2VOWide` (16:9). Sie laufen mit gedehnten Verweilzonen (`src/warp.ts`), damit die Sprache Platz hat: Handy, Karte und Bühne bleiben länger stehen, Kamerafahrten und Schnitte behalten ihr Tempo. Musik, SFX und Sprecher werden auf dieselbe Zeitachse gelegt, die Musik wird unter der Stimme abgesenkt.
+
+```bash
+export OPENROUTER_API_KEY=...        # in der Umgebung hinterlegen, nie ins Repo oder in den Chat
+npm run frames                       # Handy-Texturen erzeugen (einmalig pro Umgebung)
+npm run vo -- --audition             # derselbe Satz in 8 Stimmen -> public/vo/audition/*.mp3
+VO_VOICE=george npm run vo           # Stimme wählen und alle Segmente erzeugen (src/vo.json)
+npm run audio:vo                     # Musik + SFX auf die gedehnte Zeitachse legen
+npm run render:vo                    # 9:16
+npm run render:vo-wide               # 16:9
+```
+
+- Sprechtext, Modell und Stimme: `src/voscript.json`. Geänderte Segmente werden neu erzeugt, unveränderte nicht (keine unnötigen Kosten).
+- Modell per `VO_MODEL` wählbar, z. B. `elevenlabs/eleven-v3` (ausdrucksstärker) oder `elevenlabs/eleven-multilingual-v2` (Standard, ruhig und stabil).
+- Ohne Key kann die Zeitachse mit `npm run vo:placeholder` (stille Platzhalter nach Wortzahl) getestet werden. `src/vo.json` enthält dann `placeholder: true`.
+- Alternativ direkt über ElevenLabs: `"provider": "elevenlabs"` in `src/voscript.json` und `ELEVENLABS_API_KEY`.
+
 ## Wichtige Hinweise
 
 - **Screenrecords:** Das Formular auf `/speaker-werden` wird nur mit Demo-Daten ausgefüllt und **nie abgeschickt**.

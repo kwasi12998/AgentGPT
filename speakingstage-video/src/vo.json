@@ -1,0 +1,50 @@
+{
+  "placeholder": true,
+  "provider": "placeholder",
+  "model": null,
+  "voice": null,
+  "segments": {
+    "s0": {
+      "file": "vo/s0.mp3",
+      "dur": 2.638367,
+      "hash": "ae2f2060a873f2b7baac484c3b1ebe299e3052eb",
+      "text": "SpeakingStage. Die Bühne für Keynote Speaker."
+    },
+    "s1": {
+      "file": "vo/s1.mp3",
+      "dur": 7.000816,
+      "hash": "107c9280b4c12467355455a34cae63f21f1c4794",
+      "text": "Veranstalter suchen Keynote Speaker und beschreiben ihr Event einfach in eigenen Worten. Doch wo sind Sie?"
+    },
+    "s2": {
+      "file": "vo/s2.mp3",
+      "dur": 9.613061,
+      "hash": "3e66d3f9b446a53bef1d07c2cf6c353154f5711f",
+      "text": "SpeakingStage ist die kuratierte Plattform für Keynote Speaker im DACH-Raum. Über hundertsechzig aktive Profile, darunter Oliver Kahn, Miriam Meckel und Sandra Navidi."
+    },
+    "s3": {
+      "file": "vo/s3.mp3",
+      "dur": 8.306939,
+      "hash": "67be68b18ff47522f69328d2cb3682df75f9ee26",
+      "text": "Ihr Profil einzureichen ist kostenlos und dauert etwa eine Minute. Keine Exklusivität, keine Umsatzbeteiligung. Ihre Kunden bleiben Ihre Kunden."
+    },
+    "s4": {
+      "file": "vo/s4.mp3",
+      "dur": 8.306939,
+      "hash": "73187b644407c814f8d87d11df9d8511a2eb8aef",
+      "text": "Wir prüfen Ihr Profil persönlich, meist in wenigen Tagen. Dann sind Sie live, bei Google und in unserer KI-Suche."
+    },
+    "s5": {
+      "file": "vo/s5.mp3",
+      "dur": 2.220408,
+      "hash": "a35204f6ff28af24ff5d44f994822c052d70e713",
+      "text": "Und dann kommen die Anfragen."
+    },
+    "s6": {
+      "file": "vo/s6.mp3",
+      "dur": 8.306939,
+      "hash": "b12ef699ee7d6df1e7faa3dc7d96e1f7e0757521",
+      "text": "Ihre Bühne. Ihr Thema. Kostenlos. Reichen Sie jetzt Ihr Profil ein, auf speakingstage punkt com, Schrägstrich speaker minus werden."
+    }
+  }
+}

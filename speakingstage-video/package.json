@@ -11,7 +11,12 @@
     "record": "cd capture && node record.cjs",
     "render:v2": "remotion render src/index.ts SpeakerV2 out/speakingstage-speaker-v2.mp4 --gl=swangle --codec=h264 --crf=18 --concurrency=3",
     "stills": "node scripts/stills.mjs",
-    "render:wide": "remotion render src/index.ts SpeakerV2Wide out/speakingstage-speaker-v2-16x9.mp4 --gl=swangle --codec=h264 --crf=18 --concurrency=3"
+    "render:wide": "remotion render src/index.ts SpeakerV2Wide out/speakingstage-speaker-v2-16x9.mp4 --gl=swangle --codec=h264 --crf=18 --concurrency=3",
+    "vo": "node scripts/make-vo.mjs",
+    "vo:placeholder": "node scripts/make-vo.mjs --placeholder",
+    "audio:vo": "node scripts/make-audio2.mjs --vo",
+    "render:vo": "remotion render src/index.ts SpeakerV2VO out/speakingstage-speaker-v2-vo.mp4 --gl=swangle --codec=h264 --crf=18 --concurrency=3",
+    "render:vo-wide": "remotion render src/index.ts SpeakerV2VOWide out/speakingstage-speaker-v2-vo-16x9.mp4 --gl=swangle --codec=h264 --crf=18 --concurrency=3"
   },
   "dependencies": {
     "@react-three/fiber": "^8.17.10",
