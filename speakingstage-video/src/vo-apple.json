@@ -1,0 +1,50 @@
+{
+  "placeholder": false,
+  "provider": "openrouter",
+  "model": "elevenlabs/eleven-v4",
+  "voice": "alice",
+  "segments": {
+    "a1": {
+      "file": "vo-apple/a1.mp3",
+      "dur": 1.802449,
+      "hash": "9f53330aaf7ad04b913a55fd525a7e3a14468a0d",
+      "text": "Wer nimmt diesen Platz ein?"
+    },
+    "a2": {
+      "file": "vo-apple/a2.mp3",
+      "dur": 1.959184,
+      "hash": "b312e3f5fbd5de1c81f61d92f374a9a8fc33ab45",
+      "text": "Eine Stimme mit Haltung."
+    },
+    "a3": {
+      "file": "vo-apple/a3.mp3",
+      "dur": 4.519184,
+      "hash": "d94214214ec9b2351cc6345b12ebfb29cd9fd71e",
+      "text": "Chris-Aike Spring. Keynote-Speakerin für Female Leadership."
+    },
+    "a4a": {
+      "file": "vo-apple/a4a.mp3",
+      "dur": 1.149388,
+      "hash": "4875f223e3d95e8577ccb7f238355eb3a902d834",
+      "text": "Klartext."
+    },
+    "a4b": {
+      "file": "vo-apple/a4b.mp3",
+      "dur": 1.07102,
+      "hash": "93fadef0789f1ba51217f336e50481386a052abc",
+      "text": "Substanz."
+    },
+    "a4c": {
+      "file": "vo-apple/a4c.mp3",
+      "dur": 0.914286,
+      "hash": "947870beb898f1b894c93b35085fbc88158efcf4",
+      "text": "Haltung."
+    },
+    "a5": {
+      "file": "vo-apple/a5.mp3",
+      "dur": 1.410612,
+      "hash": "712cb7ab6b7acb1ff6e1b4fd9b8d8abb865953e0",
+      "text": "Jetzt anfragen."
+    }
+  }
+}

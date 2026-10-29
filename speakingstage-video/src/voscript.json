@@ -1,0 +1,97 @@
+{
+  "provider": "openrouter",
+  "model": "elevenlabs/eleven-v4",
+  "voiceSettings": {
+    "stability": 0.5,
+    "similarity_boost": 0.75,
+    "style": 0.15,
+    "speed": 0.96
+  },
+  "scenes": [
+    {
+      "id": "s0",
+      "start": 0,
+      "end": 105,
+      "voOffset": 40,
+      "tail": 14,
+      "zone": [
+        58,
+        98
+      ],
+      "text": "SpeakingStage. Die Bühne für Keynote Speaker."
+    },
+    {
+      "id": "s1",
+      "start": 105,
+      "end": 290,
+      "voOffset": 22,
+      "tail": 14,
+      "zone": [
+        128,
+        262
+      ],
+      "text": "Veranstalter suchen Keynote Speaker und beschreiben ihr Event einfach in eigenen Worten. Doch wo sind Sie?"
+    },
+    {
+      "id": "s2",
+      "start": 290,
+      "end": 530,
+      "voOffset": 6,
+      "tail": 14,
+      "zone": [
+        296,
+        528
+      ],
+      "text": "SpeakingStage ist die kuratierte Plattform für Keynote Speaker im DACH-Raum. Über hundertsechzig aktive Profile, darunter Oliver Kahn, Miriam Meckel und Sandra Navidi."
+    },
+    {
+      "id": "s3",
+      "start": 530,
+      "end": 770,
+      "voOffset": 8,
+      "tail": 14,
+      "zone": [
+        540,
+        722
+      ],
+      "text": "Ihr Profil einzureichen ist kostenlos und dauert etwa eine Minute. Keine Exklusivität, keine Umsatzbeteiligung. Ihre Kunden bleiben Ihre Kunden."
+    },
+    {
+      "id": "s4",
+      "start": 770,
+      "end": 920,
+      "voOffset": 14,
+      "tail": 14,
+      "zone": [
+        800,
+        908
+      ],
+      "text": "Wir prüfen Ihr Profil persönlich, meist in wenigen Tagen. Dann sind Sie live, bei Google und in unserer KI-Suche."
+    },
+    {
+      "id": "s5",
+      "start": 920,
+      "end": 1040,
+      "voOffset": 30,
+      "tail": 10,
+      "zone": [
+        960,
+        1030
+      ],
+      "text": "Und dann kommen die Anfragen."
+    },
+    {
+      "id": "s6",
+      "start": 1040,
+      "end": 1200,
+      "voOffset": 12,
+      "tail": 16,
+      "zone": [
+        1100,
+        1198
+      ],
+      "text": "Ihre Bühne. Ihr Thema. Kostenlos. Reichen Sie jetzt Ihr Profil ein, auf speakingstage punkt com, Schrägstrich speaker minus werden."
+    }
+  ],
+  "voice": "alice"
+}

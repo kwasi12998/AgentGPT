@@ -1,0 +1,90 @@
+{
+  "provider": "openrouter",
+  "model": "elevenlabs/eleven-v4",
+  "voice": "alice",
+  "voiceSettings": {
+    "stability": 0.5,
+    "similarity_boost": 0.75,
+    "style": 0.15,
+    "speed": 0.96
+  },
+  "scenes": [
+    {
+      "id": "b1",
+      "pre": 4,
+      "tail": 10,
+      "min": 150,
+      "text": "Als Frau musst du doppelt so gut sein, damit ein Mann anerkennt, dass du halb so gut bist wie er."
+    },
+    {
+      "id": "b2",
+      "pre": 6,
+      "tail": 14,
+      "min": 60,
+      "text": "Viele Frauen kennen diesen Satz."
+    },
+    {
+      "id": "b3",
+      "pre": 16,
+      "tail": 18,
+      "min": 120,
+      "text": "Zu viele Unternehmen machen integere Menschen zu Befehlsempfängern, und verlieren genau die, die Missstände aufrichtig benennen."
+    },
+    {
+      "id": "b4",
+      "pre": 16,
+      "tail": 16,
+      "min": 100,
+      "text": "Führung scheitert selten an fehlenden Werkzeugen. Sie scheitert an fehlender Haltung."
+    },
+    {
+      "id": "b5",
+      "pre": 16,
+      "tail": 20,
+      "min": 100,
+      "text": "Was Sie brauchen: eine Keynote mit Klartext und Substanz. Keine Durchhalteparolen."
+    },
+    {
+      "id": "b6",
+      "pre": 16,
+      "tail": 16,
+      "min": 120,
+      "text": "Chris-Aike Spring führte früh, in männergeprägten Branchen. Mit siebenundzwanzig kaufmännische Leiterin, mit dreißig Niederlassungsleiterin."
+    },
+    {
+      "id": "b7",
+      "pre": 16,
+      "tail": 8,
+      "min": 90,
+      "text": "Ehrlichkeit als Diagnoseinstrument: Räume, in denen Führung neu gedacht wird."
+    },
+    {
+      "id": "b8",
+      "pre": 6,
+      "tail": 8,
+      "min": 90,
+      "text": "Führungshaltung: Integrität, Selbstreflexion und Vorbild vervielfachen Verhalten."
+    },
+    {
+      "id": "b9",
+      "pre": 6,
+      "tail": 16,
+      "min": 90,
+      "text": "Und die unsichtbaren Bewertungsmaßstäbe weiblicher Führung werden sichtbar."
+    },
+    {
+      "id": "b10",
+      "pre": 16,
+      "tail": 20,
+      "min": 90,
+      "text": "Du musst nicht die Person bleiben, die andere in dir sehen."
+    },
+    {
+      "id": "b11",
+      "pre": 16,
+      "tail": 60,
+      "min": 150,
+      "text": "Chris-Aike Spring. Jetzt unverbindlich anfragen, auf speakingstage punkt com."
+    }
+  ]
+}

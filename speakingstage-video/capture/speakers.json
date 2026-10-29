@@ -1,0 +1,282 @@
+[
+  {
+    "slug": "oliver-kahn",
+    "status": 200,
+    "h1": "Oliver Kahn als Leadership Speaker",
+    "known": "Bekannt aus: dbb akademie · HEROcon · handwerk.com",
+    "img": [
+      {
+        "src": "https://xwltjvbyvzqsardmnhip.supabase.co/storage/v1/render/image/public/speaker-images/oliver-kahn/hero/oliver-kahn-hero.webp?width=960&quality=80&format=webp&resize=contain",
+        "w": 430,
+        "h": 537,
+        "alt": "Oliver Kahn – Keynote Speaker"
+      },
+      {
+        "src": "https://xwltjvbyvzqsardmnhip.supabase.co/storage/v1/render/image/public/speaker-images/oliver-kahn/gallery/01-oliver-kahn-oliver-kahn-premium-speakers-01-digital-x-foto-mareen-fischinger.webp?width=960&quality=80&format=webp&resize=contain",
+        "w": 430,
+        "h": 286,
+        "alt": "Oliver Kahn – Keynote Speaker Foto 2"
+      }
+    ],
+    "tags": [
+      "Speaker finden",
+      "Themen",
+      "Über uns",
+      "Blog",
+      "1 / 5",
+      "Leadership"
+    ]
+  },
+  {
+    "slug": "jochen-schweizer",
+    "status": 200,
+    "h1": "Jochen Schweizer als Speaker für Mut und Unternehmertum",
+    "known": "Bekannt aus: VOX · Jochen Schweizer Arena · Wikipedia",
+    "img": [
+      {
+        "src": "https://xwltjvbyvzqsardmnhip.supabase.co/storage/v1/render/image/public/speaker-images/1eb0fc90-1928-423e-9d51-b13366d7999b/hero/2026-05-27-hero.webp?width=960&quality=80&format=webp&resize=contain",
+        "w": 430,
+        "h": 286,
+        "alt": "Jochen Schweizer – Keynote Speaker"
+      },
+      {
+        "src": "https://xwltjvbyvzqsardmnhip.supabase.co/storage/v1/render/image/public/speaker-images/1eb0fc90-1928-423e-9d51-b13366d7999b/gallery/2026-05-27-gallery-01.webp?width=960&quality=80&format=webp&resize=contain",
+        "w": 430,
+        "h": 286,
+        "alt": "Jochen Schweizer – Keynote Speaker Foto 2"
+      }
+    ],
+    "tags": [
+      "Speaker finden",
+      "Themen",
+      "Über uns",
+      "Blog",
+      "1 / 5",
+      "Unternehmertum"
+    ]
+  },
+  {
+    "slug": "miriam-meckel",
+    "status": 200,
+    "h1": "Miriam Meckel als KI Speakerin",
+    "known": "",
+    "img": [
+      {
+        "src": "https://xwltjvbyvzqsardmnhip.supabase.co/storage/v1/render/image/public/speaker-images/miriam-meckel/hero/01-miriam-meckel-premium-speakers-05.jpeg?width=960&quality=80&format=webp&resize=contain",
+        "w": 430,
+        "h": 322,
+        "alt": "Miriam Meckel – Keynote Speaker"
+      },
+      {
+        "src": "https://xwltjvbyvzqsardmnhip.supabase.co/storage/v1/render/image/public/speaker-images/miriam-meckel/gallery/01-miriam-meckel-premium-speakers-01.jpeg?width=960&quality=80&format=webp&resize=contain",
+        "w": 403,
+        "h": 537,
+        "alt": "Miriam Meckel – Keynote Speaker Foto 2"
+      }
+    ],
+    "tags": [
+      "Speaker finden",
+      "Themen",
+      "Über uns",
+      "Blog",
+      "1 / 4",
+      "Künstliche Intelligenz"
+    ]
+  },
+  {
+    "slug": "sandra-navidi",
+    "status": 200,
+    "h1": "Sandra Navidi als Speakerin für USA und Finanzmärkte",
+    "known": "Bekannt aus: n-tv · finanzwelt",
+    "img": [
+      {
+        "src": "https://xwltjvbyvzqsardmnhip.supabase.co/storage/v1/render/image/public/speaker-images/21d1585f-b16f-4bdc-b588-cee07ffd7bde/hero/2026-05-21-hero.webp?width=960&quality=80&format=webp&resize=contain",
+        "w": 430,
+        "h": 322,
+        "alt": "Sandra Navidi – Keynote Speaker"
+      },
+      {
+        "src": "https://xwltjvbyvzqsardmnhip.supabase.co/storage/v1/render/image/public/speaker-images/21d1585f-b16f-4bdc-b588-cee07ffd7bde/gallery/2026-05-21-gallery-01.webp?width=960&quality=80&format=webp&resize=contain",
+        "w": 430,
+        "h": 322,
+        "alt": "Sandra Navidi – Keynote Speaker Foto 2"
+      }
+    ],
+    "tags": [
+      "Speaker finden",
+      "Themen",
+      "Über uns",
+      "Blog",
+      "1 / 5",
+      "USA"
+    ]
+  },
+  {
+    "slug": "anders-indset",
+    "status": 200,
+    "h1": "Anders Indset als Speaker für KI und Leadership anfragen",
+    "known": "",
+    "img": [
+      {
+        "src": "https://xwltjvbyvzqsardmnhip.supabase.co/storage/v1/render/image/public/speaker-images/anders-indset/hero/anders-indset-hero.webp?width=960&quality=80&format=webp&resize=contain",
+        "w": 430,
+        "h": 537,
+        "alt": "Anders Indset – Keynote Speaker"
+      },
+      {
+        "src": "https://xwltjvbyvzqsardmnhip.supabase.co/storage/v1/render/image/public/speaker-images/anders-indset/gallery/01-anders-indset-anders-indset-premium-speakers-01.webp?width=960&quality=80&format=webp&resize=contain",
+        "w": 403,
+        "h": 537,
+        "alt": "Anders Indset – Keynote Speaker Foto 2"
+      }
+    ],
+    "tags": [
+      "Speaker finden",
+      "Themen",
+      "Über uns",
+      "Blog",
+      "1 / 5",
+      "Wirtschaftsphilosophie"
+    ]
+  },
+  {
+    "slug": "hannes-jaenicke",
+    "status": 200,
+    "h1": "Hannes Jaenicke als Nachhaltigkeits-Speaker",
+    "known": "",
+    "img": [
+      {
+        "src": "https://xwltjvbyvzqsardmnhip.supabase.co/storage/v1/render/image/public/speaker-images/b3d0c3d0-2003-4f29-af28-20f3954aff16/hero/1760634931328.webp?width=960&quality=80&format=webp&resize=contain",
+        "w": 430,
+        "h": 286,
+        "alt": "Hannes Jaenicke – Keynote Speaker"
+      },
+      {
+        "src": "https://speakingstage.com/exposes/previews/hannes-jaenicke.webp",
+        "w": 360,
+        "h": 510,
+        "alt": "Vorschau der ersten Exposé-Seite"
+      }
+    ],
+    "tags": [
+      "Speaker finden",
+      "Themen",
+      "Über uns",
+      "Blog",
+      "Umweltschutz",
+      "Artenschutz"
+    ]
+  },
+  {
+    "slug": "nina-ruge",
+    "status": 200,
+    "h1": "Nina Ruge als Longevity Speakerin",
+    "known": "Bekannt aus: Dresden International University · Fränkische Nachrichten · Deutsche Longevity Gesellschaft",
+    "img": [
+      {
+        "src": "https://xwltjvbyvzqsardmnhip.supabase.co/storage/v1/render/image/public/speaker-images/nina-ruge/hero/nina-ruge-hero-1600-20260814.webp?width=960&quality=80&format=webp&resize=contain",
+        "w": 430,
+        "h": 286,
+        "alt": "Nina Ruge – Keynote Speaker"
+      },
+      {
+        "src": "https://xwltjvbyvzqsardmnhip.supabase.co/storage/v1/render/image/public/speaker-images/nina-ruge/gallery/01-nina-ruge-premium-speakers-05-Linda-Kasbohrer-oder-auf-Instagram-linda.j.ennifer_Nina_Ruge_1.jpg?width=960&quality=80&format=webp&resize=contain",
+        "w": 358,
+        "h": 537,
+        "alt": "Nina Ruge – Keynote Speaker Foto 2"
+      }
+    ],
+    "tags": [
+      "Speaker finden",
+      "Themen",
+      "Über uns",
+      "Blog",
+      "1 / 4",
+      "Healthy Longevity"
+    ]
+  },
+  {
+    "slug": "urs-meier",
+    "status": 200,
+    "h1": "Urs Meier als Speaker für Leadership und Entscheidungen",
+    "known": "Bekannt aus: Urs Meier Management AG · TED · Premium Speakers",
+    "img": [
+      {
+        "src": "https://xwltjvbyvzqsardmnhip.supabase.co/storage/v1/render/image/public/speaker-images/55d44258-48ff-44f1-b6de-ae40cc2769da/hero/2026-05-27-hero.webp?width=960&quality=80&format=webp&resize=contain",
+        "w": 430,
+        "h": 286,
+        "alt": "Urs Meier – Keynote Speaker"
+      },
+      {
+        "src": "https://xwltjvbyvzqsardmnhip.supabase.co/storage/v1/render/image/public/speaker-images/55d44258-48ff-44f1-b6de-ae40cc2769da/gallery/2026-05-27-gallery-01.webp?width=960&quality=80&format=webp&resize=contain",
+        "w": 430,
+        "h": 286,
+        "alt": "Urs Meier – Keynote Speaker Foto 2"
+      }
+    ],
+    "tags": [
+      "Speaker finden",
+      "Themen",
+      "Über uns",
+      "Blog",
+      "1 / 5",
+      "Entscheidungen"
+    ]
+  },
+  {
+    "slug": "dani-arnold",
+    "status": 200,
+    "h1": "Dani Arnold als Speaker für Motivation und Extremsport",
+    "known": "",
+    "img": [
+      {
+        "src": "https://xwltjvbyvzqsardmnhip.supabase.co/storage/v1/render/image/public/speaker-images/3b13049b-fbb8-4127-97f6-da6540781882/hero/2026-05-27-hero.webp?width=960&quality=80&format=webp&resize=contain",
+        "w": 430,
+        "h": 286,
+        "alt": "Dani Arnold – Keynote Speaker"
+      },
+      {
+        "src": "https://xwltjvbyvzqsardmnhip.supabase.co/storage/v1/render/image/public/speaker-images/3b13049b-fbb8-4127-97f6-da6540781882/gallery/2026-05-27-gallery-01.webp?width=960&quality=80&format=webp&resize=contain",
+        "w": 430,
+        "h": 286,
+        "alt": "Dani Arnold – Keynote Speaker Foto 2"
+      }
+    ],
+    "tags": [
+      "Speaker finden",
+      "Themen",
+      "Über uns",
+      "Blog",
+      "1 / 5",
+      "Extrembergsteigen"
+    ]
+  },
+  {
+    "slug": "michael-gross",
+    "status": 200,
+    "h1": "Michael Groß als Motivations-Speaker anfragen",
+    "known": "",
+    "img": [
+      {
+        "src": "https://xwltjvbyvzqsardmnhip.supabase.co/storage/v1/render/image/public/speaker-images/michael-gross/hero/01-michael-gross-premium-speakers-01.jpg?width=960&quality=80&format=webp&resize=contain",
+        "w": 430,
+        "h": 573,
+        "alt": "Michael Groß – Keynote Speaker"
+      },
+      {
+        "src": "https://xwltjvbyvzqsardmnhip.supabase.co/storage/v1/render/image/public/speaker-images/michael-gross/gallery/01-michael-gross-premium-speakers-02-Before_Applaus-foto-mario-drescher.jpg?width=960&quality=80&format=webp&resize=contain",
+        "w": 403,
+        "h": 537,
+        "alt": "Michael Groß – Keynote Speaker Foto 2"
+      }
+    ],
+    "tags": [
+      "Speaker finden",
+      "Themen",
+      "Über uns",
+      "Blog",
+      "1 / 4",
+      "Selbstführung"
+    ]
+  }
+]

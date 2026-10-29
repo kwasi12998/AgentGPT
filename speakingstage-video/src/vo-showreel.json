@@ -1,0 +1,74 @@
+{
+  "placeholder": false,
+  "provider": "openrouter",
+  "model": "elevenlabs/eleven-v4",
+  "voice": "alice",
+  "segments": {
+    "r1": {
+      "file": "vo-showreel/r1.mp3",
+      "dur": 4.440816,
+      "hash": "d94214214ec9b2351cc6345b12ebfb29cd9fd71e",
+      "text": "Chris-Aike Spring. Keynote-Speakerin für Female Leadership."
+    },
+    "r2": {
+      "file": "vo-showreel/r2.mp3",
+      "dur": 10.762449,
+      "hash": "57e117d676c8904e39857e1f51f9ab65489f76d8",
+      "text": "Mit siebenundzwanzig kaufmännische Leiterin. Mit dreißig Niederlassungsleiterin. Dann ein eigenes Unternehmen. Und Vorsitzende der Wirtschaftsjunioren Rostock."
+    },
+    "r3": {
+      "file": "vo-showreel/r3.mp3",
+      "dur": 4.754286,
+      "hash": "de1901eb986f3937742050901cad417029e7ac50",
+      "text": "Klartext und Substanz. Persönliche Einblicke und eine Haltung."
+    },
+    "k0": {
+      "file": "vo-showreel/k0.mp3",
+      "dur": 3.970612,
+      "hash": "9514f07a0db2d88b4a166480c0ac9d3892f3f0f3",
+      "text": "Fünf Keynotes. Als Frau musst du doppelt so gut sein."
+    },
+    "k1": {
+      "file": "vo-showreel/k1.mp3",
+      "dur": 2.76898,
+      "hash": "e8d86c48261cbc5c3c37001b8cfe567e719c6d81",
+      "text": "Führungshaltung vervielfacht Verhalten."
+    },
+    "k2": {
+      "file": "vo-showreel/k2.mp3",
+      "dur": 2.507755,
+      "hash": "f43e3f9b1b7e222556066813ac4988bac092e85d",
+      "text": "Ehrlichkeit als Diagnoseinstrument."
+    },
+    "k3": {
+      "file": "vo-showreel/k3.mp3",
+      "dur": 2.847347,
+      "hash": "da17dcc667d4bd3942edba282bb504be0b2a1171",
+      "text": "Im nächsten Leben wäre ich gerne ein Mann."
+    },
+    "k4": {
+      "file": "vo-showreel/k4.mp3",
+      "dur": 3.552653,
+      "hash": "ddc5087b57ff05aa3113451e90340910ab8d6db9",
+      "text": "Wer bin ich, wenn niemand mehr entscheidet, wer ich sein soll?"
+    },
+    "r5": {
+      "file": "vo-showreel/r5.mp3",
+      "dur": 5.720816,
+      "hash": "4d772205ac17fde4720271b5cc4c7ba2967a4afb",
+      "text": "Als Frau musst du doppelt so gut sein, damit ein Mann anerkennt, dass du halb so gut bist wie er."
+    },
+    "r6": {
+      "file": "vo-showreel/r6.mp3",
+      "dur": 8.202449,
+      "hash": "c2ab56f998bd9b10a38063159f2827e86a8ccc1c",
+      "text": "Standort Rostock. Sprache Deutsch. Vortragsdauer zwanzig bis sechzig Minuten. Verfügbarkeit auf Anfrage."
+    },
+    "r7": {
+      "file": "vo-showreel/r7.mp3",
+      "dur": 5.642449,
+      "hash": "fe983b75b2469f60ecdd87e4263109ad42f9fae4",
+      "text": "Chris-Aike Spring. Jetzt unverbindlich anfragen, auf speakingstage punkt com."
+    }
+  }
+}

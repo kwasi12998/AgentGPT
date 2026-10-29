@@ -1,0 +1,74 @@
+{
+  "placeholder": false,
+  "provider": "openrouter",
+  "model": "elevenlabs/eleven-v4",
+  "voice": "alice",
+  "segments": {
+    "b1": {
+      "file": "vo-pitch/b1.mp3",
+      "dur": 5.799184,
+      "hash": "4d772205ac17fde4720271b5cc4c7ba2967a4afb",
+      "text": "Als Frau musst du doppelt so gut sein, damit ein Mann anerkennt, dass du halb so gut bist wie er."
+    },
+    "b2": {
+      "file": "vo-pitch/b2.mp3",
+      "dur": 2.194286,
+      "hash": "7d4e17bbee97387a7ef8d5e563874a716386fa32",
+      "text": "Viele Frauen kennen diesen Satz."
+    },
+    "b3": {
+      "file": "vo-pitch/b3.mp3",
+      "dur": 7.88898,
+      "hash": "55d0ceb1e0f4696514cd3c6762afab7f48910271",
+      "text": "Zu viele Unternehmen machen integere Menschen zu Befehlsempfängern, und verlieren genau die, die Missstände aufrichtig benennen."
+    },
+    "b4": {
+      "file": "vo-pitch/b4.mp3",
+      "dur": 5.407347,
+      "hash": "dcdc3b9249480a6257be064d640f4a8d66ed7195",
+      "text": "Führung scheitert selten an fehlenden Werkzeugen. Sie scheitert an fehlender Haltung."
+    },
+    "b5": {
+      "file": "vo-pitch/b5.mp3",
+      "dur": 6.112653,
+      "hash": "d4013740015ab6359e073659b003de23290fc8cb",
+      "text": "Was Sie brauchen: eine Keynote mit Klartext und Substanz. Keine Durchhalteparolen."
+    },
+    "b6": {
+      "file": "vo-pitch/b6.mp3",
+      "dur": 9.090612,
+      "hash": "5d6f5f37323d8980f46af5684e5e447a5e829c58",
+      "text": "Chris-Aike Spring führte früh, in männergeprägten Branchen. Mit siebenundzwanzig kaufmännische Leiterin, mit dreißig Niederlassungsleiterin."
+    },
+    "b7": {
+      "file": "vo-pitch/b7.mp3",
+      "dur": 5.564082,
+      "hash": "f3798366e76c96e4b03a43105e43e591cfbde11e",
+      "text": "Ehrlichkeit als Diagnoseinstrument: Räume, in denen Führung neu gedacht wird."
+    },
+    "b8": {
+      "file": "vo-pitch/b8.mp3",
+      "dur": 6.19102,
+      "hash": "80217cb6fa1318e12758b7fa51a99dd3fb90f08d",
+      "text": "Führungshaltung: Integrität, Selbstreflexion und Vorbild vervielfachen Verhalten."
+    },
+    "b9": {
+      "file": "vo-pitch/b9.mp3",
+      "dur": 4.754286,
+      "hash": "c9f124bc62307bcfbe4cf5c81636368cfda8f91b",
+      "text": "Und die unsichtbaren Bewertungsmaßstäbe weiblicher Führung werden sichtbar."
+    },
+    "b10": {
+      "file": "vo-pitch/b10.mp3",
+      "dur": 3.787755,
+      "hash": "59a0167220da80b7fa8eff9a49128b300844ef8d",
+      "text": "Du musst nicht die Person bleiben, die andere in dir sehen."
+    },
+    "b11": {
+      "file": "vo-pitch/b11.mp3",
+      "dur": 5.642449,
+      "hash": "fe983b75b2469f60ecdd87e4263109ad42f9fae4",
+      "text": "Chris-Aike Spring. Jetzt unverbindlich anfragen, auf speakingstage punkt com."
+    }
+  }
+}
