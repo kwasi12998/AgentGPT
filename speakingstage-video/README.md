@@ -86,3 +86,17 @@ npm run vo:apple      # Sprecher (Alice) -> src/vo-apple.json
 npm run audio:apple   # Musik und SFX auf die Sprach-Zeitachse
 npm run render:apple  # 1,5-fach rendern, auf 1080x1080 herunterrechnen
 ```
+
+## SpeakingStage-Werbevideo für LinkedIn (Du-Form, ca. 50 s)
+
+Komposition `SpeakingStageAd` (1080×1080): Schmerzpunkte der Veranstalter, dann die drei Schritte Finden, Vergleichen, Anfragen mit echten Screenrecords der Website (KI-Suche, Speaker-Profil), Zooms und Klick-Animationen. Aussagen stammen von speakingstage.com, es gibt keine Zeit- oder Preisversprechen.
+
+```bash
+npm run record:ad   # Desktop-Screenrecords (public/rec-adki.webm, rec-adprof.webm), es wird nichts abgeschickt
+npm run frames      # JPEG-Folgen daraus
+npm run vo:ad       # Sprecher (src/voscript-ad.json)
+npm run audio:ad    # Musik und SFX
+npm run render:ad   # Render (ca. 40 Min.)
+```
+
+Storyboard: `prompts/ad-storyboard.png`. Die Ergebnisliste der KI-Suche im Video ist eine Illustration, die Live-Suche lieferte beim Aufnehmen keine Treffer.
