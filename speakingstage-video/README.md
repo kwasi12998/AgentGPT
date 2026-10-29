@@ -7,7 +7,7 @@ Motion Graphic für `speakingstage.com/speaker-werden`, gebaut mit [Remotion](ht
 | `SpeakerV2` (aktuell, 40 s, 1080×1920) | Durchgehende 3D-Kamerafahrt: Logo, 3D-Handy mit echter Screenrecord der KI-Suche, Speaker-Slalom mit bekannten, gelisteten Namen, Formular-Screenrecord, Karte DACH, Bühne, Claim und Aufruf |
 | `Speaker` (v1, 30 s) | Erste, rein 2D-basierte Version |
 
-Fertige Videos: `speakingstage-speaker.mp4` (v1), `speakingstage-speaker-v2.mp4` (v2, 9:16), `speakingstage-speaker-v2-16x9.mp4` (v2, 16:9)
+Fertige Videos: `speakingstage-speaker.mp4` (v1), `speakingstage-speaker-v2.mp4` (v2, 9:16), `speakingstage-speaker-v2-16x9.mp4` (v2, 16:9), mit Voice-over: `speakingstage-speaker-v2-vo.mp4` (9:16) und `speakingstage-speaker-v2-vo-16x9.mp4` (16:9)
 
 ## Befehle
 
