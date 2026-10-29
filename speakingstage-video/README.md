@@ -7,6 +7,7 @@ Motion Graphic für `speakingstage.com/speaker-werden`, gebaut mit [Remotion](ht
 | `SpeakerV2` (aktuell, 40 s, 1080×1920) | Durchgehende 3D-Kamerafahrt: Logo, 3D-Handy mit echter Screenrecord der KI-Suche, Speaker-Slalom mit bekannten, gelisteten Namen, Formular-Screenrecord, Karte DACH, Bühne, Claim und Aufruf |
 | `ShowreelChris` (40 s, 1080×1080) | Showreel für ein Speaker-Profil (Chris-Aike Spring) im LinkedIn-Quadrat: Intro, Porträt, Karrierestationen, Foto-Ring, Handy mit echter Profil-Aufnahme, Keynotes, Zitat, Karte, Aufruf |
 | `PitchChris` (74 s, 1080×1080) | Pitch-Video für Chris-Aike Spring: kinetischer Hook, Schmerzpunkte der Zielgruppe, Lösung durch ihre Keynotes, Aufruf. Zeitachse folgt der Sprache (`src/timeline.ts`), kein Dehnen von Szenen |
+| `AppleChris` (30 s, 1080×1080) | Apple-Motion-Stil für Chris-Aike Spring: leerer Stuhl, Morph zum Mikrofon, Lichtwisch zum Porträt auf Glasfläche, „Klartext. Substanz. Haltung.“. Prompt in `prompts/apple-motion-chris-aike-spring.md` |
 | `Speaker` (v1, 30 s) | Erste, rein 2D-basierte Version |
 
 Fertige Videos: `speakingstage-speaker.mp4` (v1), `speakingstage-speaker-v2.mp4` (v2, 9:16), `speakingstage-speaker-v2-16x9.mp4` (v2, 16:9), mit Voice-over: `speakingstage-speaker-v2-vo.mp4` (9:16) und `speakingstage-speaker-v2-vo-16x9.mp4` (16:9)
@@ -77,3 +78,11 @@ npm run render:vo-wide               # 16:9
 - **Handy-Screen:** Die Aufnahmen werden als JPEG-Folge geladen (kein H.264 im Playwright-Chromium nötig). `public/frames/` ist per `.gitignore` ausgenommen und wird mit `npm run frames` erzeugt.
 
 CI: Inter, Kupfer `#a7643c`, Navy `#162131`, Creme `#f7f3ee`, weißer Hintergrund.
+
+## Apple-Motion-Video
+
+```bash
+npm run vo:apple      # Sprecher (Alice) -> src/vo-apple.json
+npm run audio:apple   # Musik und SFX auf die Sprach-Zeitachse
+npm run render:apple  # 1,5-fach rendern, auf 1080x1080 herunterrechnen
+```

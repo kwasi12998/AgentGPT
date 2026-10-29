@@ -1,0 +1,62 @@
+{
+  "provider": "openrouter",
+  "model": "elevenlabs/eleven-v4",
+  "voice": "alice",
+  "voiceSettings": {
+    "stability": 0.5,
+    "similarity_boost": 0.75,
+    "style": 0.15,
+    "speed": 0.96
+  },
+  "scenes": [
+    {
+      "id": "a1",
+      "pre": 36,
+      "tail": 14,
+      "min": 150,
+      "text": "Wer nimmt diesen Platz ein?"
+    },
+    {
+      "id": "a2",
+      "pre": 56,
+      "tail": 14,
+      "min": 160,
+      "text": "Eine Stimme mit Haltung."
+    },
+    {
+      "id": "a3",
+      "pre": 44,
+      "tail": 30,
+      "min": 250,
+      "text": "Chris-Aike Spring. Keynote-Speakerin für Female Leadership."
+    },
+    {
+      "id": "a4a",
+      "pre": 14,
+      "tail": 10,
+      "min": 60,
+      "text": "Klartext."
+    },
+    {
+      "id": "a4b",
+      "pre": 8,
+      "tail": 10,
+      "min": 56,
+      "text": "Substanz."
+    },
+    {
+      "id": "a4c",
+      "pre": 8,
+      "tail": 22,
+      "min": 76,
+      "text": "Haltung."
+    },
+    {
+      "id": "a5",
+      "pre": 20,
+      "tail": 80,
+      "min": 160,
+      "text": "Jetzt anfragen."
+    }
+  ]
+}
