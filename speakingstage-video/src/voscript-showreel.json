@@ -1,0 +1,145 @@
+{
+  "provider": "openrouter",
+  "model": "elevenlabs/eleven-v4",
+  "voice": "alice",
+  "voiceSettings": {
+    "stability": 0.5,
+    "similarity_boost": 0.75,
+    "style": 0.15,
+    "speed": 0.96
+  },
+  "scenes": [
+    {
+      "id": "r1",
+      "start": 75,
+      "end": 230,
+      "voOffset": 24,
+      "tail": 14,
+      "zone": [
+        118,
+        205
+      ],
+      "text": "Chris-Aike Spring. Keynote-Speakerin für Female Leadership."
+    },
+    {
+      "id": "r2",
+      "start": 230,
+      "end": 400,
+      "voOffset": 16,
+      "tail": 14,
+      "zone": [
+        250,
+        385
+      ],
+      "text": "Mit siebenundzwanzig kaufmännische Leiterin. Mit dreißig Niederlassungsleiterin. Dann ein eigenes Unternehmen. Und Vorsitzende der Wirtschaftsjunioren Rostock."
+    },
+    {
+      "id": "r3",
+      "start": 400,
+      "end": 560,
+      "voOffset": 18,
+      "tail": 14,
+      "zone": [
+        430,
+        540
+      ],
+      "text": "Klartext und Substanz. Persönliche Einblicke und eine Haltung."
+    },
+    {
+      "id": "k0",
+      "start": 586,
+      "end": 620,
+      "voOffset": 4,
+      "tail": 8,
+      "zone": [
+        590,
+        620
+      ],
+      "text": "Fünf Keynotes. Als Frau musst du doppelt so gut sein."
+    },
+    {
+      "id": "k1",
+      "start": 620,
+      "end": 654,
+      "voOffset": 4,
+      "tail": 8,
+      "zone": [
+        624,
+        654
+      ],
+      "text": "Führungshaltung vervielfacht Verhalten."
+    },
+    {
+      "id": "k2",
+      "start": 654,
+      "end": 688,
+      "voOffset": 4,
+      "tail": 8,
+      "zone": [
+        658,
+        688
+      ],
+      "text": "Ehrlichkeit als Diagnoseinstrument."
+    },
+    {
+      "id": "k3",
+      "start": 688,
+      "end": 722,
+      "voOffset": 4,
+      "tail": 8,
+      "zone": [
+        692,
+        722
+      ],
+      "text": "Im nächsten Leben wäre ich gerne ein Mann."
+    },
+    {
+      "id": "k4",
+      "start": 722,
+      "end": 770,
+      "voOffset": 4,
+      "tail": 10,
+      "zone": [
+        726,
+        768
+      ],
+      "text": "Wer bin ich, wenn niemand mehr entscheidet, wer ich sein soll?"
+    },
+    {
+      "id": "r5",
+      "start": 770,
+      "end": 920,
+      "voOffset": 8,
+      "tail": 12,
+      "zone": [
+        796,
+        884
+      ],
+      "text": "Als Frau musst du doppelt so gut sein, damit ein Mann anerkennt, dass du halb so gut bist wie er."
+    },
+    {
+      "id": "r6",
+      "start": 920,
+      "end": 1040,
+      "voOffset": 20,
+      "tail": 12,
+      "zone": [
+        950,
+        1030
+      ],
+      "text": "Standort Rostock. Sprache Deutsch. Vortragsdauer zwanzig bis sechzig Minuten. Verfügbarkeit auf Anfrage."
+    },
+    {
+      "id": "r7",
+      "start": 1040,
+      "end": 1200,
+      "voOffset": 14,
+      "tail": 16,
+      "zone": [
+        1100,
+        1198
+      ],
+      "text": "Chris-Aike Spring. Jetzt unverbindlich anfragen, auf speakingstage punkt com."
+    }
+  ]
+}

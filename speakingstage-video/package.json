@@ -19,7 +19,10 @@
     "render:vo-wide": "remotion render src/index.ts SpeakerV2VOWide out/speakingstage-speaker-v2-vo-16x9.mp4 --gl=swangle --codec=h264 --crf=18 --concurrency=3",
     "record:profile": "cd capture && node record-profile.cjs",
     "audio:showreel": "node scripts/make-audio-showreel.mjs",
-    "render:showreel": "remotion render src/index.ts ShowreelChris out/showreel-chris-aike-spring-1x1.mp4 --gl=swangle --codec=h264 --crf=18 --concurrency=3"
+    "render:showreel": "remotion render src/index.ts ShowreelChris out/showreel-chris-aike-spring-1x1.mp4 --gl=swangle --codec=h264 --crf=18 --concurrency=3",
+    "vo:showreel": "node scripts/make-vo.mjs --script=showreel",
+    "audio:showreel-vo": "node scripts/make-audio-showreel.mjs --vo",
+    "render:showreel-vo": "remotion render src/index.ts ShowreelChrisVO out/showreel-chris-aike-spring-1x1-vo.mp4 --gl=swangle --codec=h264 --crf=18 --concurrency=3"
   },
   "dependencies": {
     "@react-three/fiber": "^8.17.10",

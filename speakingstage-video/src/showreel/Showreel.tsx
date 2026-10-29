@@ -1,10 +1,12 @@
 import React from 'react';
-import {AbsoluteFill, Audio, Img, staticFile, useCurrentFrame} from 'remotion';
+import {AbsoluteFill, Audio, Img, Sequence, staticFile, useCurrentFrame} from 'remotion';
 import {ThreeCanvas} from '@remotion/three';
 import T from '../timing3.json';
 import {C, FONT, prog, sp} from '../theme';
 import {Headline} from '../Headline';
 import {LayoutCtx} from '../layout';
+import {WarpCtx} from '../warp-ctx';
+import {SR_WARP} from './vo-warp';
 import {SpeedLines} from '../overlays';
 import {CameraRig, ease, Key, Pose, sampleKeys, shake, V3} from '../three/camera';
 import {Particles} from '../three/bits';
@@ -145,12 +147,19 @@ const Pill: React.FC<{children: React.ReactNode; at: number; f: number; fill?: s
   );
 };
 
-export const ShowreelChris: React.FC = () => {
-  const f = useCurrentFrame();
+/** 0..1 while a voice-over segment speaks (short ramps), used to duck music and effects. */
+const speaking = (frame: number) =>
+  SR_WARP.vo.reduce((m, v) => Math.max(m, Math.min(1, Math.max(0, (frame - (v.from - 6)) / 6)) * (1 - Math.min(1, Math.max(0, (frame - (v.from + v.frames)) / 10)))), 0);
+
+export const ShowreelChris: React.FC<{vo?: boolean}> = ({vo = false}) => {
+  const raw = useCurrentFrame();
+  const warp = vo ? SR_WARP : null;
+  const f = warp ? warp.logical(raw) : raw;
   const pose = cameraAt(f);
   const blur = flying(f) ? Math.min(14, Math.max(0, (speedOf(f) - 0.35) * 12)) : 0;
   const fadeTop = (between(f, 246, 400) || between(f, 570, 770) || between(f, 934, 1040)) ? 1 : 0;
   return (
+    <WarpCtx.Provider value={warp}>
     <LayoutCtx.Provider value={SQUARE}>
       <AbsoluteFill style={{background: '#fff'}}>
         <AbsoluteFill style={{filter: blur > 0.5 ? `blur(${blur}px)` : undefined}}>
@@ -214,9 +223,26 @@ export const ShowreelChris: React.FC = () => {
           </>
         )}
 
-        <Audio src={staticFile('audio/showreel-music.wav')} volume={0.6} />
-        <Audio src={staticFile('audio/showreel-sfx.wav')} volume={0.9} />
+        {vo ? (
+          <>
+            <Audio src={staticFile('audio/showreel-music-vo.wav')} volume={(fr) => 0.6 * (1 - 0.55 * speaking(fr))} />
+            <Audio src={staticFile('audio/showreel-sfx-vo.wav')} volume={(fr) => 0.9 * (1 - 0.35 * speaking(fr))} />
+            {SR_WARP.vo.map((v) => (
+              <Sequence key={v.id} from={v.from} durationInFrames={v.frames + 4}>
+                <Audio src={staticFile(v.file)} volume={1} />
+              </Sequence>
+            ))}
+          </>
+        ) : (
+          <>
+            <Audio src={staticFile('audio/showreel-music.wav')} volume={0.6} />
+            <Audio src={staticFile('audio/showreel-sfx.wav')} volume={0.9} />
+          </>
+        )}
       </AbsoluteFill>
     </LayoutCtx.Provider>
+    </WarpCtx.Provider>
   );
 };
+
+export const ShowreelChrisVO: React.FC = () => <ShowreelChris vo />;

@@ -4,11 +4,18 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createSynth, mtof} from './synth.mjs';
 import {renderMusic} from './music.mjs';
+import {buildWarp} from '../src/warp.ts';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const T = JSON.parse(fs.readFileSync(path.join(here, '../src/timing3.json'), 'utf8'));
-const DUR = T.total / T.fps;
-const t = (f) => f / T.fps;
+// `--vo` builds the soundtrack for the voice-over cut: every event goes through the same time warp as the picture.
+const VO = process.argv.includes('--vo');
+const W = VO
+  ? buildWarp(T.total, JSON.parse(fs.readFileSync(path.join(here, '../src/voscript-showreel.json'), 'utf8')).scenes, JSON.parse(fs.readFileSync(path.join(here, '../src/vo-showreel.json'), 'utf8')))
+  : {total: T.total, out: (l) => l};
+const DUR = W.total / T.fps;
+const t = (f) => W.out(f) / T.fps;
+const span = (a, b) => (W.out(b) - W.out(a)) / T.fps;
 const S = createSynth(DUR);
 const {track, tone, noise, kick, click, pop, bell, whoosh, boom, sparkle, writeWav} = S;
 const pan = (i) => (i % 2 ? 0.35 : -0.35);
@@ -23,8 +30,8 @@ bell(sfx, t(T.s0.wordmark + 8), mtof(88), 0.12);
 
 // camera flights between the scenes
 T.flights.forEach(([a, b], i) => {
-  whoosh(sfx, t(a), t(b - a), 0.3, i % 2 === 0, i % 2 ? 0.4 : -0.4);
-  tone(sfx, t(a), t(b - a), 70, {f1: 220, gain: 0.12, decay: 0.8, attack: 0.3, harmonics: [1, 2]});
+  whoosh(sfx, t(a), span(a, b), 0.3, i % 2 === 0, i % 2 ? 0.4 : -0.4);
+  tone(sfx, t(a), span(a, b), 70, {f1: 220, gain: 0.12, decay: 0.8, attack: 0.3, harmonics: [1, 2]});
 });
 
 // portrait + name
@@ -48,7 +55,7 @@ T.s2.cards.forEach((f, i) => {
 // gallery pans
 for (let k = 0; k < 4; k++) {
   const a = T.s3.first + k * T.s3.step + T.s3.turn[0];
-  whoosh(sfx, t(a), t(T.s3.turn[1]) + 0.08, 0.3, k % 2 === 0, k % 2 ? 0.6 : -0.6);
+  whoosh(sfx, t(a), span(a, a + T.s3.turn[1]) + 0.08, 0.3, k % 2 === 0, k % 2 ? 0.6 : -0.6);
 }
 for (let k = 0; k < 5; k++) {
   const a = T.s3.first + k * T.s3.step;
@@ -103,5 +110,6 @@ const music = renderMusic(S, DUR, {
 
 const out = path.join(here, '../public/audio');
 fs.mkdirSync(out, {recursive: true});
-writeWav(path.join(out, 'showreel-music.wav'), music, 0.8);
-writeWav(path.join(out, 'showreel-sfx.wav'), sfx, 0.85);
+const suffix = VO ? '-vo' : '';
+writeWav(path.join(out, `showreel-music${suffix}.wav`), music, 0.8);
+writeWav(path.join(out, `showreel-sfx${suffix}.wav`), sfx, 0.85);

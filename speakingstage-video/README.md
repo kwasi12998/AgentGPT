@@ -31,6 +31,9 @@ npm run record:profile -- <slug> <name>                        # Screenrecord de
 npm run frames                                                 # JPEG-Folgen für die Handy-Textur
 npm run audio:showreel                                         # Musik und SFX (scripts/make-audio-showreel.mjs, getaktet auf src/timing3.json)
 npm run render:showreel                                        # 1080x1080
+npm run vo:showreel                                            # Voice-over (src/voscript-showreel.json -> src/vo-showreel.json)
+npm run audio:showreel-vo                                      # Musik und SFX auf die gedehnte Zeitachse
+npm run render:showreel-vo                                     # Komposition ShowreelChrisVO (mit Sprecher)
 ```
 
 Inhalte (Texte, Keynotes, Stationen, Fotos) stammen ausschließlich aus dem öffentlichen Profil und stehen in `src/showreel/worlds.tsx` und `src/showreel/Showreel.tsx`. Sensible private Angaben aus der Biografie sind bewusst nicht enthalten.

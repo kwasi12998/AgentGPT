@@ -3,6 +3,7 @@
 //   node scripts/make-vo.mjs                                      (default: ElevenLabs models via OpenRouter /audio/speech;
 //                                                                  key from OPENROUTER_API_KEY or an injected network secret)
 //   node scripts/make-vo.mjs --audition                           (same sentence in 8 voices -> public/vo/audition-<model>/)
+//   add --script=showreel to use src/voscript-showreel.json (-> src/vo-showreel.json, public/vo-showreel/)
 //   node scripts/make-vo.mjs --placeholder                        (silent stand-ins sized by word count; tests timing without a key)
 //   ELEVENLABS_API_KEY=... + "provider": "elevenlabs" in voscript.json uses the ElevenLabs API directly (voice = voice id)
 //
@@ -22,9 +23,11 @@ if (process.env.HTTPS_PROXY && !process.env.NODE_USE_ENV_PROXY) {
 }
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
-const script = JSON.parse(fs.readFileSync(path.join(root, 'src/voscript.json'), 'utf8'));
-const voFile = path.join(root, 'src/vo.json');
-const outDir = path.join(root, 'public/vo');
+const which = (process.argv.find((a) => a.startsWith('--script=')) || '').slice('--script='.length); // e.g. --script=showreel
+const sfx = which ? `-${which}` : '';
+const script = JSON.parse(fs.readFileSync(path.join(root, `src/voscript${sfx}.json`), 'utf8'));
+const voFile = path.join(root, `src/vo${sfx}.json`);
+const outDir = path.join(root, `public/vo${sfx}`);
 fs.mkdirSync(outDir, {recursive: true});
 
 const args = new Set(process.argv.slice(2));
@@ -94,7 +97,7 @@ const result = {placeholder, provider: placeholder ? 'placeholder' : provider, m
 const scenes = script.scenes;
 for (let i = 0; i < scenes.length; i++) {
   const s = scenes[i];
-  const file = `vo/${s.id}.mp3`;
+  const file = `vo${sfx}/${s.id}.mp3`;
   const abs = path.join(root, 'public', file);
   const hash = crypto.createHash('sha1').update(JSON.stringify([placeholder, s.text, provider, model, voice, script.voiceSettings])).digest('hex');
   const prev = old.segments[s.id];
@@ -117,4 +120,4 @@ for (let i = 0; i < scenes.length; i++) {
   console.log(s.id, placeholder ? 'placeholder' : 'generated', result.segments[s.id].dur.toFixed(2) + 's');
 }
 fs.writeFileSync(voFile, JSON.stringify(result, null, 2));
-console.log('wrote src/vo.json');
+console.log(`wrote src/vo${sfx}.json`);
