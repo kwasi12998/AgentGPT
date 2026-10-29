@@ -2,7 +2,7 @@
 //
 //   node scripts/make-vo.mjs                                      (default: ElevenLabs models via OpenRouter /audio/speech;
 //                                                                  key from OPENROUTER_API_KEY or an injected network secret)
-//   node scripts/make-vo.mjs --audition                           (same sentence in 8 voices -> public/vo/audition/)
+//   node scripts/make-vo.mjs --audition                           (same sentence in 8 voices -> public/vo/audition-<model>/)
 //   node scripts/make-vo.mjs --placeholder                        (silent stand-ins sized by word count; tests timing without a key)
 //   ELEVENLABS_API_KEY=... + "provider": "elevenlabs" in voscript.json uses the ElevenLabs API directly (voice = voice id)
 //
@@ -71,7 +71,7 @@ async function synth(text, ctx = {}) {
 }
 
 if (args.has('--audition')) {
-  const dir = path.join(outDir, 'audition');
+  const dir = path.join(outDir, `audition-${model.split('/').pop()}`);
   fs.mkdirSync(dir, {recursive: true});
   const sample = 'Veranstalter suchen Keynote Speaker. Doch wo sind Sie? Reichen Sie jetzt Ihr Profil ein, kostenlos und in etwa einer Minute.';
   for (const v of ['george', 'brian', 'daniel', 'adam', 'sarah', 'alice', 'laura', 'matilda']) {

@@ -1,6 +1,6 @@
 {
   "provider": "openrouter",
-  "model": "elevenlabs/eleven-multilingual-v2",
+  "model": "elevenlabs/eleven-v4",
   "voiceSettings": {
     "stability": 0.5,
     "similarity_boost": 0.75,
