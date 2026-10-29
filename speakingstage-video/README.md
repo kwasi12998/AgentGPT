@@ -5,6 +5,7 @@ Motion Graphic für `speakingstage.com/speaker-werden`, gebaut mit [Remotion](ht
 | Komposition | Inhalt |
 |---|---|
 | `SpeakerV2` (aktuell, 40 s, 1080×1920) | Durchgehende 3D-Kamerafahrt: Logo, 3D-Handy mit echter Screenrecord der KI-Suche, Speaker-Slalom mit bekannten, gelisteten Namen, Formular-Screenrecord, Karte DACH, Bühne, Claim und Aufruf |
+| `ShowreelChris` (40 s, 1080×1080) | Showreel für ein Speaker-Profil (Chris-Aike Spring) im LinkedIn-Quadrat: Intro, Porträt, Karrierestationen, Foto-Ring, Handy mit echter Profil-Aufnahme, Keynotes, Zitat, Karte, Aufruf |
 | `Speaker` (v1, 30 s) | Erste, rein 2D-basierte Version |
 
 Fertige Videos: `speakingstage-speaker.mp4` (v1), `speakingstage-speaker-v2.mp4` (v2, 9:16), `speakingstage-speaker-v2-16x9.mp4` (v2, 16:9), mit Voice-over: `speakingstage-speaker-v2-vo.mp4` (9:16) und `speakingstage-speaker-v2-vo-16x9.mp4` (16:9)
@@ -21,6 +22,18 @@ npm run render:v2   # 9:16 rendern (Software-WebGL, ca. 30 Min.)
 npm run render:wide # 16:9 rendern (Komposition SpeakerV2Wide)
 npm run stills -- out/review 0.4 100 300 700   # einzelne Frames zur schnellen Kontrolle
 ```
+
+## Showreel für ein Speaker-Profil
+
+```bash
+cd capture && node profile.cjs <slug> <ausgabeordner>          # Texte, Bilder, Videos des Profils auslesen (nur lesend)
+npm run record:profile -- <slug> <name>                        # Screenrecord des Profils (public/rec-<name>.webm)
+npm run frames                                                 # JPEG-Folgen für die Handy-Textur
+npm run audio:showreel                                         # Musik und SFX (scripts/make-audio-showreel.mjs, getaktet auf src/timing3.json)
+npm run render:showreel                                        # 1080x1080
+```
+
+Inhalte (Texte, Keynotes, Stationen, Fotos) stammen ausschließlich aus dem öffentlichen Profil und stehen in `src/showreel/worlds.tsx` und `src/showreel/Showreel.tsx`. Sensible private Angaben aus der Biografie sind bewusst nicht enthalten.
 
 ## Voice-over (ElevenLabs über OpenRouter)
 
