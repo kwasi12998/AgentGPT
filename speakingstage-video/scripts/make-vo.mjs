@@ -10,8 +10,16 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import {execFileSync} from 'node:child_process';
+import {execFileSync, spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
+
+// Node's fetch ignores HTTPS_PROXY by default. Behind an egress proxy (which may also inject the OpenRouter secret) re-run
+// this script once with proxy support and the proxy's CA bundle.
+if (process.env.HTTPS_PROXY && !process.env.NODE_USE_ENV_PROXY) {
+  const ca = process.env.NODE_EXTRA_CA_CERTS || (fs.existsSync('/root/.ccr/ca-bundle.crt') ? '/root/.ccr/ca-bundle.crt' : undefined);
+  const r = spawnSync(process.execPath, process.argv.slice(1), {stdio: 'inherit', env: {...process.env, NODE_USE_ENV_PROXY: '1', ...(ca ? {NODE_EXTRA_CA_CERTS: ca} : {}), NODE_NO_WARNINGS: '1'}});
+  process.exit(r.status ?? 1);
+}
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const script = JSON.parse(fs.readFileSync(path.join(root, 'src/voscript.json'), 'utf8'));
