@@ -1,6 +1,6 @@
 node_modules
 out
 public/frames
-public/vo/
+public/vo/audition*/
 public/audio/music2vo.wav
 public/audio/sfx2vo.wav

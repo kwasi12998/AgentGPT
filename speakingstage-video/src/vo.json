@@ -1,49 +1,49 @@
 {
-  "placeholder": true,
-  "provider": "placeholder",
-  "model": null,
-  "voice": null,
+  "placeholder": false,
+  "provider": "openrouter",
+  "model": "elevenlabs/eleven-v4",
+  "voice": "alice",
   "segments": {
     "s0": {
       "file": "vo/s0.mp3",
-      "dur": 2.638367,
-      "hash": "ae2f2060a873f2b7baac484c3b1ebe299e3052eb",
+      "dur": 3.63102,
+      "hash": "71700aa56f6baa6ab47bf240d61aa24c95993f1b",
       "text": "SpeakingStage. Die Bühne für Keynote Speaker."
     },
     "s1": {
       "file": "vo/s1.mp3",
-      "dur": 7.000816,
-      "hash": "107c9280b4c12467355455a34cae63f21f1c4794",
+      "dur": 6.844082,
+      "hash": "ffdbec178c3cb9cdcf71f0d5773d857c45155eb7",
       "text": "Veranstalter suchen Keynote Speaker und beschreiben ihr Event einfach in eigenen Worten. Doch wo sind Sie?"
     },
     "s2": {
       "file": "vo/s2.mp3",
-      "dur": 9.613061,
-      "hash": "3e66d3f9b446a53bef1d07c2cf6c353154f5711f",
+      "dur": 11.232653,
+      "hash": "17967b8da6da27011778f940d2b2997601636c5f",
       "text": "SpeakingStage ist die kuratierte Plattform für Keynote Speaker im DACH-Raum. Über hundertsechzig aktive Profile, darunter Oliver Kahn, Miriam Meckel und Sandra Navidi."
     },
     "s3": {
       "file": "vo/s3.mp3",
-      "dur": 8.306939,
-      "hash": "67be68b18ff47522f69328d2cb3682df75f9ee26",
+      "dur": 10.266122,
+      "hash": "280d0841177492faf3d202bd47edbe364fed3b06",
       "text": "Ihr Profil einzureichen ist kostenlos und dauert etwa eine Minute. Keine Exklusivität, keine Umsatzbeteiligung. Ihre Kunden bleiben Ihre Kunden."
     },
     "s4": {
       "file": "vo/s4.mp3",
-      "dur": 8.306939,
-      "hash": "73187b644407c814f8d87d11df9d8511a2eb8aef",
+      "dur": 7.810612,
+      "hash": "5cca8c0afede2e424e799e076f93608d72c8aca7",
       "text": "Wir prüfen Ihr Profil persönlich, meist in wenigen Tagen. Dann sind Sie live, bei Google und in unserer KI-Suche."
     },
     "s5": {
       "file": "vo/s5.mp3",
-      "dur": 2.220408,
-      "hash": "a35204f6ff28af24ff5d44f994822c052d70e713",
+      "dur": 2.115918,
+      "hash": "7b1d667ee1823acf7c0a2e9af7325e96c612607e",
       "text": "Und dann kommen die Anfragen."
     },
     "s6": {
       "file": "vo/s6.mp3",
-      "dur": 8.306939,
-      "hash": "b12ef699ee7d6df1e7faa3dc7d96e1f7e0757521",
+      "dur": 9.404082,
+      "hash": "5a180eed2aae1591f159443862e37c48d0c2978b",
       "text": "Ihre Bühne. Ihr Thema. Kostenlos. Reichen Sie jetzt Ihr Profil ein, auf speakingstage punkt com, Schrägstrich speaker minus werden."
     }
   }
