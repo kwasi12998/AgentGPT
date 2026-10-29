@@ -46,7 +46,8 @@ export const shake = (f: number, amp: number): V3 => [
   0
 ];
 
-export const CameraRig: React.FC<{pose: Pose}> = ({pose}) => {
+/** `shiftX` (px) slides the rendered image sideways via a view offset, to leave room for text. */
+export const CameraRig: React.FC<{pose: Pose; shiftX?: number; width?: number; height?: number}> = ({pose, shiftX = 0, width = 1080, height = 1920}) => {
   const camera = useThree((s) => s.camera) as PerspectiveCamera;
   useLayoutEffect(() => {
     camera.fov = pose.fov;
@@ -56,6 +57,8 @@ export const CameraRig: React.FC<{pose: Pose}> = ({pose}) => {
     camera.rotateZ((pose.roll * Math.PI) / 180);
     camera.near = 0.1;
     camera.far = 400;
+    if (shiftX) camera.setViewOffset(width, height, -shiftX, 0, width, height);
+    else camera.clearViewOffset();
     camera.updateProjectionMatrix();
     camera.updateMatrixWorld();
   });

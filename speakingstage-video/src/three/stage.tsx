@@ -19,11 +19,11 @@ const Person: React.FC<{x: number; z: number; s: number; f: number; i: number}> 
   <group position={[x, Math.sin(f / 11 + i * 1.9) * 0.05, z]} scale={s}>
     <mesh position={[0, 1.55, 0]}>
       <sphereGeometry args={[0.4, 20, 16]} />
-      <meshStandardMaterial color={C.navy} roughness={0.7} />
+      <meshStandardMaterial color={C.navy} roughness={0.9} metalness={0} />
     </mesh>
     <mesh position={[0, 0.55, 0]} scale={[1, 1.15, 0.62]}>
       <sphereGeometry args={[0.78, 20, 16]} />
-      <meshStandardMaterial color={C.navy} roughness={0.7} />
+      <meshStandardMaterial color={C.navy} roughness={0.9} metalness={0} />
     </mesh>
   </group>
 );

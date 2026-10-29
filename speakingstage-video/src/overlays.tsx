@@ -3,9 +3,12 @@ import {Img, staticFile, useCurrentFrame} from 'remotion';
 import T from './timing2.json';
 import {C, FONT, prog, sp} from './theme';
 import {SPEAKERS} from './three/cards';
+import {useLayout} from './layout';
 
 export const Tracker: React.FC = () => {
   const f = useCurrentFrame();
+  const {wide} = useLayout();
+  const W = wide ? 820 : 920;
   const s4 = T.s4;
   if (f < s4.start + 2 || f > s4.end - 4) return null;
   const steps = ['Einreichen', 'Prüfung', 'Live', 'Anfrage'];
@@ -13,12 +16,12 @@ export const Tracker: React.FC = () => {
   const reveal = sp(f, s4.start + 6, 16, 110) * (1 - prog(f, s4.end - 12, 8));
   const fill = Math.min(1, Math.max(0, (f - s4.start) / (s4.steps.anfrage + 14 - s4.start))) * 0.97;
   return (
-    <div style={{position: 'absolute', left: 80, width: 920, top: 1560, height: 210, borderRadius: 48, background: '#ffffffee', border: `2px solid ${C.line}`, boxShadow: '0 30px 70px rgba(22,33,49,0.14)', fontFamily: FONT, opacity: reveal, transform: `translateY(${(1 - reveal) * 120}px)`}}>
-      <div style={{position: 'absolute', left: 110, right: 110, top: 70, height: 8, borderRadius: 4, background: C.line}}>
+    <div style={{position: 'absolute', left: wide ? 100 : 80, width: W, top: wide ? 810 : 1560, height: 210, borderRadius: 48, background: '#ffffffee', border: `2px solid ${C.line}`, boxShadow: '0 30px 70px rgba(22,33,49,0.14)', fontFamily: FONT, opacity: reveal, transform: `translateY(${(1 - reveal) * 120}px)`}}>
+      <div style={{position: 'absolute', left: 100, right: 100, top: 70, height: 8, borderRadius: 4, background: C.line}}>
         <div style={{width: `${fill * 100}%`, height: '100%', borderRadius: 4, background: `linear-gradient(90deg, ${C.copper}, ${C.copperLight})`}} />
       </div>
       {steps.map((s, i) => {
-        const x = 110 + (i * (920 - 220)) / 3;
+        const x = 100 + (i * (W - 200)) / 3;
         const done = f >= at[i] + (i === 0 ? 0 : 12);
         const active = !done && (i === 0 || f >= at[i - 1] + 12);
         const pop = sp(f, at[i] + 10, 8, 160);
@@ -37,12 +40,13 @@ export const Tracker: React.FC = () => {
 
 export const Notification: React.FC = () => {
   const f = useCurrentFrame();
+  const {wide} = useLayout();
   const {notify, end} = T.s5;
   if (f < notify - 2 || f > end + 8) return null;
   const note = sp(f, notify, 14, 110);
   const out = prog(f, end - 8, 10);
   return (
-    <div style={{position: 'absolute', left: 70, width: 940, top: 230, borderRadius: 56, padding: '34px 38px', background: '#ffffffee', border: `2px solid ${C.line}`, boxShadow: '0 36px 90px rgba(22,33,49,0.25)', fontFamily: FONT, display: 'flex', gap: 30, alignItems: 'center', opacity: Math.min(1, note * 1.4) * (1 - out), transform: `translateY(${(1 - note) * -420}px) scale(${1 - out * 0.06})`}}>
+    <div style={{position: 'absolute', left: wide ? 100 : 70, width: wide ? 900 : 940, top: wide ? 380 : 230, borderRadius: 56, padding: '34px 38px', background: '#ffffffee', border: `2px solid ${C.line}`, boxShadow: '0 36px 90px rgba(22,33,49,0.25)', fontFamily: FONT, display: 'flex', gap: 30, alignItems: 'center', opacity: Math.min(1, note * 1.4) * (1 - out), transform: `translateY(${(1 - note) * (wide ? -520 : -420)}px) scale(${1 - out * 0.06})`}}>
       <div style={{width: 120, height: 120, borderRadius: 30, background: C.cream, border: `2px solid ${C.line}`, display: 'grid', placeItems: 'center', flex: 'none'}}>
         <Img src={staticFile('mark.png')} style={{width: 92, height: 92}} />
       </div>
@@ -62,6 +66,7 @@ const CHIPS = ['Keine Exklusivität', 'Keine Umsatzbeteiligung', 'Andere Plattfo
 
 export const ClaimOverlay: React.FC = () => {
   const f = useCurrentFrame();
+  const {wide} = useLayout();
   const c = T.s6;
   if (f < c.chips[0] - 6) return null;
   const wm = sp(f, c.wordmark, 14, 120);
@@ -73,18 +78,18 @@ export const ClaimOverlay: React.FC = () => {
       {CHIPS.map((t, i) => {
         const s = sp(f, c.chips[i], 11, 150);
         return (
-          <div key={t} style={{position: 'absolute', left: 130, width: 820, top: 930 + i * 128, height: 104, borderRadius: 52, background: C.cream, border: `2px solid ${C.line}`, display: 'flex', alignItems: 'center', gap: 26, padding: '0 14px', fontFamily: FONT, fontSize: 40, fontWeight: 600, color: C.ink, opacity: Math.min(1, s * 1.5), transform: `translateX(${(1 - s) * 160}px)`}}>
+          <div key={t} style={{position: 'absolute', left: wide ? 1130 : 130, width: wide ? 740 : 820, top: wide ? 190 + i * 118 : 930 + i * 128, height: wide ? 96 : 104, borderRadius: 52, background: C.cream, border: `2px solid ${C.line}`, display: 'flex', alignItems: 'center', gap: 26, padding: '0 14px', fontFamily: FONT, fontSize: wide ? 36 : 40, fontWeight: 600, color: C.ink, opacity: Math.min(1, s * 1.5), transform: `translateX(${(1 - s) * 160}px)`}}>
             <div style={{width: 76, height: 76, borderRadius: '50%', background: C.copper, color: '#fff', display: 'grid', placeItems: 'center', fontSize: 40, fontWeight: 800}}>✓</div>
             {t}
           </div>
         );
       })}
-      <Img src={staticFile('wordmark.png')} style={{position: 'absolute', left: 190, top: 1340, width: 700, height: 117, opacity: Math.min(1, wm * 1.5), transform: `translateY(${(1 - wm) * 40}px)`}} />
-      <div style={{position: 'absolute', left: 160, width: 760, top: 1490, height: 138, borderRadius: 69, background: C.copper, overflow: 'hidden', opacity: Math.min(1, btn * 1.5), transform: `scale(${0.7 + btn * 0.3 + Math.sin(f / 10) * 0.008})`, boxShadow: `0 24px 60px ${C.copper}66`, display: 'grid', placeItems: 'center', color: '#fff', fontFamily: FONT, fontSize: 54, fontWeight: 800, letterSpacing: -0.5}}>
+      <Img src={staticFile('wordmark.png')} style={{position: 'absolute', left: wide ? 1170 : 190, top: wide ? 560 : 1340, width: wide ? 660 : 700, height: wide ? 110 : 117, opacity: Math.min(1, wm * 1.5), transform: `translateY(${(1 - wm) * 40}px)`}} />
+      <div style={{position: 'absolute', left: wide ? 1150 : 160, width: wide ? 700 : 760, top: wide ? 730 : 1490, height: wide ? 124 : 138, borderRadius: 69, background: C.copper, overflow: 'hidden', opacity: Math.min(1, btn * 1.5), transform: `scale(${0.7 + btn * 0.3 + Math.sin(f / 10) * 0.008})`, boxShadow: `0 24px 60px ${C.copper}66`, display: 'grid', placeItems: 'center', color: '#fff', fontFamily: FONT, fontSize: wide ? 48 : 54, fontWeight: 800, letterSpacing: -0.5}}>
         <div style={{position: 'absolute', top: 0, bottom: 0, width: 120, left: `${-20 + shine * 140}%`, background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent)', transform: 'skewX(-20deg)'}} />
         Profil einreichen  →
       </div>
-      <div style={{position: 'absolute', left: 0, right: 0, top: 1666, textAlign: 'center', fontFamily: FONT, fontSize: 42, fontWeight: 600, color: C.navy, opacity: url}}>speakingstage.com/speaker-werden</div>
+      <div style={{position: 'absolute', left: wide ? 1130 : 0, width: wide ? 740 : undefined, right: wide ? undefined : 0, top: wide ? 900 : 1666, textAlign: 'center', fontFamily: FONT, fontSize: wide ? 36 : 42, fontWeight: 600, color: C.navy, opacity: url}}>speakingstage.com/speaker-werden</div>
     </>
   );
 };
@@ -92,6 +97,7 @@ export const ClaimOverlay: React.FC = () => {
 /** Trust strip for the speaker corridor: counter + scrolling names. */
 export const TrustStrip: React.FC = () => {
   const f = useCurrentFrame();
+  const {wide} = useLayout();
   const {start, end} = T.s2;
   if (f < start + 30 || f > end + 4) return null;
   const a = sp(f, start + 34, 14, 110) * (1 - prog(f, end - 10, 10));
@@ -100,12 +106,12 @@ export const TrustStrip: React.FC = () => {
   const x = -((f - start) * 5.2);
   return (
     <>
-      <div style={{position: 'absolute', left: 0, right: 0, top: 1580, textAlign: 'center', fontFamily: FONT, opacity: a, transform: `translateY(${(1 - a) * 60}px)`}}>
+      <div style={{position: 'absolute', left: wide ? 100 : 0, right: wide ? undefined : 0, top: wide ? 870 : 1580, textAlign: wide ? 'left' : 'center', fontFamily: FONT, opacity: a, transform: `translateY(${(1 - a) * 60}px)`}}>
         <span style={{display: 'inline-block', padding: '18px 44px', borderRadius: 60, background: '#ffffffee', border: `2px solid ${C.line}`, boxShadow: '0 20px 50px rgba(22,33,49,0.14)', fontSize: 46, fontWeight: 800, color: C.ink}}>
           <span style={{color: C.copper}}>{count}+</span> Speaker-Profile
         </span>
       </div>
-      <div style={{position: 'absolute', left: 0, right: 0, top: 1730, height: 60, overflow: 'hidden', fontFamily: FONT, fontSize: 36, fontWeight: 700, letterSpacing: 2, color: C.gray, opacity: a * 0.9, whiteSpace: 'nowrap'}}>
+      <div style={{position: 'absolute', left: 0, right: 0, top: wide ? 1000 : 1730, height: 60, overflow: 'hidden', fontFamily: FONT, fontSize: wide ? 32 : 36, fontWeight: 700, letterSpacing: 2, color: C.gray, opacity: a * 0.9, whiteSpace: 'nowrap'}}>
         <div style={{transform: `translateX(${x}px)`}}>{names}   ·   {names}   ·   {names}</div>
       </div>
     </>
@@ -114,15 +120,18 @@ export const TrustStrip: React.FC = () => {
 
 /** Copper speed lines that fire during camera flights. */
 export const SpeedLines: React.FC<{amount: number}> = ({amount}) => {
+  const {wide, w, h} = useLayout();
   if (amount < 0.05) return null;
+  const kx = wide ? 1.7 : 1;
+  const ky = wide ? 0.8 : 1.6;
   const lines = Array.from({length: 34}, (_, i) => {
     const a = (i / 34) * Math.PI * 2 + (i % 5) * 0.07;
     const r0 = 260 + ((i * 97) % 220);
     const r1 = r0 + 420 + ((i * 53) % 500);
-    return {x1: 540 + Math.cos(a) * r0, y1: 960 + Math.sin(a) * r0 * 1.6, x2: 540 + Math.cos(a) * r1, y2: 960 + Math.sin(a) * r1 * 1.6, w: 3 + (i % 4) * 2};
+    return {x1: w / 2 + Math.cos(a) * r0 * kx, y1: h / 2 + Math.sin(a) * r0 * ky, x2: w / 2 + Math.cos(a) * r1 * kx, y2: h / 2 + Math.sin(a) * r1 * ky, w: 3 + (i % 4) * 2};
   });
   return (
-    <svg width={1080} height={1920} style={{position: 'absolute', inset: 0, opacity: Math.min(1, amount) * 0.5, pointerEvents: 'none'}}>
+    <svg width={w} height={h} style={{position: 'absolute', inset: 0, opacity: Math.min(1, amount) * 0.5, pointerEvents: 'none'}}>
       {lines.map((l, i) => (
         <line key={i} x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2} stroke={i % 3 ? C.copperLight : C.copper} strokeWidth={l.w} strokeLinecap="round" />
       ))}

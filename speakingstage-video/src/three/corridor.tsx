@@ -2,6 +2,7 @@ import React from 'react';
 import {Easing} from 'remotion';
 import {Vector3, QuadraticBezierCurve3} from 'three';
 import {C, prog, sp} from '../theme';
+import {useLayout} from '../layout';
 import {PingRing} from './bits';
 import {GapCard, MyCard, SPEAKERS, SpeakerCard} from './cards';
 import {PhoneModel} from './PhoneModel';
@@ -54,6 +55,7 @@ type Cfg = {
 export const CorridorWorld: React.FC<{f: number; cfg: Cfg}> = ({f, cfg}) => {
   const {cards, gap} = cfg.s2;
   const {rec, launch, snap, stamp} = cfg.s3;
+  const {wide} = useLayout();
   const phoneIn = sp(f, gap - 14, 14, 70);
   const gapIn = sp(f, gap, 12, 90);
   const pulse = 0.5 + 0.5 * Math.sin(f / 6);
@@ -125,7 +127,7 @@ export const CorridorWorld: React.FC<{f: number; cfg: Cfg}> = ({f, cfg}) => {
       <PingRing position={[GAP_POS[0], GAP_POS[1], GAP_POS[2] + 0.2]} t={prog(f, snap, 26, (t) => t)} size={7} flat={false} />
 
       {f >= stamp && (
-        <group position={[0.35, -2.5, -141.6]} rotation={[0, 0, -0.14]} scale={Math.max(0.01, 3.2 - 2.2 * stampS)}>
+        <group position={[0.35, wide ? -1.75 : -2.5, -141.6]} rotation={[0, 0, -0.14]} scale={Math.max(0.01, 3.2 - 2.2 * stampS)}>
           <TextPlane text="100 %" fontPx={90} weight={700} color={C.copper} unit={0.0034} position={[0, 0.46, 0]} opacity={Math.min(1, stampS * 1.5)} />
           <TextPlane text="KOSTENLOS" fontPx={150} weight={800} color={C.copper} layers={10} layerStep={0.014} layerColor={C.copperDark} unit={0.0033} opacity={Math.min(1, stampS * 1.5)} />
         </group>

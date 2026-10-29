@@ -8,7 +8,7 @@ import {PhoneScene} from './Phone';
 import {MapScene} from './MapScene';
 import {StageScene} from './StageScene';
 import {ClaimScene} from './ClaimScene';
-import {SpeakerV2} from './V2';
+import {SpeakerV2, SpeakerV2Wide} from './V2';
 import T2 from './timing2.json';
 
 const Speaker: React.FC = () => (
@@ -27,6 +27,7 @@ const Speaker: React.FC = () => (
 export const Root: React.FC = () => (
   <>
   <Composition id="SpeakerV2" component={SpeakerV2} durationInFrames={T2.total} fps={FPS} width={1080} height={1920} />
+  <Composition id="SpeakerV2Wide" component={SpeakerV2Wide} durationInFrames={T2.total} fps={FPS} width={1920} height={1080} />
   <Composition id="Speaker" component={Speaker} durationInFrames={T.total} fps={FPS} width={1080} height={1920} />
   </>
 );

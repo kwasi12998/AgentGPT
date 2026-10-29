@@ -10,7 +10,8 @@
     "frames": "bash scripts/extract-frames.sh",
     "record": "cd capture && node record.cjs",
     "render:v2": "remotion render src/index.ts SpeakerV2 out/speakingstage-speaker-v2.mp4 --gl=swangle --codec=h264 --crf=18 --concurrency=3",
-    "stills": "node scripts/stills.mjs"
+    "stills": "node scripts/stills.mjs",
+    "render:wide": "remotion render src/index.ts SpeakerV2Wide out/speakingstage-speaker-v2-16x9.mp4 --gl=swangle --codec=h264 --crf=18 --concurrency=3"
   },
   "dependencies": {
     "@react-three/fiber": "^8.17.10",
