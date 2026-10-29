@@ -307,7 +307,7 @@ const Check: React.FC<{p: number; size?: number}> = ({p, size = 52}) => (
 const REC = {w: 1920, h: 1200};
 type View = [number, number, number]; // centre x, centre y (recording px) and scale
 const lerpV = (a: View, b: View, t: number): View => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
-const recSrc = (dir: string, n: number) => staticFile(`frames/${dir}/${String(Math.round(Math.min(150, Math.max(1, n)))).padStart(4, '0')}.jpg`);
+const recSrc = (dir: string, n: number) => staticFile(`frames/${dir}/${String(Math.round(Math.min(dir === 'adki' ? 110 : 150, Math.max(1, n)))).padStart(4, '0')}.jpg`);
 const toPanel = (x: number, y: number, v: View, w: number, h: number): [number, number] => [w / 2 + (x - v[0]) * v[2], h / 2 + (y - v[1]) * v[2]];
 
 const Screen: React.FC<{dir: string; n: number; view: View; w: number; h: number; radius?: number; children?: React.ReactNode; inner?: React.ReactNode}> = ({dir, n, view, w, h, radius = 0, children, inner}) => (
