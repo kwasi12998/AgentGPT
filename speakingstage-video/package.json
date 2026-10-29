@@ -31,7 +31,7 @@
     "vo:ad": "node scripts/make-vo.mjs --script=ad",
     "audio:ad": "node scripts/make-audio-ad.mjs",
     "record:ad": "cd capture && node record-ad.cjs",
-    "render:ad": "remotion render src/index.ts SpeakingStageAd out/ad-raw.mp4 --gl=swangle --codec=h264 --crf=16 --scale=1.5 --concurrency=3 && ffmpeg -y -i out/ad-raw.mp4 -vf scale=1080:1080:flags=lanczos -c:v libx264 -crf 17 -pix_fmt yuv420p -c:a copy out/speakingstage-ad-linkedin-1x1.mp4",
+    "render:ad": "remotion render src/index.ts SpeakingStageAd out/ad-raw.mp4 --gl=swangle --codec=h264 --crf=16 --scale=1 --concurrency=4 && ffmpeg -y -i out/ad-raw.mp4 -vf scale=1080:1080:flags=lanczos -c:v libx264 -crf 17 -pix_fmt yuv420p -c:a copy out/speakingstage-ad-linkedin-1x1.mp4",
     "render:pitch": "remotion render src/index.ts PitchChris out/pitch-chris-raw.mp4 --gl=swangle --codec=h264 --crf=16 --scale=1.5 --concurrency=3 && ffmpeg -y -i out/pitch-chris-raw.mp4 -vf scale=1080:1080:flags=lanczos -c:v libx264 -crf 17 -pix_fmt yuv420p -c:a copy out/pitch-chris-aike-spring-1x1.mp4"
   },
   "dependencies": {
