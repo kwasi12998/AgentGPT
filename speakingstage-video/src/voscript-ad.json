@@ -1,0 +1,104 @@
+{
+ "provider": "openrouter",
+ "model": "elevenlabs/eleven-v4",
+ "voice": "alice",
+ "voiceSettings": {
+  "stability": 0.45,
+  "similarity_boost": 0.75,
+  "style": 0.3,
+  "speed": 1.04
+ },
+ "scenes": [
+  {
+   "id": "d1",
+   "pre": 10,
+   "tail": 8,
+   "min": 60,
+   "text": "Du suchst einen Keynote-Speaker?"
+  },
+  {
+   "id": "d2a",
+   "pre": 4,
+   "tail": 3,
+   "min": 40,
+   "text": "Endlose Recherche."
+  },
+  {
+   "id": "d2b",
+   "pre": 3,
+   "tail": 3,
+   "min": 40,
+   "text": "Unklare Preise."
+  },
+  {
+   "id": "d2c",
+   "pre": 3,
+   "tail": 4,
+   "min": 40,
+   "text": "Offener Termin."
+  },
+  {
+   "id": "d3",
+   "pre": 8,
+   "tail": 10,
+   "min": 70,
+   "text": "Und Angebote, die du nicht vergleichen kannst."
+  },
+  {
+   "id": "d4",
+   "pre": 30,
+   "tail": 12,
+   "min": 100,
+   "text": "Es geht einfacher. Mit SpeakingStage."
+  },
+  {
+   "id": "d5",
+   "pre": 6,
+   "tail": 6,
+   "min": 50,
+   "text": "In drei Schritten."
+  },
+  {
+   "id": "d6",
+   "pre": 14,
+   "tail": 8,
+   "min": 90,
+   "text": "Finden. Mehr als 160 Speaker aus dem DACH-Raum."
+  },
+  {
+   "id": "d7",
+   "pre": 12,
+   "tail": 8,
+   "min": 80,
+   "text": "Vergleichen. Profile, Videos und Themen."
+  },
+  {
+   "id": "d8",
+   "pre": 12,
+   "tail": 8,
+   "min": 80,
+   "text": "Anfragen. Unverbindlich, mit deinem Briefing."
+  },
+  {
+   "id": "d9",
+   "pre": 12,
+   "tail": 8,
+   "min": 100,
+   "text": "Wir prüfen Fit und Termin. Du bekommst eine kuratierte Auswahl."
+  },
+  {
+   "id": "d10",
+   "pre": 12,
+   "tail": 8,
+   "min": 100,
+   "text": "Du entscheidest. Verbindlich wird es erst mit deiner Zusage."
+  },
+  {
+   "id": "d11",
+   "pre": 14,
+   "tail": 50,
+   "min": 120,
+   "text": "Dein Speaker. Dein Event. Jetzt unverbindlich anfragen."
+  }
+ ]
+}

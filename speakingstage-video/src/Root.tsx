@@ -20,6 +20,8 @@ import {AppleChris} from './apple/AppleChris';
 import {TL as APPLE_TL} from './apple-timeline';
 import {Apple2} from './apple2/Apple2';
 import {TL as APPLE2_TL} from './apple2-timeline';
+import {Ad} from './ad/Ad';
+import {TL as AD_TL} from './ad-timeline';
 
 const Speaker: React.FC = () => (
   <AbsoluteFill>
@@ -37,6 +39,7 @@ const Speaker: React.FC = () => (
 export const Root: React.FC = () => (
   <>
   <Composition id="SpeakerV2" component={SpeakerV2} durationInFrames={T2.total} fps={FPS} width={1080} height={1920} />
+  <Composition id="SpeakingStageAd" component={Ad} durationInFrames={AD_TL.total} fps={FPS} width={1080} height={1080} />
   <Composition id="AppleChris2" component={Apple2} durationInFrames={APPLE2_TL.total} fps={FPS} width={1080} height={1080} />
   <Composition id="AppleChris" component={AppleChris} durationInFrames={APPLE_TL.total} fps={FPS} width={1080} height={1080} />
   <Composition id="PitchChris" component={PitchChris} durationInFrames={PITCH_TL.total} fps={FPS} width={1080} height={1080} />

@@ -1,0 +1,86 @@
+{
+  "placeholder": false,
+  "provider": "openrouter",
+  "model": "elevenlabs/eleven-v4",
+  "voice": "alice",
+  "segments": {
+    "d1": {
+      "file": "vo-ad/d1.mp3",
+      "dur": 2.037551,
+      "hash": "66b3b49ae8df6a6bced3db70fd6199e40ce5b3d4",
+      "text": "Du suchst einen Keynote-Speaker?"
+    },
+    "d2a": {
+      "file": "vo-ad/d2a.mp3",
+      "dur": 1.645714,
+      "hash": "c6712a0849ece1e37747e14140ef3d2d5834a157",
+      "text": "Endlose Recherche."
+    },
+    "d2b": {
+      "file": "vo-ad/d2b.mp3",
+      "dur": 1.645714,
+      "hash": "5c7d28826d9e1fe61c8c5693e21ae904505d7d50",
+      "text": "Unklare Preise."
+    },
+    "d2c": {
+      "file": "vo-ad/d2c.mp3",
+      "dur": 1.227755,
+      "hash": "14c6d7e5fee8351dcb4692e8087e56678087cd0e",
+      "text": "Offener Termin."
+    },
+    "d3": {
+      "file": "vo-ad/d3.mp3",
+      "dur": 3.004082,
+      "hash": "460cba74042c355b747d87121af98ace0b3a0d55",
+      "text": "Und Angebote, die du nicht vergleichen kannst."
+    },
+    "d4": {
+      "file": "vo-ad/d4.mp3",
+      "dur": 2.925714,
+      "hash": "516b79d3cc5f6d5afa4ee365127a303a85bc8d99",
+      "text": "Es geht einfacher. Mit SpeakingStage."
+    },
+    "d5": {
+      "file": "vo-ad/d5.mp3",
+      "dur": 1.48898,
+      "hash": "85f06f3964948435757e987eeb296c9f16438eac",
+      "text": "In drei Schritten."
+    },
+    "d6": {
+      "file": "vo-ad/d6.mp3",
+      "dur": 4.675918,
+      "hash": "ebfb4c7e81ac9e2d8306d3e3ae8c8a1fcf45560e",
+      "text": "Finden. Mehr als 160 Speaker aus dem DACH-Raum."
+    },
+    "d7": {
+      "file": "vo-ad/d7.mp3",
+      "dur": 3.552653,
+      "hash": "8d4dd9d490f83e55aff4e04c764a8ef3a022fd9e",
+      "text": "Vergleichen. Profile, Videos und Themen."
+    },
+    "d8": {
+      "file": "vo-ad/d8.mp3",
+      "dur": 3.552653,
+      "hash": "5bad40f3b98779680cf10d1922cc5fa7c51e6623",
+      "text": "Anfragen. Unverbindlich, mit deinem Briefing."
+    },
+    "d9": {
+      "file": "vo-ad/d9.mp3",
+      "dur": 4.440816,
+      "hash": "2cd7515a4570ce0d5f1cfce4d75b12bcb4f14a9c",
+      "text": "Wir prüfen Fit und Termin. Du bekommst eine kuratierte Auswahl."
+    },
+    "d10": {
+      "file": "vo-ad/d10.mp3",
+      "dur": 4.284082,
+      "hash": "a34ffc313a6735715e2e1ff8cbf95609b9efaf47",
+      "text": "Du entscheidest. Verbindlich wird es erst mit deiner Zusage."
+    },
+    "d11": {
+      "file": "vo-ad/d11.mp3",
+      "dur": 4.519184,
+      "hash": "f543b1957582cc2d9fb708afc87a0de03cd67623",
+      "text": "Dein Speaker. Dein Event. Jetzt unverbindlich anfragen."
+    }
+  }
+}
