@@ -2,6 +2,7 @@ import React from 'react';
 import {AbsoluteFill, Audio, Easing, Img, Sequence, staticFile, useCurrentFrame} from 'remotion';
 import {C, FONT, prog} from '../theme';
 import {B, TL} from '../ad-timeline';
+import adprofMeta from '../../public/rec-adprof.json';
 
 // ------------------------------------------------------------------ helpers
 const expoOut = Easing.bezier(0.16, 1, 0.3, 1);
@@ -302,82 +303,143 @@ const Check: React.FC<{p: number; size?: number}> = ({p, size = 52}) => (
   </div>
 );
 
+// ---- real screen recordings inside a browser window (zoom + pan on the live site)
+const REC = {w: 1920, h: 1200};
+type View = [number, number, number]; // centre x, centre y (recording px) and scale
+const lerpV = (a: View, b: View, t: number): View => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
+const recSrc = (dir: string, n: number) => staticFile(`frames/${dir}/${String(Math.round(Math.min(150, Math.max(1, n)))).padStart(4, '0')}.jpg`);
+const toPanel = (x: number, y: number, v: View, w: number, h: number): [number, number] => [w / 2 + (x - v[0]) * v[2], h / 2 + (y - v[1]) * v[2]];
+
+const Screen: React.FC<{dir: string; n: number; view: View; w: number; h: number; radius?: number; children?: React.ReactNode; inner?: React.ReactNode}> = ({dir, n, view, w, h, radius = 0, children, inner}) => (
+  <div style={{position: 'relative', width: w, height: h, overflow: 'hidden', borderRadius: radius, background: '#f7f3ee'}}>
+    <div style={{position: 'absolute', left: 0, top: 0, width: REC.w, height: REC.h, transformOrigin: '0 0', transform: `translate(${w / 2 - view[0] * view[2]}px, ${h / 2 - view[1] * view[2]}px) scale(${view[2]})`}}>
+      <Img src={recSrc(dir, n)} style={{width: REC.w, height: REC.h, display: 'block'}} />
+      {inner}
+    </div>
+    {children}
+  </div>
+);
+
+const Cursor: React.FC<{x: number; y: number; o?: number}> = ({x, y, o = 1}) => (
+  <svg width="44" height="44" viewBox="0 0 24 24" style={{position: 'absolute', left: x - 4, top: y - 3, opacity: o, filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.35))'}}>
+    <path d="M4 2 L4 19 L8.6 14.8 L11.6 21.6 L14.4 20.4 L11.5 13.8 L17.8 13.4 Z" fill="#fff" stroke="#162131" strokeWidth="1.6" strokeLinejoin="round" />
+  </svg>
+);
+
+const Ripple: React.FC<{x: number; y: number; p: number; r?: number}> = ({x, y, p, r = 70}) =>
+  p > 0 && p < 1 ? <div style={{position: 'absolute', left: x - r * p, top: y - r * p, width: r * 2 * p, height: r * 2 * p, borderRadius: '50%', border: `4px solid ${C.copper}`, opacity: (1 - p) * 0.9, boxSizing: 'border-box'}} /> : null;
+
+const BrowserBar: React.FC<{url: string}> = ({url}) => (
+  <div style={{height: 44, background: '#efe9e0', display: 'flex', alignItems: 'center', padding: '0 18px', gap: 8}}>
+    {['#e0a074', '#d9cfc2', '#d9cfc2'].map((c, i) => (
+      <div key={i} style={{width: 12, height: 12, borderRadius: 6, background: c}} />
+    ))}
+    <div style={{marginLeft: 18, flex: 1, height: 26, borderRadius: 13, background: '#fff', fontSize: 15, fontWeight: 600, color: '#7b838f', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>{url}</div>
+  </div>
+);
+
+const KI_QUERY = 'Keynote zu KI und Change für 150 Führungskräfte in München';
+const KI_BTN = [1479, 618]; // search arrow in recording px
+const RESULTS = [
+  {f: FACES[1], why: 'Künstliche Intelligenz'},
+  {f: FACES[4], why: 'KI & Leadership'},
+  {f: FACES[0], why: 'Leadership'}
+];
+
 const P1: React.FC<{t: number}> = ({t}) => {
-  const count = Math.round(160 * prog(t, 18, 40, out3));
-  const q = typed('Leadership Keynote', t, 6, 0.6);
-  const tiles = FACES.slice(0, 8);
+  const W = PANEL.w;
+  const H = PANEL.h - 44;
+  const v0: View = [960, H / 0.396 / 2, 0.396];
+  const v1: View = [960, 590, 0.6];
+  const v2: View = [1160, 600, 0.72];
+  const view = t < 100 ? lerpV(v0, v1, inOut3(clamp01((t - 6) / 28))) : lerpV(v1, v2, inOut3(clamp01((t - 100) / 26)));
+  const recF = t < 40 ? 1 : 10 + (t - 40);
+  const bp = toPanel(KI_BTN[0], KI_BTN[1], view, W, H);
+  const cp = clamp01((t - 104) / 24);
+  const ce = inOut3(cp);
+  const cx = lerp(bp[0] + 150, bp[0], ce);
+  const cy = lerp(bp[1] + 130, bp[1], ce);
+  const press = prog(t, 132, 4, inOut3) * (1 - prog(t, 138, 6, out3));
+  const sheet = prog(t, 140, 20, expoOut);
   return (
     <GlassPanel sheen={prog(t, 0, 40, inOut3)}>
-      <div style={{position: 'absolute', left: 28, top: 28, width: 704, height: 76, borderRadius: 38, background: '#f4efe8', display: 'flex', alignItems: 'center', padding: '0 30px', boxSizing: 'border-box'}}>
-        <svg width="32" height="32" viewBox="0 0 24 24" style={{marginRight: 18}}>
-          <circle cx="10.5" cy="10.5" r="6.5" stroke={C.navy} strokeWidth="2.4" fill="none" />
-          <path d="M15.5 15.5 L21 21" stroke={C.navy} strokeWidth="2.4" strokeLinecap="round" />
-        </svg>
-        <div style={{fontSize: 30, fontWeight: 600, color: C.navy}}>
-          {q}
-          <span style={{opacity: Math.floor(t / 8) % 2 ? 0 : 1, color: C.copper}}>|</span>
-        </div>
-        <div style={{marginLeft: 'auto', padding: '8px 20px', borderRadius: 24, background: C.copper, color: '#fff', fontSize: 26, fontWeight: 800, opacity: prog(t, 14, 8)}}>{count}+</div>
-      </div>
-      {tiles.map((fc, i) => {
-        const p = prog(t, 24 + i * 3, 14, expoOut);
-        const col = i % 4;
-        const row = Math.floor(i / 4);
-        return (
-          <div key={i} style={{position: 'absolute', left: 28 + col * 181, top: 128 + row * 210, width: 160, height: 194, borderRadius: 24, overflow: 'hidden', opacity: p, transform: `translateY(${(1 - p) * 40}px) scale(${0.88 + 0.12 * p})`, boxShadow: i === 2 ? `0 0 0 4px ${C.copper}` : '0 10px 24px rgba(22,33,49,0.18)'}}>
-            {photo(fc.src, 160, 194, 0)}
-            <div style={{position: 'absolute', left: 0, right: 0, bottom: 0, padding: '28px 12px 10px', background: 'linear-gradient(180deg, rgba(0,0,0,0), rgba(10,16,24,0.78))', color: '#fff', fontSize: 15, fontWeight: 700}}>{fc.n}</div>
+      <BrowserBar url="speakingstage.com" />
+      <Screen dir="adki" n={recF} view={view} w={W} h={H}>
+        {t >= 104 && <Cursor x={cx} y={cy} o={clamp01(cp * 4) * (1 - sheet)} />}
+        {press > 0 && <div style={{position: 'absolute', left: bp[0] - 26 * (1 - 0.1 * press), top: bp[1] - 26 * (1 - 0.1 * press), width: 52 * (1 - 0.1 * press), height: 52 * (1 - 0.1 * press), borderRadius: '50%', background: C.copperDark, boxShadow: `0 0 0 ${press * 10}px rgba(167,100,60,0.25)`}} />}
+        <Ripple x={bp[0]} y={bp[1]} p={clamp01((t - 132) / 22)} />
+        {/* AI result sheet slides in after the click */}
+        {sheet > 0 && (
+          <div style={{position: 'absolute', left: 0, top: 0, width: W, height: H, background: 'linear-gradient(180deg,#fffdfb,#f9f4ee)', transform: `translateY(${(1 - sheet) * H}px)`, padding: '26px 28px', boxSizing: 'border-box'}}>
+            <div style={{display: 'flex', alignItems: 'center', gap: 12}}>
+              <svg width="30" height="30" viewBox="0 0 24 24">
+                <path d="M12 2 L14 9 L21 11 L14 13 L12 20 L10 13 L3 11 L10 9 Z" fill={C.copper} />
+              </svg>
+              <div style={{fontSize: 30, fontWeight: 800, color: C.ink, letterSpacing: -0.6}}>Passende Speaker</div>
+              <div style={{marginLeft: 'auto', padding: '6px 16px', borderRadius: 20, background: '#f0e9e0', color: C.copperDark, fontSize: 20, fontWeight: 800}}>Über 150 Speaker</div>
+            </div>
+            <div style={{display: 'flex', gap: 16, marginTop: 20}}>
+              {RESULTS.map((r, i) => {
+                const p = prog(t, 150 + i * 6, 16, expoOut);
+                return (
+                  <div key={i} style={{width: 216, height: 360, borderRadius: 26, background: '#fff', boxShadow: '0 12px 28px rgba(22,33,49,0.14)', overflow: 'hidden', opacity: p, transform: `translateY(${(1 - p) * 50}px)`}}>
+                    {photo(r.f.src, 216, 200, 0)}
+                    <div style={{padding: '14px 18px'}}>
+                      <div style={{fontSize: 24, fontWeight: 800, color: C.ink, letterSpacing: -0.5}}>{r.f.n}</div>
+                      <div style={{marginTop: 8, fontSize: 17, fontWeight: 700, color: '#7b838f'}}>Warum passend</div>
+                      <div style={{marginTop: 4, fontSize: 20, fontWeight: 700, color: C.copper}}>{r.why}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        );
-      })}
+        )}
+      </Screen>
     </GlassPanel>
   );
 };
 
-const P2: React.FC<{t: number; words: number[]; f: number}> = ({t, words, f}) => {
+const interpRect = (key: 'thumb' | 'chips' | 'keynotes' | 'fit', n: number): number[] | null => {
+  const m = adprofMeta as Record<string, number[] | null>[];
+  const i = Math.min(m.length - 1, Math.max(0, Math.round(n) - 1));
+  const r = m[i][key];
+  if (!r) return null;
+  // css px -> recording px (device scale factor 1.5); the thumb rect is only its caption, so grow upwards
+  const g = key === 'thumb' ? [r[0], r[1] - 88, r[2], r[3] + 88] : r;
+  return g.map((v) => v * 1.5);
+};
+
+const Ring: React.FC<{rect: number[] | null; p: number}> = ({rect, p}) =>
+  rect && p > 0.01 ? <div style={{position: 'absolute', left: rect[0] - 10, top: rect[1] - 10, width: rect[2] + 20, height: rect[3] + 20, borderRadius: 26, border: `6px solid ${C.copper}`, boxShadow: '0 0 0 14px rgba(167,100,60,0.16)', opacity: p, boxSizing: 'border-box'}} /> : null;
+
+const P2: React.FC<{t: number; words: number[]; f: number}> = ({words, f, t}) => {
   const tabs = ['Profile', 'Videos', 'Themen'];
   const act = (i: number) => prog(f, words[i], 6, out3) * (1 - (i < 2 ? prog(f, words[i + 1], 6, out3) : 0));
-  const cards = [FACES[2], FACES[0], FACES[1]];
-  const heart = prog(t, 76, 12, expoOut);
+  const recF = t < 30 ? 1 : 1 + (t - 30) * 1.4;
+  const view: View = [640, 560, 0.62];
+  const W = 704;
+  const H = 444;
+  const inner = (
+    <>
+      <Ring rect={interpRect('thumb', recF)} p={act(1)} />
+      <Ring rect={interpRect('chips', recF)} p={act(2)} />
+      <Ring rect={interpRect('keynotes', recF)} p={act(2)} />
+      <Ring rect={[66, 315, 804, 760]} p={recF < 30 ? act(0) : 0} />
+    </>
+  );
   return (
     <GlassPanel sheen={prog(t, 0, 40, inOut3)}>
-      <div style={{position: 'absolute', left: 28, top: 26, display: 'flex', gap: 14}}>
+      <div style={{position: 'absolute', left: 28, top: 20, display: 'flex', gap: 14}}>
         {tabs.map((tb, i) => (
           <Chip key={tb} active={act(i)}>
             {tb}
           </Chip>
         ))}
       </div>
-      {cards.map((fc, i) => {
-        const p = prog(t, 10 + i * 5, 16, expoOut);
-        const pActive = act(0);
-        const vActive = act(1);
-        const tActive = act(2);
-        return (
-          <div key={i} style={{position: 'absolute', left: 28 + i * 240, top: 104, width: 224, height: 424, borderRadius: 28, background: '#fbf8f4', boxShadow: '0 12px 28px rgba(22,33,49,0.14)', opacity: p, transform: `translateY(${(1 - p) * 50}px) scale(${1 + 0.03 * pActive})`, overflow: 'hidden'}}>
-            <div style={{position: 'relative', width: 224, height: 252}}>
-              {photo(fc.src, 224, 252, 0)}
-              <div style={{position: 'absolute', left: 14, bottom: 14, height: 44, padding: '0 16px', borderRadius: 22, background: vActive > 0.5 ? C.copper : 'rgba(255,255,255,0.92)', color: vActive > 0.5 ? '#fff' : C.navy, fontSize: 18, fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8}}>
-                <svg width="14" height="16" viewBox="0 0 14 16">
-                  <path d="M1 1 L13 8 L1 15 Z" fill={vActive > 0.5 ? '#fff' : C.navy} />
-                </svg>
-                Video
-              </div>
-              {i === 0 && (
-                <div style={{position: 'absolute', right: 14, top: 14, width: 44, height: 44, borderRadius: 22, background: 'rgba(255,255,255,0.92)', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                  <svg width="24" height="22" viewBox="0 0 24 22">
-                    <path d="M12 20 C-4 9 4 -2 12 5 C20 -2 28 9 12 20 Z" fill={heart > 0.4 ? C.copper : 'none'} stroke={heart > 0.4 ? C.copper : C.navy} strokeWidth="2.2" />
-                  </svg>
-                </div>
-              )}
-            </div>
-            <div style={{padding: '16px 18px'}}>
-              <div style={{fontSize: 24, fontWeight: 800, color: C.ink, letterSpacing: -0.5}}>{fc.n}</div>
-              <div style={{marginTop: 10, display: 'inline-block', padding: '6px 14px', borderRadius: 16, background: tActive > 0.5 ? C.copper : '#f0e9e0', color: tActive > 0.5 ? '#fff' : C.copperDark, fontSize: 16, fontWeight: 700}}>{fc.t}</div>
-            </div>
-          </div>
-        );
-      })}
+      <div style={{position: 'absolute', left: 28, top: 92, boxShadow: '0 10px 26px rgba(22,33,49,0.18)', borderRadius: 20, overflow: 'hidden'}}>
+        <Screen dir="adprof" n={recF} view={view} w={W} h={H} radius={20} inner={inner} />
+      </div>
     </GlassPanel>
   );
 };
@@ -415,6 +477,8 @@ const P3: React.FC<{t: number}> = ({t}) => {
         )}
       </div>
       <div style={{position: 'absolute', left: 0, right: 0, top: 472, textAlign: 'center', fontSize: 22, fontWeight: 600, color: '#7b838f'}}>Die Anfrage bleibt unverbindlich.</div>
+      <Ripple x={420} y={402} p={clamp01((t - 74) / 22)} r={90} />
+      {t >= 54 && <Cursor x={lerp(640, 420, inOut3(clamp01((t - 54) / 20)))} y={lerp(300, 406, inOut3(clamp01((t - 54) / 20)))} o={clamp01((t - 54) / 5) * (1 - prog(t, 100, 8))} />}
     </GlassPanel>
   );
 };
@@ -534,11 +598,11 @@ const LightWorld: React.FC<{f: number; cam: Cam}> = ({f, cam}) => {
       {PX.map((px, i) => {
         const pIn = panelsIn(i) * overviewHold(i) * (1 - d11 * 0.85);
         if (pIn <= 0.01) return null;
-        const t = f - T.arrive(STEP_IDS[i]) + 24;
+        const t = Math.max([0, 0, 22, 14, 22][i], f - T.arrive(STEP_IDS[i]) + 24);
         return (
           <React.Fragment key={i}>
             <Obj x={px} y={PANEL.y + (1 - pIn) * 520} z={0} s={0.9 + 0.1 * pIn} style={{opacity: Math.min(1, pIn * 1.6)}}>
-              {panels[i](Math.max(0, t))}
+              {panels[i](t)}
             </Obj>
             <Obj x={px} y={PANEL.y + PANEL.h / 2 + 90} z={-20} rx={90} style={{opacity: pIn}}>
               <div style={{width: 900, height: 220, borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(22,33,49,0.26) 0%, rgba(22,33,49,0.08) 55%, rgba(22,33,49,0) 72%)'}} />
@@ -564,7 +628,7 @@ const Head: React.FC<{f: number; id: string; num?: string; title: string; sub?: 
             {num}
           </Slam>
         )}
-        <div style={{fontSize: 136, fontWeight: 800, letterSpacing: -5, color: C.ink, lineHeight: 1}}>
+        <div style={{fontSize: title.length > 14 ? 104 : 136, fontWeight: 800, letterSpacing: -5, color: C.ink, lineHeight: 1, whiteSpace: 'nowrap'}}>
           <Slam f={f} at={at + 2} dur={11} from={0.4}>
             {title}
           </Slam>
@@ -585,7 +649,7 @@ const LightText: React.FC<{f: number}> = ({f}) => (
   <>
     <Head f={f} id="d4" title="Es geht einfacher." />
     <Head f={f} id="d5" title="In drei Schritten." />
-    <Head f={f} id="d6" num="1" title="Finden." sub={<>160+ Speaker aus dem <span style={{color: C.copper}}>DACH-Raum</span></>} />
+    <Head f={f} id="d6" num="1" title="Finden." sub={<>Beschreib dein Event in <span style={{color: C.copper}}>einem Satz.</span></>} />
     <Head f={f} id="d7" num="2" title="Vergleichen." sub={<>Profile. Videos. <span style={{color: C.copper}}>Themen.</span></>} />
     <Head f={f} id="d8" num="3" title="Anfragen." sub={<>Unverbindlich. Mit deinem <span style={{color: C.copper}}>Briefing.</span></>} />
     <Head f={f} id="d9" title="Wir prüfen." sub={<>Fit, Termin und eine <span style={{color: C.copper}}>Auswahl.</span></>} />
