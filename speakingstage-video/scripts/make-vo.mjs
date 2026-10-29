@@ -1,7 +1,8 @@
 // Generates the voice-over segments from src/voscript.json and writes src/vo.json (file names + durations).
 //
-//   OPENROUTER_API_KEY=... node scripts/make-vo.mjs               (default: ElevenLabs models via OpenRouter /audio/speech)
-//   OPENROUTER_API_KEY=... node scripts/make-vo.mjs --audition    (same sentence in 8 voices -> public/vo/audition/)
+//   node scripts/make-vo.mjs                                      (default: ElevenLabs models via OpenRouter /audio/speech;
+//                                                                  key from OPENROUTER_API_KEY or an injected network secret)
+//   node scripts/make-vo.mjs --audition                           (same sentence in 8 voices -> public/vo/audition/)
 //   node scripts/make-vo.mjs --placeholder                        (silent stand-ins sized by word count; tests timing without a key)
 //   ELEVENLABS_API_KEY=... + "provider": "elevenlabs" in voscript.json uses the ElevenLabs API directly (voice = voice id)
 //
@@ -25,15 +26,21 @@ const voice = process.env.VO_VOICE || script.voice;
 
 const probe = (file) => parseFloat(execFileSync('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', file]).toString());
 
+// OPENROUTER_API_KEY if set; otherwise no Authorization header, because a network secret on the environment (header
+// "Authorization: Bearer <key>" for openrouter.ai) is injected by the proxy.
+const orHeaders = () => ({
+  'Content-Type': 'application/json',
+  'X-Title': 'SpeakingStage video',
+  ...(process.env.OPENROUTER_API_KEY ? {Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`} : {})
+});
+
 async function synth(text, ctx = {}) {
   for (let attempt = 0; ; attempt++) {
     let r;
     if (provider === 'openrouter') {
-      const key = process.env.OPENROUTER_API_KEY;
-      if (!key) throw new Error('OPENROUTER_API_KEY is not set');
       r = await fetch('https://openrouter.ai/api/v1/audio/speech', {
         method: 'POST',
-        headers: {Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', 'X-Title': 'SpeakingStage video'},
+        headers: orHeaders(),
         body: JSON.stringify({model, input: text, voice, response_format: 'mp3'})
       });
     } else {
@@ -49,6 +56,7 @@ async function synth(text, ctx = {}) {
       await new Promise((res) => setTimeout(res, 2000 * 2 ** attempt));
       continue;
     }
+    if (r.status === 401 && provider === 'openrouter') throw new Error('HTTP 401: neither OPENROUTER_API_KEY nor an injected Authorization header (network secret for openrouter.ai) is available');
     if (!r.ok) throw new Error(`HTTP ${r.status} ${await r.text()}`);
     return Buffer.from(await r.arrayBuffer());
   }
@@ -62,7 +70,7 @@ if (args.has('--audition')) {
     process.env.VO_VOICE = v;
     const r = await fetch('https://openrouter.ai/api/v1/audio/speech', {
       method: 'POST',
-      headers: {Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`, 'Content-Type': 'application/json'},
+      headers: orHeaders(),
       body: JSON.stringify({model, input: sample, voice: v, response_format: 'mp3'})
     });
     if (!r.ok) throw new Error(`${v}: HTTP ${r.status} ${await r.text()}`);

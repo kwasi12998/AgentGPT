@@ -27,7 +27,8 @@ npm run stills -- out/review 0.4 100 300 700   # einzelne Frames zur schnellen K
 Zusätzliche Kompositionen `SpeakerV2VO` (9:16) und `SpeakerV2VOWide` (16:9). Sie laufen mit gedehnten Verweilzonen (`src/warp.ts`), damit die Sprache Platz hat: Handy, Karte und Bühne bleiben länger stehen, Kamerafahrten und Schnitte behalten ihr Tempo. Musik, SFX und Sprecher werden auf dieselbe Zeitachse gelegt, die Musik wird unter der Stimme abgesenkt.
 
 ```bash
-export OPENROUTER_API_KEY=...        # in der Umgebung hinterlegen, nie ins Repo oder in den Chat
+# Key: entweder Umgebungsvariable OPENROUTER_API_KEY oder ein Netzwerk-Secret für openrouter.ai
+# (Header "Authorization", Präfix "Bearer ", Wert = Key). Nie ins Repo oder in den Chat.
 npm run frames                       # Handy-Texturen erzeugen (einmalig pro Umgebung)
 npm run vo -- --audition             # derselbe Satz in 8 Stimmen -> public/vo/audition/*.mp3
 VO_VOICE=george npm run vo           # Stimme wählen und alle Segmente erzeugen (src/vo.json)
