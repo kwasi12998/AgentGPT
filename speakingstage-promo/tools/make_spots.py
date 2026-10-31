@@ -1,0 +1,179 @@
+"""Erzeugt Speaker-Spots (60 s) aus der Miriam-Meckel-Vorlage.
+
+Jeder Eintrag in SPOTS ersetzt Texte, Bilder und Zeiten der Vorlage.
+Aufruf: python3 tools/make_spots.py  (im Ordner speakingstage-promo)
+"""
+import json
+
+TPL = open('miriam-meckel.html', encoding='utf8').read()
+
+T = dict(
+    title="<title>Miriam Meckel – Keynote</title>", start="<b>Miriam Meckel</b>", music='src="assets/miriam/music.m4a"',
+    mm="const MM='assets/miriam/';", comment="   Miriam Meckel · Speaker-Spot (60 s)",
+    qa="s.wa=words(s.a,'Welche Entscheidungen wollen wir<br><em>Maschinen</em> überlassen?');",
+    qb="s.wb=words(s.b,'Wie bleiben wir <em>urteilsfähig?</em>');",
+    qbsize="s.b=el('div','big',{top:'460px',fontSize:'140px'}",
+    intro="s.im=img(MM+'hero.jpg',", label="'Keynote Speakerin · KI & Kommunikation'", small="},s.world,'Prof. Dr.');",
+    name="s.wn=words(s.nm,'Miriam<br>Meckel');", sub="'Übersetzt Künstliche Intelligenz in Führung, Kommunikation und Transformation.'",
+    chips="['Deutsch / Englisch','St. Gallen','30–60 Min.']", chippos="[0,250,430][i]",
+    sta="const STA=[['2005','Professorin für Corporate Communication','Universität St. Gallen'],['2001','Regierungssprecherin & Staatssekretärin','Nordrhein-Westfalen · 2001–2005'],['2014','Chefredakteurin & Herausgeberin','WirtschaftsWoche · 2014–2019'],['ada','Mitgründerin','ada Learning – Weiterbildung für Zukunftskompetenzen'],['2024','Autorin','„Alles überall auf einmal“ · mit Léa Steinacker']];",
+    stalabel="'Station '+(i+1)+' / 5'",
+    marquee="('HARVARD  ·  NEW YORK  ·  SINGAPUR  ·  WIEN  ·  NEUCHÂTEL  ·  ST. GALLEN  ·  ')",
+    stg="const STG=[['cointelligenz.jpg','Keynote: Co-IntelligenZ – die Zukunft der Zusammenarbeit zwischen Mensch und KI',0,'50% 20%'],['hero.jpg','Live auf der Bühne',2.3,'50% 40%'],['hinterland.jpg','Impuls: How Artificial Intelligence is Changing Everything · Hinterland of Things',4.4,'50% 50%'],['stage3.jpg','Klare Botschaften – verständlich erklärt',6.5,'50% 4%']];",
+    big="s.wk=words(s.k,'Orientierung statt<br><em>Technik-Euphorie.</em>');",
+    kn="const KN=['KI und Führung verständlich zusammenbringen','Digitale Transformation als Kommunikations&shy;aufgabe gestalten','Alles überall auf einmal: Technologie einordnen'];",
+    knsub="'30–60 Min. · Deutsch / Englisch'",
+    tags="['Vorstandstagungen','Führungskräfteprogramme','Medien- & Tech-Konferenzen','Zukunft der Arbeit']", tagpos="[0,330,700,1100][i]",
+    res="s.wr=words(s.res,'Mehr Orientierung. Bessere Diskussionen. <em>Klare Impulse.</em>');",
+    url1="{url:'speakingstage.com/speaker/miriam-meckel'}",
+    glow="s.glow=el('div','abs',{left:'700px',top:'465px'",
+    curpath="[[1.4,1300,900],[3.2,843,497],[4.5,843,497],[5.4,1200,800]]",
+    camzoom="[3.6,{x:1080,y:600,z:1.55,ry:0,rx:0}],[4.6,{x:1080,y:600,z:1.62}]",
+    end="s.wt=words(s.t,'Miriam Meckel<br>für Ihr Event <em>anfragen.</em>');", url2="'speakingstage.com/speaker/miriam-meckel');",
+    endimg="img(MM+'portrait.jpg',{left:0,top:0,width:'560px',height:'746px',objectFit:'cover',objectPosition:'50% 30%'},s.ph);",
+    cap1="cap(8.2,13.8,'Professorin für Corporate Communication · <em>Universität St. Gallen</em>');",
+    cap2="cap(38.6,42.6,'Keynotes, die <em>technologische Zukunft</em> mit Führung verbinden.');",
+)
+
+
+def spot(slug, d, dy):
+    r = {
+        'title': f"<title>{d['name']} – Keynote</title>", 'start': f"<b>{d['name']}</b>", 'music': f'src="assets/{slug}/music.m4a"',
+        'mm': f"const MM='assets/{slug}/';", 'comment': f"   {d['name']} · Speaker-Spot (60 s)",
+        'qa': f"s.wa=words(s.a,'{d['qa']}');", 'qb': f"s.wb=words(s.b,'{d['qb']}');",
+        'qbsize': "s.b=el('div','big',{top:'380px',fontSize:'128px'}",
+        'intro': f"s.im=img(MM+'{d['intro']}',", 'label': f"'{d['label']}'", 'small': f"}},s.world,'{d['small']}');",
+        'name': f"s.wn=words(s.nm,'{d['first']}<br>{d['last']}');", 'sub': f"'{d['sub']}'",
+        'chips': json.dumps(d['chips'], ensure_ascii=False).replace('"', "'"), 'chippos': f"{d['chippos']}[i]",
+        'sta': 'const STA=' + json.dumps(d['sta'], ensure_ascii=False).replace('"', "'") + ';',
+        'stalabel': d['stalabel'], 'marquee': f"('{d['marquee']}')",
+        'stg': 'const STG=' + json.dumps(d['stg'], ensure_ascii=False).replace('"', "'") + ';',
+        'big': f"s.wk=words(s.k,'{d['big']}');", 'kn': 'const KN=' + json.dumps(d['kn'], ensure_ascii=False).replace('"', "'") + ';',
+        'knsub': f"'{d['knsub']}'", 'tags': json.dumps(d['tags'], ensure_ascii=False).replace('"', "'"), 'tagpos': f"{d['tagpos']}[i]",
+        'res': f"s.wr=words(s.res,'{d['res']}');", 'url1': f"{{url:'speakingstage.com/speaker/{d['url']}'}}",
+        'glow': f"s.glow=el('div','abs',{{left:'700px',top:'{465+dy}px'",
+        'curpath': f"[[1.4,1300,900],[3.2,843,{497+dy}],[4.5,843,{497+dy}],[5.4,1200,{800+dy}]]",
+        'camzoom': f"[3.6,{{x:1080,y:{600+dy},z:1.55,ry:0,rx:0}}],[4.6,{{x:1080,y:{600+dy},z:1.62}}]",
+        'end': f"s.wt=words(s.t,'{d['name']}<br>für Ihr Event <em>anfragen.</em>');", 'url2': f"'speakingstage.com/speaker/{d['url']}');",
+        'endimg': f"img(MM+'{d['endimg'][0]}',{{left:0,top:0,width:'560px',height:'746px',objectFit:'cover',objectPosition:'{d['endimg'][1]}'}},s.ph);",
+        'cap1': f"cap(8.2,13.8,'{d['cap1']}');", 'cap2': f"cap(38.6,42.6,'{d['cap2']}');",
+    }
+    s = TPL
+    for k, old in T.items():
+        assert old in s, k
+        s = s.replace(old, r[k])
+    if d.get('credit'):
+        s = s.replace("  s.cur=cursor(s.world);\n  s.K=keys([[0,{x:960,y:540,z:.92,ry:-10,rx:3}],[6.6,{x:980,y:540,z:1.0,ry:4,rx:0}]]);",
+                      f"  el('div','abs',{{left:'200px',top:'940px',font:'500 16px IN',color:'#9a948d'}},s.world,'{d['credit']}');\n  s.cur=cursor(s.world);\n  s.K=keys([[0,{{x:960,y:540,z:.92,ry:-10,rx:3}}],[6.6,{{x:980,y:540,z:1.0,ry:4,rx:0}}]]);")
+    open(f'{slug}.html', 'w', encoding='utf8').write(s)
+    json.dump(d['vo'], open(f'tools/voiceover_{slug}.json', 'w', encoding='utf8'), ensure_ascii=False, indent=1)
+    print('ok', slug)
+
+
+VO_END = [[48.6, None], [54.6, "Jetzt anfragen – für Ihr nächstes Event."]]
+
+
+def vo(lines, name):
+    return lines + [[48.6, f"{name} ist über SpeakingStage anfragbar – unverbindlich und persönlich begleitet."], VO_END[1]]
+
+
+SPOTS = {
+ 'oemer-atiker': (40, dict(
+    name='Ömer Atiker', first='Ömer', last='Atiker', url='oemer-atiker',
+    qa='Digitalisierung klingt<br>nach <em>Technik.</em>', qb='Ist aber vor allem<br><em>Menschensache.</em>',
+    intro='stage2.jpg', label='Keynote Speaker · Digitale Transformation & KI', small='Unternehmer & Autor',
+    sub='KI und Digitalisierung verständlich übersetzen – damit Menschen und Organisationen ins Handeln kommen.',
+    chips=['DE / EN / NL', 'Baden-Württemberg', '20–60 Min.'], chippos='[0,190,450]',
+    sta=[['01', 'Digitale Transformation', 'Als fortlaufende Fähigkeit zum Lernen und Anpassen'], ['02', 'Künstliche Intelligenz', 'KI-Anwendungen realistisch bewerten'],
+         ['03', 'New Work & Kultur', 'Kulturwandel im digitalen Zeitalter'], ['141', 'Transformation Hacks', 'Praxiserprobt für digitale Innovation'], ['3', 'Sprachen', 'Deutsch · Englisch · Niederländisch']],
+    stalabel="'Auf einen Blick · '+(i+1)+' / 5'", marquee='DIGITALISIERUNG  ·  KÜNSTLICHE INTELLIGENZ  ·  NEW WORK  ·  INNOVATIONSKULTUR  ·  ',
+    stg=[['stage2.jpg', 'The Future isn’t what it used to be', 0, '50% 40%'], ['stage1.jpg', 'Live auf der Bühne', 2.3, '50% 35%'], ['portrait2.jpg', 'Mit Humor und Klarheit', 4.4, '50% 25%'], ['portrait.jpg', 'Unternehmer, Autor, Keynote Speaker', 6.5, '50% 30%']],
+    big='Mit Humor<br><em>ins Handeln.</em>',
+    kn=['New Work erfolgreich gestalten: Kulturwandel im digitalen Zeitalter', 'Smarte Transformation Hacks: Praxistipps für digitale Innovation', 'Digitale Transformation meistern: Chancen der KI nutzen'],
+    knsub='20–60 Min. · Deutsch / Englisch', tags=['Geschäftsführung', 'Innovationsteams', 'Marketing & Vertrieb', 'Mittelstand'], tagpos='[0,300,600,920]',
+    res='Digitale Prioritäten klären. <em>Veränderung verständlich machen.</em>', endimg=['portrait.jpg', '50% 30%'],
+    cap1='Unternehmer, Autor und <em>Keynote Speaker</em>', cap2='Keynotes mit <em>Humor und Klarheit.</em>',
+    vo=vo([[0.3, "Digitalisierung klingt nach Technik."], [4.1, "Ist aber vor allem Menschensache."],
+           [7.9, "Ömer Atiker übersetzt Künstliche Intelligenz und Digitalisierung so, dass Menschen ins Handeln kommen."],
+           [14.4, "Als Unternehmer kennt er die praktische Seite des Wandels."],
+           [19.6, "Digitale Transformation, Künstliche Intelligenz, New Work – und hunderteinundvierzig praxiserprobte Transformation Hacks."],
+           [27.3, "Er erklärt technologische Veränderung mit Humor und klarer Orientierung am Unternehmensalltag."],
+           [34.0, "Humor öffnet den Einstieg. Klare Fragen sorgen für Wirkung."],
+           [38.6, "Seine Keynotes klären Prioritäten und machen Veränderung verständlich."],
+           [43.1, "Für Geschäftsführung, Innovationsteams, Marketing, Vertrieb und Mittelstand."]], 'Ömer Atiker'))),
+ 'johann-hofmann': (40, dict(
+    name='Johann Hofmann', first='Johann', last='Hofmann', url='johann-hofmann',
+    qa='Viel investiert.<br>Wenig <em>digitalisiert?</em>', qb='Was die Produktion<br><em>wirklich</em> braucht.',
+    intro='stage1.jpg', label='Keynote Speaker · Industrie 4.0 & KI', small='Ingenieur & Industrie-4.0-Praktiker',
+    sub='Digitale Produktion und Künstliche Intelligenz aus jahrzehntelanger Shopfloor-Praxis.',
+    chips=['Deutsch', '20–60 Min.', 'Keynote'], chippos='[0,150,330]',
+    sta=[['1989', 'Digitale Produktion', 'Seit 1989 selbst entwickelt und umgesetzt'], ['MES', 'Manufacturing Execution System', 'Entstanden bei der Maschinenfabrik Reinhausen'],
+         ['2013', 'Industrie 4.0 Award', 'Erstmals vergeben – für die Umsetzung ausgezeichnet'], ['5', 'Naturgesetze der Digitalisierung', 'Prozesse, Daten und Verantwortung zuerst'], ['KI', 'In der Produktion', 'Erst die Grundlagen, dann die KI']],
+    stalabel="'Praxis · '+(i+1)+' / 5'", marquee='PRODUKTIONSKONGRESSE  ·  STRATEGIETAGE  ·  TECHNOLOGIEFOREN  ·  KUNDENVERANSTALTUNGEN  ·  ',
+    stg=[['stage1.jpg', 'Kompetenz 4.0 – vom Homo sapiens zum Homo digitalis', 0, '50% 40%'], ['stage3.jpg', 'Live vor Fachpublikum', 2.3, '40% 40%'], ['stage2.jpg', 'Aus der Praxis für die Praxis', 4.4, '50% 40%'], ['portrait.jpg', 'Ingenieur und Industrie-4.0-Experte', 6.5, '50% 30%']],
+    big='Erst die Grundlagen.<br><em>Dann die KI.</em>',
+    kn=['Grundlagen der Digitalisierung als Voraussetzung für KI in der Produktion', 'Das Dilemma der Produktion in Deutschland', 'Die fünf Naturgesetze der Digitalisierung anwenden'],
+    knsub='20–60 Min. · Deutsch', tags=['Produktionsleitung', 'Geschäftsführung', 'Operations & IT', 'Lean Management'], tagpos='[0,290,580,860]',
+    res='Klare Prioritäten. <em>Konkrete Umsetzungsschritte.</em>', endimg=['portrait.jpg', '50% 30%'],
+    cap1='Industrie-4.0-Praktiker für <em>digitale Produktion und KI</em>', cap2='Keynotes aus <em>echter Shopfloor-Praxis.</em>',
+    vo=vo([[0.3, "Viel investiert – und trotzdem wenig digitalisiert?"], [4.1, "Was braucht die Produktion jetzt wirklich?"],
+           [7.9, "Johann Hofmann bringt digitale Produktion und Künstliche Intelligenz aus jahrzehntelanger Praxis auf die Bühne."],
+           [14.4, "Seit neunzehnhundertneunundachtzig entwickelt er digitale Fertigung – und setzt sie selbst um."],
+           [19.6, "Seine Umsetzung bei der Maschinenfabrik Reinhausen wurde mit dem ersten Industrie-vier-punkt-null-Award ausgezeichnet."],
+           [27.3, "Er spricht nicht über ferne Zukunftsbilder, sondern über Voraussetzungen, die im Werk funktionieren."],
+           [34.0, "Sein Prinzip: erst die Grundlagen, dann die Technologie."],
+           [38.6, "Seine Keynotes geben Teams eine gemeinsame Sprache für die Smart Factory."],
+           [43.1, "Für Produktionskongresse, Strategietage, Technologieforen und Kundenveranstaltungen."]], 'Johann Hofmann'))),
+ 'yara-molthan': (40, dict(
+    name='Yara Molthan', first='Yara', last='Molthan', url='yara-molthan',
+    qa='Online verkaufen<br>kann <em>jeder?</em>', qb='Digital Commerce<br>braucht <em>Strategie.</em>',
+    intro='stage2.jpg', label='Keynote Speakerin · Digital Commerce', small='Partnerin bei Etribes',
+    sub='E-Commerce, D2C und digitale Geschäftsmodelle aus Konzern-, Start-up-, Technologie- und Beratungspraxis.',
+    chips=['Deutsch / Englisch', 'Hamburg', '20–60 Min.'], chippos='[0,250,410]',
+    sta=[['01', 'Konzern', 'Start bei Coca-Cola'], ['02', 'Start-ups in China', 'Home & Living und Online-Lebensmittelhandel'], ['03', 'Skalierung', 'Internationalisierung im Schmuckhandel'],
+         ['5', 'Jahre bei Spryker', 'Commerce-Technologie und Beratung'], ['2026', 'Partnerin bei Etribes', 'Strategie trifft Umsetzung']],
+    stalabel="'Station · '+(i+1)+' / 5'", marquee='DIGITAL COMMERCE  ·  E-COMMERCE  ·  DIRECT TO CONSUMER  ·  COMPOSABLE COMMERCE  ·  ',
+    stg=[['stage2.jpg', 'Live auf der OMR Stage', 0, '50% 45%'], ['stage1.jpg', 'Digital Commerce auf der Bühne', 2.3, '50% 35%'], ['office.jpg', 'Aus Konzern-, Start-up- und Beratungspraxis', 4.4, '50% 30%'], ['portrait.jpg', 'Speakerin für Digital Commerce', 6.5, '50% 25%']],
+    big='Strategie trifft<br><em>Umsetzung.</em>',
+    kn=['Was einen digitalen Leader ausmacht', 'Composable Commerce', 'Nachhaltigkeit und Digitalisierung gemeinsam nutzen'],
+    knsub='20–60 Min. · Deutsch / Englisch', tags=['Geschäftsführungen', 'E-Commerce-Leitung', 'Digitalstrategie', 'B2B-Plattformteams'], tagpos='[0,300,600,860]',
+    res='Klare Prioritäten. <em>Wirksamere Umsetzung.</em>', endimg=['portrait.jpg', '50% 25%'],
+    cap1='Partnerin bei Etribes · <em>Speakerin für Digital Commerce</em>', cap2='Keynotes, die <em>Technologie und Geschäft</em> verbinden.',
+    vo=vo([[0.3, "Online verkaufen kann jeder?"], [4.1, "Digital Commerce braucht Strategie."],
+           [7.9, "Yara Molthan kennt E-Commerce aus Konzern, Start-up, Technologie und Beratung."],
+           [14.4, "Vom Konzern über digitale Start-ups in China bis zur Commerce-Technologie."],
+           [19.6, "Fünf Jahre bei Spryker – und seit zweitausendsechsundzwanzig Partnerin bei Etribes."],
+           [27.3, "Auf der Bühne übersetzt sie Technologie und Handel in Entscheidungen, die Unternehmen wirklich treffen müssen."],
+           [34.0, "Strategie, Kundennutzen und Umsetzung – zusammengedacht."],
+           [38.6, "Ihre Keynotes machen digitale Führung greifbar."],
+           [43.1, "Für Geschäftsführungen, E-Commerce-Teams, Digitalstrategie und B2B-Plattformen."]], 'Yara Molthan'))),
+ 'benjamin-talin': (68, dict(
+    name='Benjamin Talin', first='Benjamin', last='Talin', url='benjamin-talin',
+    qa='Digitalisierung:<br>Wo <em>anfangen?</em>', qb='Und wie wird KI<br>zum <em>Wachstumsmotor?</em>',
+    intro='data.jpg', label='Keynote Speaker · KI & digitale Transformation', small='Unternehmer & Digitalstratege',
+    sub='KI, Daten und digitale Souveränität – verständlich eingeordnet und wirksam umgesetzt.',
+    chips=['Deutsch / Englisch', 'Bayern', '20–60 Min.'], chippos='[0,250,390]',
+    sta=[['13', 'Erste Gründung', 'Mit 13 Jahren das erste Unternehmen'], ['361', 'Weitere Gründungen', 'Darunter die 361 Group'], ['2017', 'MoreThanDigital', 'Wissens- und Austauschplattform – seit 2017 geführt'],
+         ['KI', 'Daten & Souveränität', 'Für Entscheider verständlich eingeordnet'], ['CEO', 'Unternehmer', 'Technologie, Menschen und Geschäftslogik']],
+    stalabel="'Station · '+(i+1)+' / 5'", marquee='DIGITALE TRANSFORMATION  ·  KÜNSTLICHE INTELLIGENZ  ·  DATENSTRATEGIE  ·  INNOVATION  ·  ',
+    stg=[['data.jpg', 'The Future of Managing Data and Insights', 0, '50% 35%'], ['portrait.jpg', 'Unternehmer und Digitalstratege', 2.8, '50% 25%'], ['podcast.jpg', 'CEO bei MoreThanDigital & 361 Group', 5.4, '50% 35%']],
+    big='Weniger Werkzeuge.<br><em>Bessere Entscheidungen.</em>',
+    kn=['Digitale Transformation meistern', 'Change Management im digitalen Zeitalter', 'KI als Wachstumsmotor: Chancen und Herausforderungen'],
+    knsub='20–60 Min. · Deutsch / Englisch', tags=['Geschäftsführung', 'Strategie', 'IT & Innovation', 'Mittelstand'], tagpos='[0,280,480,760]',
+    res='Realistische Wege. <em>Bessere Entscheidungen.</em>', endimg=['portrait.jpg', '50% 25%'],
+    cap1='Unternehmer, Digitalstratege und <em>Keynote Speaker</em>', cap2='Keynotes, die <em>Technologie und Geschäft</em> verbinden.',
+    vo=vo([[0.3, "Digitalisierung – wo fängt man an?"], [4.1, "Und wie wird Künstliche Intelligenz zum Wachstumsmotor?"],
+           [7.9, "Benjamin Talin verbindet Künstliche Intelligenz, Daten und Transformation mit unternehmerischer Praxis."],
+           [14.4, "Sein erstes Unternehmen gründete er mit dreizehn Jahren."],
+           [19.6, "Später folgten weitere Gründungen – und seit zweitausendsiebzehn führt er MoreThanDigital."],
+           [27.3, "Er stellt die entscheidende Frage: Welches Problem soll gelöst werden?"],
+           [34.0, "Statt einzelner Werkzeuge: ein realistischer Weg für die eigene Organisation."],
+           [38.6, "Seine Keynotes führen Technologie, Menschen und Geschäftslogik zusammen."],
+           [43.1, "Für Geschäftsführung, Strategie, IT, Innovation und den Mittelstand."]], 'Benjamin Talin'))),
+}
+
+if __name__ == '__main__':
+    import sys
+    for slug in (sys.argv[1:] or SPOTS):
+        dy, d = SPOTS[slug]
+        spot(slug, d, dy)
