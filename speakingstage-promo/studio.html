@@ -207,10 +207,9 @@ Scene(21.4,34,s=>{
   s.ex=[['expose_a1.jpg',-14,2300,'Dr. Arne Wieben'],['expose_a2.jpg',-4,2560,''],['expose_z1.jpg',6,2820,'Sebastian Ziegler'],['expose_z2.jpg',14,3080,'']].map(([f,r,x])=>{const e=img(SA+f,{left:px(x),top:'170px',width:'480px',borderRadius:'10px',boxShadow:'0 40px 80px -24px rgba(22,33,49,.45)'},s.world);return [e,r]});
   s.p2=tagPill(s.world,2380,900,'Speaker-Exposé – zum Weitergeben');
   // Videos
-  s.v1=device(s.world,4180,210,960,540,{bar:false,r:24});s.v1i=img(SA+'zt/f0001.jpg',{left:0,top:0,width:'960px',height:'540px',objectFit:'cover'},s.v1.v);
-  s.v2=device(s.world,5190,140,380,676,{bar:false,r:34});s.v2i=img(SA+'mo/f0001.jpg',{left:0,top:0,width:'380px',height:'676px',objectFit:'cover'},s.v2.v);
-  s.v3=device(s.world,4420,560,420,420,{bar:false,r:24});s.v3i=img(SA+'at/f0001.jpg',{left:0,top:0,width:'420px',height:'420px',objectFit:'cover'},s.v3.v);
-  s.p3=tagPill(s.world,3940,800,'Videos aus vorhandenem Material');
+  s.v1=device(s.world,4060,200,1060,596,{bar:false,r:24});s.v1i=img(SA+'mm/f0001.jpg',{left:0,top:0,width:'1060px',height:'596px',objectFit:'cover'},s.v1.v);
+  s.v2=device(s.world,5200,150,380,676,{bar:false,r:40});s.v2i=img(SA+'mmv/f0001.jpg',{left:0,top:0,width:'380px',height:'676px',objectFit:'cover'},s.v2.v);
+  s.p3=tagPill(s.world,4060,850,'Teaser-Video aus vorhandenem Material · Beispiel: Miriam Meckel');
   s.K=keys([[0,{x:960,y:520,z:.8,ry:-20,rx:10}],[1.4,{x:900,y:500,z:.95,ry:-8,rx:4}],[3.8,{x:1100,y:560,z:.98,ry:6,rx:2}],[5.0,{x:1100,y:560,z:1.0,ry:8}],
     [5.5,{x:2900,y:540,z:.88,ry:-6,rx:2}],[8.2,{x:2900,y:540,z:.95,ry:4}],[8.7,{x:4860,y:520,z:.86,ry:-8,rx:3}],[12.4,{x:4880,y:540,z:.94,ry:6,rx:0}]]);
   s.update=lt=>{camera(s,lt,s.K);
@@ -218,8 +217,8 @@ Scene(21.4,34,s=>{
     const q=E.outQ5(P(lt,0,.8)),q2=E.outQ5(P(lt,.5,1.3));css(s.wa.d,{opacity:String(q),transform:`translateZ(${((1-q)*-600).toFixed(0)}px)`});css(s.wz.d,{opacity:String(q2),transform:`translateZ(${(120-(1-q2)*600).toFixed(0)}px) rotateY(-6deg)`});
     fadeUp(s.p1,lt,1.6);
     s.ex.forEach(([e,r],i)=>{const t0=5.6+i*.2,q=E.outQ5(P(lt,t0,t0+.7));css(e,{opacity:String(q),transform:`translateY(${(1-q)*240}px) rotate(${(r*q).toFixed(1)}deg) translateZ(${(i*30).toFixed(0)}px)`})});fadeUp(s.p2,lt,6.4);
-    seq(s.v1i,'zt',180,lt-8.6);seq(s.v2i,'mo',420,lt-8.4+2.2);seq(s.v3i,'at',150,lt-8.9);
-    [s.v1,s.v2,s.v3].forEach((v,i)=>{const t0=8.6+i*.18,q=E.outQ5(P(lt,t0,t0+.6));css(v.d,{opacity:String(q),transform:`translateZ(${((1-q)*-700+i*60).toFixed(0)}px) rotateY(${((1-q)*20).toFixed(1)}deg)`})});fadeUp(s.p3,lt,9.4);
+    seq(s.v1i,'mm',180,lt-8.6);seq(s.v2i,'mmv',180,lt-8.8);
+    [s.v1,s.v2].forEach((v,i)=>{const t0=8.6+i*.18,q=E.outQ5(P(lt,t0,t0+.6));css(v.d,{opacity:String(q),transform:`translateZ(${((1-q)*-700+i*60).toFixed(0)}px) rotateY(${((1-q)*20).toFixed(1)}deg)`})});fadeUp(s.p3,lt,9.4);
     css(s.root,{opacity:String(P(lt,0,.25))})};
 });
 sfx(21.5,'whoosh',.8);sfx(22.0,'pop',.5);sfx(27.0,'whoosh',.7);[27.0,27.2,27.4,27.6].forEach(t=>sfx(t,'pop',.45));sfx(30.0,'whoosh',.8);[30.0,30.2,30.4].forEach(t=>sfx(t,'hit',.5));
@@ -244,22 +243,25 @@ Scene(33.6,41.4,s=>{
 });
 [34.5,34.7,34.9,35.1].forEach(t=>sfx(t,'pop',.5));[37.7,38.05,38.4,38.75].forEach(t=>sfx(t,'node',.55));
 
-/* ---------- 6 · Pakete (41–49) ---------- */
-const PK=[['Speaker-Unterlagen','Bilder + Exposé + Kurzvideo','149'],['Website Kompakt','Eine kompakte Website-Seite','290'],['Auftritt Komplett','Website + Exposé + Video + 3 LinkedIn-Beiträge','890']];
+/* ---------- 6 · Einzelleistungen & Pakete (41–49) ---------- */
+const EL=[['Speaker-Website','Profil, Vorträge, Anfrageweg'],['Speaker-Exposé','Zum internen Weitergeben'],['Teaser & Kurzvideo','Aus vorhandenem Material'],['Shorts','Clips mit Untertiteln'],['Showreel','Aus echten Szenen'],['Interview & Podcast','Klar als Interview gekennzeichnet'],['Fotos & Video vor Ort','Ihr Auftritt, festgehalten'],['SEO für Speaker','Auffindbare Expertise']];
+const PK=[['Speaker-Unterlagen','Bilder · Exposé · Kurzvideo'],['Website Kompakt','Profilseite mit allen Themen'],['Auftritt Komplett','Website · Exposé · Video · LinkedIn']];
 Scene(41,49.2,s=>{
-  s.h=el('div','big',{top:'110px',fontSize:'96px'},s.world);s.wh=words(s.h,'Klare Pakete. <mark>Fester Umfang.</mark>');
-  s.cards=PK.map(([t,d,p],i)=>{const hl=i===2;const c=el('div','card',{left:px(170+i*540),top:'290px',width:'500px',height:'500px',borderRadius:'30px',background:hl?'var(--teal)':'#fff',borderColor:hl?'var(--teal)':'var(--line)'},s.world);
-    el('div','abs lbl',{left:'44px',top:'44px',color:hl?'#bfe0e0':'var(--teal)'},c,d);
-    el('div','abs d',{left:'44px',top:'112px',width:'420px',font:'700 46px/1.08 ID',color:hl?'#fff':'var(--navy)'},c,t);
-    const pr=el('div','abs d',{left:'44px',top:'300px',font:'700 110px/1 ID',color:hl?'#fff':'var(--navy)',letterSpacing:'-.04em'},c,'0 €');
-    el('div','abs',{left:'48px',top:'420px',font:'500 22px IN',color:hl?'#d6e8e8':'#7d756d'},c,'netto · einmalig');return {c,pr,p:+p}});
-  s.n=el('div','abs',{left:'170px',top:'830px',width:'1580px',font:'500 22px IN',color:'#8a837b'},s.world,'Zzgl. USt. Hosting, Domain und Fremdkosten werden vor dem Auftrag benannt. Die Anfrage ist keine Bestellung.');
-  s.K=keys([[0,{x:960,y:540,z:.86,ry:-14,rx:6}],[2.2,{x:960,y:520,z:.95,ry:-4,rx:2}],[5.4,{x:1060,y:560,z:1.0,ry:4}],[8.2,{x:1100,y:560,z:1.04,ry:6}]]);
+  s.h=el('div','big',{top:'90px',fontSize:'92px'},s.world);s.wh=words(s.h,'Einzelleistung <mark>oder Paket.</mark>');
+  s.tiles=EL.map(([t,d],i)=>{const c=el('div','card',{left:px(150+(i%4)*410),top:px(240+Math.floor(i/4)*190),width:'380px',height:'166px',borderRadius:'22px'},s.world);
+    el('div','abs',{left:'26px',top:'26px',width:'14px',height:'14px',borderRadius:'50%',background:'var(--teal)'},c);
+    el('div','abs d',{left:'26px',top:'52px',width:'340px',font:'700 31px/1.1 ID',color:'var(--navy)'},c,t);el('div','abs',{left:'26px',top:'116px',font:'500 19px IN',color:'#7d756d'},c,d);return c});
+  s.pl=el('div','abs lbl',{left:'150px',top:'650px',color:'var(--teal)'},s.world,'Oder als Paket aus einer Hand');
+  s.pk=PK.map(([t,d],i)=>{const hl=i===2;const c=el('div','abs',{left:px(150+i*545),top:'690px',width:'510px',height:'120px',borderRadius:'24px',background:hl?'var(--teal)':'#fff',border:'1.5px solid '+(hl?'var(--teal)':'var(--line)'),boxShadow:'0 24px 50px -28px rgba(22,33,49,.35)'},s.world);
+    el('div','abs d',{left:'30px',top:'24px',font:'700 34px ID',color:hl?'#fff':'var(--navy)'},c,t);el('div','abs',{left:'30px',top:'72px',font:'500 20px IN',color:hl?'#cfe3e3':'#7d756d'},c,d);return c});
+  s.n=el('div','abs',{left:'150px',top:'850px',width:'1620px',font:'500 22px IN',color:'#8a837b'},s.world,'Den passenden Umfang klären wir vor dem Auftrag. Die Anfrage ist keine Bestellung.');
+  s.K=keys([[0,{x:960,y:540,z:.86,ry:-14,rx:6}],[2.2,{x:960,y:520,z:.95,ry:-4,rx:2}],[5.4,{x:1000,y:560,z:.98,ry:4}],[8.2,{x:1020,y:560,z:1.02,ry:6}]]);
   s.update=lt=>{camera(s,lt,s.K);revealWords(s.wh,lt,.2,.12,.6,50);
-    s.cards.forEach(({c,pr,p},i)=>{const t0=.8+i*.3,q=E.outQ5(P(lt,t0,t0+.7));css(c,{opacity:String(q),transform:`translateY(${(1-q)*100}px) rotateX(${((1-q)*-25).toFixed(1)}deg)`});pr.textContent=Math.round(p*E.outQ5(P(lt,t0+.3,t0+1.5)))+' €'});
-    fadeUp(s.n,lt,2.6);css(s.root,{opacity:String(P(lt,0,.25)*(1-P(lt,7.7,8.2)))})};
+    s.tiles.forEach((c,i)=>{const t0=.7+i*.16,q=E.outQ5(P(lt,t0,t0+.55));css(c,{opacity:String(q),transform:`translateY(${(1-q)*70}px) rotateX(${((1-q)*-30).toFixed(1)}deg)`})});
+    fadeUp(s.pl,lt,3.2);s.pk.forEach((c,i)=>{const t0=3.4+i*.25,q=E.outQ5(P(lt,t0,t0+.6));css(c,{opacity:String(q),transform:`translateY(${(1-q)*60}px)`})});
+    fadeUp(s.n,lt,4.6);css(s.root,{opacity:String(P(lt,0,.25)*(1-P(lt,7.7,8.2)))})};
 });
-[41.8,42.1,42.4].forEach(t=>sfx(t,'pop',.55));
+for(let i=0;i<8;i++)sfx(41.7+i*.16,'pop',.45);[44.4,44.65,44.9].forEach(t=>sfx(t,'tick',.55));
 
 /* ---------- 7 · Ablauf & Ansprechpartner (49–54.4) ---------- */
 Scene(49,54.6,s=>{
