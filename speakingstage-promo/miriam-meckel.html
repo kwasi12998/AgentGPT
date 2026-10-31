@@ -173,10 +173,10 @@ Scene(14.2,27.2,s=>{
 STA.forEach((_,i)=>{sfx(14.2+.3+i*2.45,'whoosh',.7);sfx(14.2+.6+i*2.45,'node',.6)});
 
 /* ---------- 4 · Bühne (27–37) ---------- */
-const STG=[['cointelligenz.jpg','Keynote: Co-IntelligenZ – die Zukunft der Zusammenarbeit zwischen Mensch und KI',0,'50% 20%'],['hero.jpg','Live auf der Bühne',2.3,'50% 40%'],['hinterland.jpg','Impuls: How Artificial Intelligence is Changing Everything · Hinterland of Things',4.4,'50% 50%'],['stage3.jpg','Klare Botschaften – verständlich erklärt',6.5,'50% 30%']];
+const STG=[['cointelligenz.jpg','Keynote: Co-IntelligenZ – die Zukunft der Zusammenarbeit zwischen Mensch und KI',0,'50% 20%'],['hero.jpg','Live auf der Bühne',2.3,'50% 40%'],['hinterland.jpg','Impuls: How Artificial Intelligence is Changing Everything · Hinterland of Things',4.4,'50% 50%'],['stage3.jpg','Klare Botschaften – verständlich erklärt',6.5,'50% 4%']];
 Scene(27,37.2,s=>{
   s.cards=STG.map(([f,cap_,t0,pos],i)=>{const c=el('div','abs',{left:'200px',top:'110px',width:'1520px',height:'855px',borderRadius:'30px',overflow:'hidden',background:'#000',boxShadow:'0 70px 140px -30px rgba(22,33,49,.45)'},s.world);
-    const im=img(MM+f,{left:0,top:0,width:'1520px',height:'855px',objectFit:'cover',objectPosition:pos},c);
+    const im=img(MM+f,{left:0,top:0,width:'1520px',height:'855px',objectFit:'cover',objectPosition:pos,transformOrigin:'50% 12%'},c);
     el('div','abs',{left:0,top:'600px',width:'1520px',height:'255px',background:'linear-gradient(180deg,transparent,rgba(0,0,0,.55))'},c);
     el('div','abs',{left:'40px',top:'770px',maxWidth:'1300px',padding:'14px 26px',borderRadius:'999px',background:'rgba(255,255,255,.96)',font:'600 24px IN',color:'var(--navy)'},c,cap_);return {c,im,t0}});
   s.k=el('div','big',{top:'420px',fontSize:'132px',opacity:0},s.world);s.wk=words(s.k,'Orientierung statt<br><em>Technik-Euphorie.</em>');
