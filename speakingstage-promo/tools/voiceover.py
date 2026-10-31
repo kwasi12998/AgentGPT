@@ -36,7 +36,7 @@ def trim(x, thr=.01):
     return x[max(0, idx[0] - 600):idx[-1] + 2000] if len(idx) else x
 
 
-def main(script, music, work, out, voice='george'):
+def main(script, music, work, out, voice='sarah'):
     os.makedirs(work, exist_ok=True)
     lines = json.load(open(script))
     w = wave.open(music); n = w.getnframes()
