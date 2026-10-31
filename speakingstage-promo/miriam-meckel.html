@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Miriam Meckel – Keynote</title>
+<style>
+  @font-face{font-family:IN;font-weight:500;src:url(assets/fonts/Inter-Medium.otf)}
+  @font-face{font-family:IN;font-weight:600;src:url(assets/fonts/Inter-SemiBold.otf)}
+  @font-face{font-family:ID;font-weight:500;src:url(assets/fonts/InterDisplay-Medium.otf)}
+  @font-face{font-family:ID;font-weight:600;src:url(assets/fonts/InterDisplay-SemiBold.otf)}
+  @font-face{font-family:ID;font-weight:700;src:url(assets/fonts/InterDisplay-Bold.otf)}
+  :root{--navy:#162131;--ink:#1d2533;--copper:#a7643c;--copperD:#8c5130;--copperL:#d9a074;--cream:#f7f3ee;--sand:#f3ece4;--line:#ebe3d9;--muted:#6f6a64}
+  html,body{margin:0;background:#fff;overflow:hidden}
+  #fit{position:fixed;inset:0;display:grid;place-items:center;background:#fff}
+  #vp{position:relative;width:1920px;height:1080px;overflow:hidden;background:#fff;font-family:IN,Inter,system-ui,sans-serif;color:var(--ink);transform-origin:0 0}
+  .scene{position:absolute;inset:0;perspective:2400px;perspective-origin:960px 540px;overflow:hidden;display:none}
+  .world{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-style:preserve-3d;transform-origin:0 0}
+  .abs{position:absolute}
+  .d{font-family:ID,Inter,system-ui,sans-serif}
+  .bw{position:absolute;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 60px 140px -30px rgba(22,33,49,.30),0 14px 34px rgba(22,33,49,.10);border:1px solid var(--line)}
+  .bwbar{height:48px;background:#f7f2ec;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;padding:0 18px;position:relative}
+  .bwbar i{width:12px;height:12px;border-radius:50%;background:#e3d7ca;display:block}
+  .bwurl{position:absolute;left:50%;top:9px;transform:translateX(-50%);background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 22px;font:500 15px IN;color:#6b6157;white-space:nowrap}
+  .bwview{position:relative;overflow:hidden}
+  .layer{position:absolute;left:0;top:0;width:100%}
+  .card{position:absolute;background:#fff;border:1px solid var(--line);border-radius:26px;box-shadow:0 40px 90px -30px rgba(22,33,49,.25),0 8px 22px rgba(22,33,49,.06)}
+  .chip{display:inline-block;padding:7px 14px;border-radius:999px;background:#f6eee6;color:#7a4a2c;font:500 15px IN;margin:0 6px 6px 0;border:1px solid #efe1d3}
+  .cap{position:absolute;left:50%;top:960px;transform:translate(-50%,-50%);background:#fff;border:1px solid var(--line);box-shadow:0 20px 50px -18px rgba(22,33,49,.28);border-radius:999px;padding:18px 38px;font:600 36px ID;color:var(--navy);white-space:nowrap;opacity:0;letter-spacing:-.01em}
+  em{font-style:normal;color:var(--copper)}
+  .cap em{font-style:normal;color:var(--copper)}
+  .cap.dark{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .cap.dark em{color:var(--copperL)}
+  .big{position:absolute;left:0;width:1920px;text-align:center;font:700 140px/1.02 ID;color:var(--navy);letter-spacing:-.035em}
+  .big em{font-style:normal;color:var(--copper)}
+  .w{display:inline-block;will-change:transform,opacity}
+  .cur{position:absolute;left:0;top:0;width:40px;height:40px;z-index:50;filter:drop-shadow(0 6px 10px rgba(22,33,49,.3))}
+  .rip{position:absolute;border-radius:50%;border:3px solid var(--copper);z-index:49;opacity:0;pointer-events:none}
+  .caret{display:inline-block;width:3px;height:1.05em;background:var(--copper);vertical-align:-.15em;margin-left:2px}
+  .btn{position:absolute;background:var(--copper);color:#fff;border-radius:999px;font:600 22px IN;display:flex;align-items:center;justify-content:center;gap:12px;box-shadow:0 14px 30px -10px rgba(167,100,60,.6)}
+  .lbl{font:600 15px IN;letter-spacing:.16em;color:var(--copper);text-transform:uppercase}
+  .mark{background:var(--navy);-webkit-mask:url(assets/ui/mark.png) center/contain no-repeat;mask:url(assets/ui/mark.png) center/contain no-repeat}
+  #start{position:fixed;inset:0;display:grid;place-content:center;gap:16px;text-align:center;background:#fff;cursor:pointer;z-index:9;font-family:ID,system-ui}
+  #start b{font:700 56px ID;color:var(--navy)} #start span{font:600 16px IN;letter-spacing:.2em;color:var(--copper)}
+  #start i{justify-self:center;width:84px;height:84px;border-radius:50%;background:var(--copper);display:grid;place-items:center;color:#fff;font-style:normal;font-size:30px}
+</style>
+</head>
+<body>
+<div id="fit"><div id="vp"></div></div>
+<div id="start"><span>SPEAKINGSTAGE</span><b>Miriam Meckel</b><i>▶</i><span>MIT TON · LEERTASTE = PAUSE</span></div>
+<audio id="aud" src="assets/miriam/music.m4a" preload="auto"></audio>
+<script src="assets/manifest.js"></script>
+<script>
+/* ==================================================================
+   SpeakingStage · Erklärvideo (3:00)
+   DOM + CSS-3D. render(t) ist eine reine Funktion der Zeit.
+   ?render=1 → Export-Modus (Playwright), ?t=… → Standbild
+   ================================================================== */
+const W=1920,H=1080,FPS=30,DUR=60.6;
+const Q=new URLSearchParams(location.search),RENDER=Q.has('render'),STILL=Q.has('t')?+Q.get('t'):null;
+const vp=document.getElementById('vp');
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x)),lerp=(a,b,t)=>a+(b-a)*t,P=(t,a,b)=>clamp((t-a)/(b-a));
+const rnd=n=>{const s=Math.sin(n*127.1+311.7)*43758.5453;return s-Math.floor(s)};
+const E={lin:x=>x,outC:x=>1-Math.pow(1-x,3),outQ5:x=>1-Math.pow(1-x,5),ioC:x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2,
+  io5:x=>x<.5?16*x*x*x*x*x:1-Math.pow(-2*x+2,5)/2,outX:x=>x>=1?1:1-Math.pow(2,-10*x),
+  outB:x=>{const s=1.5;return 1+(s+1)*Math.pow(x-1,3)+s*Math.pow(x-1,2)},ioS:x=>x*x*(3-2*x)};
+
+/* ---------- DOM-Helfer ---------- */
+function el(tag,cls,style,parent,html){const e=document.createElement(tag);if(cls)e.className=cls;if(style)Object.assign(e.style,style);if(html!=null)e.innerHTML=html;(parent||vp).appendChild(e);return e}
+const px=v=>v+'px';
+function css(e,o){const s=e._s||(e._s={});for(const k in o){const v=o[k];if(s[k]!==v){e.style[k]=v;s[k]=v}}}
+function img(src,style,parent){const i=el('img','abs',style,parent);i.src=src;i.decoding='sync';return i}
+const SP=n=>`assets/sp/${n}.jpg`;
+const NAME=Object.fromEntries(SPK.map(s=>[s.slug,s.name]));
+
+/* ---------- Sounddesign-Ereignisse (werden für den Musik-Mix exportiert) ---------- */
+const EV=[];const sfx=(t,type,v=1)=>EV.push({t:+t.toFixed(3),type,v});
+function typeSfx(t0,str,cps){for(let i=0;i<str.length;i++)if(str[i]!==' '||i%3===0)sfx(t0+i/cps,'key',.6+rnd(i)*.4)}
+
+/* ---------- Szenen & Kamera ---------- */
+const SC=[];
+function Scene(t0,t1,build,o={}){const root=el('div','scene',{},vp);const world=el('div','world',{},root);const s={t0,t1,root,world,fi:o.fi||0,fo:o.fo||0};build(s);SC.push(s);return s}
+function keys(list){const out=[];let prev={x:960,y:540,z:1,rx:0,ry:0,rz:0};for(const [t,k] of list){prev={...prev,...k};out.push([t,prev])}return out}
+function interp(t,K,ease=E.io5){if(t<=K[0][0])return K[0][1];for(let i=0;i<K.length-1;i++){const[a,A]=K[i],[b,B]=K[i+1];if(t<b){const p=ease(P(t,a,b)),o={};for(const k in A)o[k]=lerp(A[k],B[k],p);return o}}return K[K.length-1][1]}
+// Kamera auf die Welt anwenden – inklusive Bewegungsunschärfe aus der Geschwindigkeit
+function camera(s,lt,K,ease){const c=interp(lt,K,ease),c2=interp(lt-1/FPS,K,ease);
+  const v=Math.hypot((c.x-c2.x)*c.z,(c.y-c2.y)*c.z)*FPS+Math.abs(c.ry-c2.ry)*FPS*14+Math.abs(c.z-c2.z)*FPS*700;
+  css(s.world,{transform:`translate3d(960px,540px,0) rotateX(${c.rx.toFixed(3)}deg) rotateY(${c.ry.toFixed(3)}deg) rotateZ(${c.rz.toFixed(3)}deg) scale(${c.z.toFixed(4)}) translate3d(${(-c.x).toFixed(2)}px,${(-c.y).toFixed(2)}px,0)`,
+    filter:v>900?`blur(${Math.min(14,(v-900)/650).toFixed(1)}px)`:'none'});return c}
+
+/* ---------- Bausteine ---------- */
+function browser(p,x,y,src,{w=1440,h=900,url='speakingstage.com'}={}){
+  const r=el('div','bw',{left:px(x),top:px(y),width:px(w),height:px(h+48)},p);
+  el('div','bwbar',{},r,`<i></i><i></i><i></i><span class="bwurl">🔒&nbsp; ${url}</span>`);
+  const view=el('div','bwview',{height:px(h)},r);const layer=el('div','layer',{},view);
+  const im=src?img(src,{left:0,top:0,width:px(w)},layer):null;return {r,view,layer,im,x,y}}
+const CURSVG=`<svg width="40" height="40" viewBox="0 0 24 24"><path d="M4.5 2.5l14.5 9-6.3 1.3 3.6 7.1-2.8 1.4-3.6-7.2-5.4 3.9z" fill="#162131" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
+function cursor(p){return {c:el('div','cur',{opacity:0},p,CURSVG),r:el('div','rip',{},p)}}
+// Pfad: [[t,x,y],...], Klicks: [t,...]  (lokale Zeiten)
+function drive(cur,lt,path,clicks=[],vis=[0,1e9]){
+  const K=keys(path.map(([t,x,y])=>[t,{x,y}]));const c=interp(lt,K,E.ioC);
+  let sc=1,last=null;for(const ct of clicks){if(lt>=ct-.12&&lt<ct+.18)sc=lt<ct?lerp(1,.78,P(lt,ct-.12,ct)):lerp(.78,1,P(lt,ct,ct+.18));if(lt>=ct)last=ct}
+  css(cur.c,{opacity:String(clamp(Math.min((lt-vis[0])/.25,(vis[1]-lt)/.25))),transform:`translate(${c.x-6}px,${c.y-4}px) scale(${sc})`});
+  if(last!=null&&lt-last<.7){const q=E.outC(P(lt,last,last+.7)),r=12+q*70;css(cur.r,{opacity:String(1-q),left:px(c.x-r),top:px(c.y-r),width:px(r*2),height:px(r*2)})}else css(cur.r,{opacity:'0'});
+  return c}
+const typed=(str,lt,t0,cps)=>str.slice(0,clamp(Math.floor((lt-t0)*cps),0,str.length));
+const caretOn=(lt,t0,t1)=>lt>=t0&&(lt<t1+.05||Math.floor(lt*2.2)%2===0);
+// Wort-für-Wort-Reveal in einem Element
+function words(e,html){html=html.replace(/<em>(.*?)<\/em>/g,(m,x)=>x.split(' ').map(w=>`<em>${w}</em>`).join(' '));
+  e.innerHTML=html.split(/(<br>|\s+)/).map(w=>w==='<br>'?'<br>':/^\s*$/.test(w)?w:`<span class="w">${w}</span>`).join('');return [...e.querySelectorAll('.w')]}
+function revealWords(ws,lt,t0,step=.09,dur=.55,dy=40){ws.forEach((w,i)=>{const p=E.outQ5(P(lt,t0+i*step,t0+i*step+dur));css(w,{opacity:String(p),transform:`translateY(${(1-p)*dy}px)`,filter:p<1?`blur(${((1-p)*10).toFixed(1)}px)`:'none'})})}
+function fadeUp(e,lt,t0,t1=1e9,dy=30,dur=.55){const a=E.outQ5(P(lt,t0,t0+dur)),b=E.ioC(P(lt,t1-.4,t1)),o=a*(1-b);css(e,{opacity:String(o),transform:`translateY(${((1-a)*dy-b*dy*.6).toFixed(1)}px)`,filter:o<.99?`blur(${((1-o)*8).toFixed(1)}px)`:'none'})}
+
+/* ---------- Untertitel (Bildschirm-Ebene) ---------- */
+const CAPS=[];function cap(t0,t1,html,dark=false){CAPS.push({t0,t1,html,dark})}
+let capLayer;
+function buildCaps(){capLayer=el('div','abs',{inset:0,zIndex:80,pointerEvents:'none'});CAPS.forEach(c=>{c.e=el('div','cap'+(c.dark?' dark':''),{},capLayer,c.html)})}
+function drawCaps(t){CAPS.forEach(c=>{if(t<c.t0-.1||t>c.t1+.1){css(c.e,{display:'none'});return}const a=E.outQ5(P(t,c.t0,c.t0+.5)),b=E.ioC(P(t,c.t1-.35,c.t1)),o=a*(1-b);
+  css(c.e,{display:'block',opacity:String(o),transform:`translate(-50%,-50%) translateY(${((1-a)*36-b*16).toFixed(1)}px) scale(${(.96+.04*a).toFixed(3)})`,filter:o<.99?`blur(${((1-o)*10).toFixed(1)}px)`:'none'})})}
+
+/* ==================================================================
+   Miriam Meckel · Speaker-Spot (60 s)
+   ================================================================== */
+const MM='assets/miriam/';
+
+/* ---------- 1 · Fragen (0–7.6) ---------- */
+Scene(0,7.8,s=>{
+  s.line=el('div','abs',{left:'560px',top:'680px',width:'800px',height:'4px',background:'var(--copper)',transformOrigin:'0 50%'},s.world);
+  s.a=el('div','big',{top:'400px',fontSize:'104px'},s.world);s.wa=words(s.a,'Welche Entscheidungen wollen wir<br><em>Maschinen</em> überlassen?');
+  s.b=el('div','big',{top:'460px',fontSize:'140px'},s.world);s.wb=words(s.b,'Wie bleiben wir <em>urteilsfähig?</em>');
+  s.K=keys([[0,{z:.94,ry:-10,rx:4}],[3.8,{z:1.04,ry:2,rx:0}],[4.0,{z:.98,ry:8}],[7.2,{z:1.06,ry:-2}],[7.8,{z:2.6,y:520}]]);
+  s.update=lt=>{camera(s,lt,s.K);revealWords(s.wa,lt,.3,.11,.6,50);css(s.a,{opacity:String(1-P(lt,3.6,3.9))});
+    css(s.line,{transform:`scaleX(${(E.io5(P(lt,.6,3.4))*(1-P(lt,3.6,3.9))).toFixed(3)})`});
+    revealWords(s.wb,lt,4.1,.15,.7,60);css(s.root,{opacity:String(1-P(lt,7.3,7.8))})};
+});
+sfx(.3,'bloom',.5);sfx(4.0,'whoosh',.6);sfx(4.1,'pop',.6);
+
+/* ---------- 2 · Vorstellung (7.6–14.2) ---------- */
+Scene(7.6,14.4,s=>{
+  s.ph=el('div','abs',{left:'140px',top:'190px',width:'860px',height:'645px',borderRadius:'30px',overflow:'hidden',boxShadow:'0 60px 120px -30px rgba(22,33,49,.4)'},s.world);
+  s.im=img(MM+'hero.jpg',{left:0,top:0,width:'860px',height:'645px',objectFit:'cover'},s.ph);
+  s.lb=el('div','abs lbl',{left:'1080px',top:'250px',fontSize:'18px'},s.world,'Keynote Speakerin · KI & Kommunikation');
+  s.t0x=el('div','abs d',{left:'1076px',top:'300px',font:'600 52px ID',color:'#7d756d'},s.world,'Prof. Dr.');
+  s.nm=el('div','abs d',{left:'1072px',top:'360px',width:'800px',font:'700 132px/0.98 ID',color:'var(--navy)',letterSpacing:'-.04em'},s.world);s.wn=words(s.nm,'Miriam<br>Meckel');
+  s.sub=el('div','abs',{left:'1080px',top:'640px',width:'760px',font:'500 30px/1.4 IN',color:'#5f5953'},s.world,'Übersetzt Künstliche Intelligenz in Führung, Kommunikation und Transformation.');
+  s.chips=['Deutsch / Englisch','St. Gallen','30–60 Min.'].map((c,i)=>el('div','abs',{left:px(1080+[0,250,430][i]),top:'790px',padding:'12px 22px',borderRadius:'999px',border:'1.5px solid var(--line)',font:'600 21px IN',color:'var(--navy)',background:'#fff'},s.world,c));
+  s.K=keys([[0,{x:960,y:540,z:.86,ry:-18,rx:6}],[2.0,{x:980,y:530,z:.98,ry:-6,rx:2}],[6.8,{x:1000,y:530,z:1.04,ry:6,rx:0}]]);
+  s.update=lt=>{camera(s,lt,s.K);const q=E.outQ5(P(lt,0,.9));css(s.ph,{opacity:String(clamp(q*2)),transform:`translateZ(${((1-q)*-900).toFixed(0)}px) rotateY(${((1-q)*35).toFixed(1)}deg)`});
+    css(s.im,{transform:`scale(${(1.12-lt*.015).toFixed(4)})`});
+    fadeUp(s.lb,lt,.5);fadeUp(s.t0x,lt,.65);revealWords(s.wn,lt,.75,.16,.7,70);fadeUp(s.sub,lt,1.6);
+    s.chips.forEach((c,i)=>{const p=E.outB(P(lt,2.2+i*.15,2.7+i*.15));css(c,{opacity:String(P(lt,2.2+i*.15,2.35+i*.15)),transform:`scale(${p.toFixed(3)})`})});
+    css(s.root,{opacity:String(P(lt,0,.25))})};
+});
+sfx(7.6,'whoosh',.8);sfx(8.4,'impact',.4);[9.8,9.95,10.1].forEach(t=>sfx(t,'pop',.5));
+
+/* ---------- 3 · Stationen (14.2–27) ---------- */
+const STA=[['2005','Professorin für Corporate Communication','Universität St. Gallen'],['2001','Regierungssprecherin & Staatssekretärin','Nordrhein-Westfalen · 2001–2005'],['2014','Chefredakteurin & Herausgeberin','WirtschaftsWoche · 2014–2019'],['ada','Mitgründerin','ada Learning – Weiterbildung für Zukunftskompetenzen'],['2024','Autorin','„Alles überall auf einmal“ · mit Léa Steinacker']];
+Scene(14.2,27.2,s=>{
+  const X=i=>700+i*1500;
+  s.cards=STA.map(([n,t,d],i)=>{const c=el('div','card',{left:px(X(i)-560),top:'250px',width:'1120px',height:'560px',borderRadius:'34px',background:i===2?'var(--navy)':'#fff',borderColor:i===2?'var(--navy)':'var(--line)'},s.world);
+    el('div','abs lbl',{left:'70px',top:'70px',color:i===2?'var(--copperL)':'var(--copper)'},c,'Station '+(i+1)+' / 5');
+    el('div','abs d',{left:'64px',top:'120px',font:'700 210px/1 ID',color:i===2?'var(--copperL)':'var(--copper)',letterSpacing:'-.05em'},c,n);
+    const tb=el('div','abs',{left:'70px',top:'345px',width:'980px'},c);
+    el('div','d',{font:'700 56px/1.08 ID',color:i===2?'#fff':'var(--navy)',letterSpacing:'-.02em'},tb,t);
+    el('div','',{marginTop:'16px',font:'500 28px IN',color:i===2?'#cfc8bf':'#6f6a64'},tb,d);return c});
+  s.mq=el('div','abs',{left:0,top:'900px',width:'1920px',whiteSpace:'nowrap',font:'700 40px ID',color:'var(--copper)',letterSpacing:'.02em'},s.root,'');
+  s.mq.textContent=('HARVARD  ·  NEW YORK  ·  SINGAPUR  ·  WIEN  ·  NEUCHÂTEL  ·  ST. GALLEN  ·  ').repeat(4);
+  const kk=[[0,{x:X(0),y:530,z:.78,ry:-20,rx:8}]];STA.forEach((_,i)=>{kk.push([.5+i*2.45,{x:X(i),y:530,z:.98,ry:(i%2?6:-6),rx:3}]);kk.push([2.45+i*2.45,{x:X(i)+40,y:530,z:1.02,ry:(i%2?2:-2),rx:2}])});kk.push([13,{x:X(4)+200,y:560,z:.7,ry:12,rx:10}]);
+  s.K=keys(kk);
+  s.update=lt=>{camera(s,lt,s.K);s.cards.forEach((c,i)=>{const t0=.3+i*2.45,q=E.outQ5(P(lt,t0,t0+.6));css(c,{opacity:String(clamp(q*1.5)),transform:`rotateY(${((1-q)*-40).toFixed(1)}deg) translateZ(${((1-q)*-300).toFixed(0)}px)`})});
+    const m=P(lt,11.4,11.8);css(s.mq,{opacity:String(m),transform:`translateX(${(-lt*160).toFixed(0)}px)`});css(s.root,{opacity:String(1-P(lt,12.7,13))})};
+});
+STA.forEach((_,i)=>{sfx(14.2+.3+i*2.45,'whoosh',.7);sfx(14.2+.6+i*2.45,'node',.6)});
+
+/* ---------- 4 · Bühne (27–37) ---------- */
+const STG=[['cointelligenz.jpg','Keynote: Co-IntelligenZ – die Zukunft der Zusammenarbeit zwischen Mensch und KI',0,'50% 20%'],['hero.jpg','Live auf der Bühne',2.3,'50% 40%'],['hinterland.jpg','Impuls: How Artificial Intelligence is Changing Everything · Hinterland of Things',4.4,'50% 50%'],['stage3.jpg','Klare Botschaften – verständlich erklärt',6.5,'50% 30%']];
+Scene(27,37.2,s=>{
+  s.cards=STG.map(([f,cap_,t0,pos],i)=>{const c=el('div','abs',{left:'200px',top:'110px',width:'1520px',height:'855px',borderRadius:'30px',overflow:'hidden',background:'#000',boxShadow:'0 70px 140px -30px rgba(22,33,49,.45)'},s.world);
+    const im=img(MM+f,{left:0,top:0,width:'1520px',height:'855px',objectFit:'cover',objectPosition:pos},c);
+    el('div','abs',{left:0,top:'600px',width:'1520px',height:'255px',background:'linear-gradient(180deg,transparent,rgba(0,0,0,.55))'},c);
+    el('div','abs',{left:'40px',top:'770px',maxWidth:'1300px',padding:'14px 26px',borderRadius:'999px',background:'rgba(255,255,255,.96)',font:'600 24px IN',color:'var(--navy)'},c,cap_);return {c,im,t0}});
+  s.k=el('div','big',{top:'420px',fontSize:'132px',opacity:0},s.world);s.wk=words(s.k,'Orientierung statt<br><em>Technik-Euphorie.</em>');
+  s.K=keys([[0,{z:.9,ry:-8}],[8.6,{z:1.0,ry:8}],[10.2,{z:1.02,ry:0}]]);
+  s.update=lt=>{camera(s,lt,s.K,E.lin);s.cards.forEach(({c,im,t0},i)=>{const q=E.outQ5(P(lt,t0,t0+.55)),out=E.ioC(P(lt,8.4,8.9));
+      css(c,{display:lt>=t0-.05?'block':'none',opacity:String(clamp(q*3)*(1-out)),transform:`translateZ(${((1-q)*800-out*400).toFixed(0)}px) rotateZ(${((rnd(i+2)-.5)*5*q).toFixed(2)}deg) rotateY(${((1-q)*(i%2?18:-18)).toFixed(1)}deg)`});
+      css(im,{transform:`scale(${(1.04+(lt-t0)*.025).toFixed(4)})`})});
+    revealWords(s.wk,lt,8.75,.12,.6,60);css(s.k,{opacity:String(P(lt,8.7,8.8))});css(s.root,{opacity:String(P(lt,0,.2))})};
+});
+STG.forEach(([,,t0])=>sfx(27+t0,'hit',.7));sfx(35.7,'impact',.45);
+
+/* ---------- 5 · Keynotes (37–46.5) ---------- */
+const KN=['KI und Führung verständlich zusammenbringen','Digitale Transformation als Kommunikations&shy;aufgabe gestalten','Alles überall auf einmal: Technologie einordnen'];
+Scene(37,46.8,s=>{
+  s.h=el('div','abs d',{left:'160px',top:'120px',font:'700 64px ID',color:'var(--navy)',letterSpacing:'-.02em'},s.world,'Keynotes <em>für Ihr Event</em>');
+  s.cards=KN.map((t,i)=>{const c=el('div','card',{left:px(160+i*540),top:'240px',width:'500px',height:'440px',borderRadius:'28px',background:i===1?'var(--navy)':'#fff',borderColor:i===1?'var(--navy)':'var(--line)'},s.world);
+    el('div','abs lbl',{left:'44px',top:'44px',color:i===1?'var(--copperL)':'var(--copper)'},c,'Keynote '+(i+1));
+    el('div','abs d',{left:'44px',top:'96px',width:'420px',font:'700 42px/1.12 ID',color:i===1?'#fff':'var(--navy)'},c,t);
+    el('div','abs',{left:'44px',top:'360px',font:'600 20px IN',color:i===1?'var(--copperL)':'var(--copper)'},c,'30–60 Min. · Deutsch / Englisch');return c});
+  s.tg=['Vorstandstagungen','Führungskräfteprogramme','Medien- & Tech-Konferenzen','Zukunft der Arbeit'].map((t,i)=>el('div','abs',{left:px(160+[0,330,700,1100][i]),top:'740px',padding:'14px 26px',borderRadius:'999px',background:'#f6eee6',border:'1px solid #efe1d3',font:'600 23px IN',color:'#7a4a2c'},s.world,t));
+  s.res=el('div','abs d',{left:'160px',top:'850px',font:'600 40px ID',color:'var(--navy)'},s.world);s.wr=words(s.res,'Mehr Orientierung. Bessere Diskussionen. <em>Klare Impulse.</em>');
+  s.K=keys([[0,{x:960,y:540,z:.86,ry:14,rx:6}],[1.8,{x:960,y:520,z:.95,ry:4,rx:2}],[4.4,{x:1000,y:560,z:.98,ry:-4}],[9.8,{x:960,y:560,z:1.03,ry:-8,rx:2}]]);
+  s.update=lt=>{camera(s,lt,s.K);fadeUp(s.h,lt,.2);s.cards.forEach((c,i)=>{const q=E.outQ5(P(lt,.5+i*.3,1.3+i*.3));css(c,{opacity:String(q),transform:`translateY(${(1-q)*90}px) rotateX(${((1-q)*-25).toFixed(1)}deg)`})});
+    s.tg.forEach((c,i)=>{const p=E.outB(P(lt,3.4+i*.18,3.9+i*.18));css(c,{opacity:String(P(lt,3.4+i*.18,3.55+i*.18)),transform:`scale(${p.toFixed(3)})`})});
+    revealWords(s.wr,lt,5.4,.1,.6,30);css(s.root,{opacity:String(P(lt,0,.3)*(1-P(lt,9.4,9.8)))})};
+});
+[37.5,37.8,38.1].forEach(t=>sfx(t,'pop',.55));[40.4,40.6,40.8,41.0].forEach(t=>sfx(t,'tick',.5));
+
+/* ---------- 6 · Profil & Anfrage (46.5–54.2) ---------- */
+Scene(46.5,54.4,s=>{
+  const B=browser(s.world,240,60,MM+'profile.jpg',{url:'speakingstage.com/speaker/miriam-meckel'});s.B=B;
+  s.glow=el('div','abs',{left:'700px',top:'465px',width:'287px',height:'64px',borderRadius:'14px',boxShadow:'0 0 0 5px rgba(167,100,60,.45)',opacity:0},B.layer);
+  s.cur=cursor(B.layer);
+  s.ok=el('div','abs',{left:'560px',top:'420px',width:'800px',padding:'34px 40px',borderRadius:'28px',background:'var(--navy)',color:'#fff',font:'600 34px/1.35 ID',textAlign:'center',opacity:0,boxShadow:'0 40px 90px -20px rgba(22,33,49,.6)'},s.root,'<span style="color:var(--copperL)">✓</span> Anfrage ist unverbindlich<br><span style="font:500 24px IN;color:#d8d2ca">Passung und Verfügbarkeit prüfen wir persönlich – für Ihren Termin.</span>');
+  s.K=keys([[0,{x:960,y:540,z:.86,ry:-18,rx:8}],[2.0,{x:960,y:520,z:.95,ry:-6,rx:3}],[3.6,{x:1080,y:600,z:1.55,ry:0,rx:0}],[4.6,{x:1080,y:600,z:1.62}],[5.2,{x:960,y:540,z:1.0,ry:6}],[7.9,{x:960,y:540,z:.96,ry:10,rx:4}]]);
+  s.update=lt=>{camera(s,lt,s.K);drive(s.cur,lt,[[1.4,1300,900],[3.2,843,497],[4.5,843,497],[5.4,1200,800]],[3.9],[1.4,5.4]);
+    css(s.glow,{opacity:String(P(lt,3.9,4.1)*(1-P(lt,5,5.4)))});const q=E.outB(P(lt,4.6,5.2));css(s.ok,{opacity:String(P(lt,4.6,4.8)),transform:`scale(${q.toFixed(3)})`});
+    css(s.root,{opacity:String(P(lt,0,.3))})};
+});
+sfx(46.6,'swoosh',.8);sfx(50.4,'click');sfx(51.1,'chime',.8);
+
+/* ---------- 7 · Endcard (54–60.6) ---------- */
+Scene(54,60.7,s=>{
+  s.ph=el('div','abs',{left:'200px',top:'170px',width:'560px',height:'746px',borderRadius:'30px',overflow:'hidden',boxShadow:'0 60px 120px -30px rgba(22,33,49,.4)'},s.world);
+  img(MM+'portrait.jpg',{left:0,top:0,width:'560px',height:'746px',objectFit:'cover',objectPosition:'50% 30%'},s.ph);
+  s.t=el('div','abs d',{left:'860px',top:'230px',width:'920px',font:'700 96px/1.0 ID',color:'var(--navy)',letterSpacing:'-.035em'},s.world);s.wt=words(s.t,'Miriam Meckel<br>für Ihr Event <em>anfragen.</em>');
+  s.s=el('div','abs',{left:'864px',top:'470px',width:'860px',font:'500 30px/1.45 IN',color:'#6f6a64'},s.world,'Unverbindlich über SpeakingStage – Honorar und Verfügbarkeit klären wir persönlich.');
+  s.btn=el('div','btn',{left:'864px',top:'600px',width:'640px',height:'96px',fontSize:'30px'},s.world,'Jetzt unverbindlich anfragen →');
+  s.u=el('div','abs',{left:'864px',top:'740px',font:'600 30px IN',color:'var(--navy)'},s.world,'speakingstage.com/speaker/miriam-meckel');
+  s.mk=el('div','abs mark',{left:'864px',top:'820px',width:'44px',height:'48px'},s.world);s.wm=el('div','abs d',{left:'920px',top:'822px',font:'700 40px ID',color:'var(--navy)'},s.world,'SpeakingStage');
+  s.cur=cursor(s.world);
+  s.K=keys([[0,{x:960,y:540,z:.92,ry:-10,rx:3}],[6.6,{x:980,y:540,z:1.0,ry:4,rx:0}]]);
+  s.update=lt=>{camera(s,lt,s.K,E.ioS);const q=E.outQ5(P(lt,0,.8));css(s.ph,{opacity:String(clamp(q*2)),transform:`rotateY(${((1-q)*30).toFixed(1)}deg) translateZ(${((1-q)*-500).toFixed(0)}px)`});
+    revealWords(s.wt,lt,.4,.1,.6,50);fadeUp(s.s,lt,1.2);const b=E.outB(P(lt,1.6,2.2));css(s.btn,{opacity:String(P(lt,1.6,1.75)),transform:`scale(${(b*(1-.04*Math.sin(Math.PI*P(lt,3.2,3.5)))).toFixed(3)})`});
+    fadeUp(s.u,lt,2.1);fadeUp(s.mk,lt,2.4);fadeUp(s.wm,lt,2.45);drive(s.cur,lt,[[2.4,1700,950],[3.2,1180,650],[4.4,1180,650],[5.2,1500,900]],[3.35],[2.4,5.2]);
+    css(s.root,{opacity:String(P(lt,0,.3)*(1-P(lt,6.2,6.6)))})};
+});
+sfx(54.1,'bloom',.7);sfx(57.35,'click');
+
+cap(8.2,13.8,'Professorin für Corporate Communication · <em>Universität St. Gallen</em>');
+cap(38.6,42.6,'Keynotes, die <em>technologische Zukunft</em> mit Führung verbinden.');
+cap(48.6,50.2,'Profil, Videos, Themen – <em>auf SpeakingStage.</em>');
+buildCaps();
+
+/* ---------- Render ---------- */
+function render(t){t=clamp(t,0,DUR);for(const s of SC){const on=t>=s.t0&&t<s.t1;css(s.root,{display:on?'block':'none'});if(on)s.update(t-s.t0,t)}drawCaps(t)}
+window.SFX=EV.sort((a,b)=>a.t-b.t);window.DUR=DUR;
+async function settle(){await Promise.all([...document.images].filter(i=>!i.complete).map(i=>new Promise(r=>{i.onload=i.onerror=r})));await Promise.all([...vp.querySelectorAll('img')].filter(i=>i.offsetParent!==null).map(i=>i.decode().catch(()=>{})))}
+window.renderAt=async t=>{render(t);await settle();await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))};
+function fitView(){if(RENDER)return;const s=Math.min(innerWidth/W,innerHeight/H);vp.style.transform=`scale(${s})`;vp.parentElement.style.cssText+=`;width:${W*s}px;height:${H*s}px`;document.getElementById('fit').style.cssText='position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#fff'}
+addEventListener('resize',fitView);
+const aud=document.getElementById('aud');let playing=false;
+function loop(){if(!playing)return;render(aud.currentTime);if(aud.ended){playing=false;return}requestAnimationFrame(loop)}
+document.getElementById('start').onclick=()=>{document.getElementById('start').style.display='none';playing=true;aud.currentTime=0;aud.play();loop()};
+addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();if(playing){playing=false;aud.pause()}else{playing=true;aud.play();loop()}}});
+document.fonts.ready.then(()=>{fitView();if(RENDER||STILL!==null){document.getElementById('start').style.display='none'}render(STILL??0);window.__ready=true});
+</script>
+</body>
+</html>

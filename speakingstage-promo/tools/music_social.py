@@ -14,6 +14,7 @@ B = 60 / BPM
 
 def main(sfx_path, cuts_path, out):
     info = json.load(open(cuts_path)); dur = info['dur'] + .8; cuts = info['cuts']
+    INTRO = info.get('intro', 2.9); DROP = info.get('drop', 12.2)
     n = int(dur * SR)
     mus = np.zeros((n, 2)); fx = np.zeros((n, 2)); rev = np.zeros(n)
 
@@ -30,8 +31,8 @@ def main(sfx_path, cuts_path, out):
     bar = 4 * B
     for bt in range(int(dur / B)):
         t = bt * B; root, ch = prog[int(t // (2 * bar)) % 4]
-        intro = t < 2.9
-        drop = 12.2 <= t
+        intro = t < INTRO
+        drop = DROP <= t
         if not intro:
             put(M.kick(.85 if drop else .6), t)
             if bt % 2 == 1 and drop: put(M.clap(.9), t, r=.25)
@@ -46,11 +47,11 @@ def main(sfx_path, cuts_path, out):
         if drop and bt % 4 == 0:
             put(M.piano(NOTE(ch[(bt // 4) % 4] + 24), 1.3, .45), t, pan=.4, r=.4)
     # Steigerungen und Akzente
-    put(M.noise_sweep(2.6, 300, 8000, .8, 'rise'), 9.6, r=.2)
-    put(M.noise_sweep(2.0, 300, 8000, .7, 'rise'), 50.3, r=.2)
+    for rt in info.get('rises', [9.6, 50.3]):
+        put(M.noise_sweep(2.4, 300, 8000, .75, 'rise'), rt, r=.2)
     for c in cuts[1:]:
         put(M.noise_sweep(.35, 1500, 9000, .35, 'bell'), c - .18, bus=fx)
-    for c in (12.2, 52.1):
+    for c in info.get('impacts', [12.2, 52.1]):
         put(M.sfx_impact(.7), c, bus=fx); put(M.sfx_bloom(.6), c, bus=fx, r=.3)
     for e in json.load(open(sfx_path)):
         f = M.SFX.get(e['type'])
