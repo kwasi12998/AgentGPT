@@ -20,3 +20,7 @@
 
 Medien: speakingstage.com (Screens, Speaker-Fotos, Vorschaubilder der Profil-Videos), lucylarbi.de (Bühnenvideo).
 Aussagen orientieren sich an der Website und den Vorgaben in speakingstage.com/llms.txt (keine Fixpreise, keine Sofortbuchung, keine Verfügbarkeitsgarantie).
+
+## LinkedIn-Schnitt (60 s)
+- `speakingstage-linkedin-60s.mp4` – 60,6 s, 1920×1080, schnelle Neu-Montage aus der Engine (Tempo 1,15–3×, harte Schnitte), eigene 124-BPM-Musik, Voiceover (ElevenLabs v4, Stimme „sarah“).
+- Werkzeuge: `tools/social.py` (Schnittliste → Frame-Zeiten), `tools/render_times.js`, `tools/music_social.py`, `tools/voiceover_social.json`.
