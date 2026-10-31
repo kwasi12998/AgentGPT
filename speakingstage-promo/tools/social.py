@@ -4,7 +4,7 @@ Jedes Segment ist (Quelle von, Quelle bis, Tempo). Daraus entstehen:
 - times.json: Quellzeit pro Ausgabe-Frame (30 fps) für den Neu-Render
 - sfx_social.json: Sound-Ereignisse der Engine auf die neue Zeitachse gelegt
 - cuts.json: Schnittpunkte (für Akzente in der Musik)
-Aufruf: python3 social.py sfx.json outdir
+Aufruf: python3 social.py sfx.json outdir [edit.json]
 """
 import json, sys
 
@@ -30,10 +30,11 @@ EDIT = [
 ]
 
 
-def build(sfx_path, outdir):
+def build(sfx_path, outdir, edit_path=None):
     sfx = json.load(open(sfx_path))
+    edit = json.load(open(edit_path)) if edit_path else EDIT
     times, cuts, ev, o = [], [], [], 0.0
-    for a, b, s in EDIT:
+    for a, b, s in edit:
         cuts.append(round(o, 3))
         n = round((b - a) / s * FPS)
         times += [round(a + k / FPS * s, 4) for k in range(n)]
@@ -50,7 +51,7 @@ def build(sfx_path, outdir):
     json.dump(sorted(ev, key=lambda e: e['t']), open(f'{outdir}/sfx_social.json', 'w'))
     json.dump({'cuts': cuts, 'dur': round(o, 3)}, open(f'{outdir}/cuts.json', 'w'))
     print('Dauer', round(o, 2), 's,', len(times), 'Frames')
-    for (a, b, s), c in zip(EDIT, cuts): print(f'{c:6.2f}  Quelle {a:6.1f}–{b:6.1f}  x{s}')
+    for (a, b, s), c in zip(edit, cuts): print(f'{c:6.2f}  Quelle {a:6.1f}–{b:6.1f}  x{s}')
 
 
 if __name__ == '__main__':
