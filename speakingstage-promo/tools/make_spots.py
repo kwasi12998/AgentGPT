@@ -196,7 +196,7 @@ SPOTS = {
  'jochen-schweizer': (68, dict(
     name='Jochen Schweizer', first='Jochen', last='Schweizer', url='jochen-schweizer',
     qa='Mut heißt nicht,<br>Risiken zu <em>ignorieren.</em>', qb='Sondern sie zu<br><em>verstehen.</em>',
-    intro='stage1.jpg', label='Keynote Speaker · Mut & Unternehmertum', small='Unternehmer, Autor & Ex-Stuntman',
+    intro='stage1.jpg', label='Keynote Speaker · Mut & Unternehmertum', small='Unternehmer & Ex-Stuntman',
     sub='Risiken bewusst abwägen, mutig entscheiden und nach Rückschlägen unternehmerisch neu starten.',
     chips=['Deutsch / Englisch', 'Taufkirchen', '30–60 Min.'], chippos='[0,250,450]',
     sta=[['80er', 'Kajak, Film & Stunts', 'Kajakfahrer, Filmproduzent und Stuntman'], ['1985', 'Erstes Unternehmen', 'Kayak Sports Productions'], ['1987', 'Stuntdouble', 'Sprung von der Staumauer im Verzascatal'],
@@ -219,7 +219,7 @@ SPOTS = {
  'caroline-bosbach': (68, dict(
     name='Caroline Bosbach', first='Caroline', last='Bosbach', url='caroline-bosbach',
     qa='Wie bleibt Deutschland<br><em>zukunftsfähig?</em>', qb='Zeit für<br><em>Mut.</em>',
-    intro='stage1.jpg', label='Keynote Speakerin · Politik & Wirtschaft', small='Mitglied des Deutschen Bundestages',
+    intro='stage1.jpg', label='Keynote Speakerin · Politik & Wirtschaft', small='Bundestagsabgeordnete',
     sub='Generationengerechtigkeit, Standort und politischer Mut – klar eingeordnet für Wirtschaft und Gesellschaft.',
     chips=['Deutsch / Englisch', 'Bergisch Gladbach', '30–60 Min.'], chippos='[0,250,520]',
     sta=[['2025', 'Deutscher Bundestag', 'Abgeordnete für den Rheinisch-Bergischen Kreis'], ['01', '„Schwarz auf Grün“', 'Buch über Nachhaltigkeit, Freiheit und Wachstum'], ['02', '„Zeit für Mut“', 'Buch über politische Kultur und Generationengerechtigkeit'],
@@ -241,8 +241,8 @@ SPOTS = {
            [43.1, "Für Mittelstand, Industrie, Kammern, Verbände und Unternehmen."]], 'Caroline Bosbach'))),
  'sandra-navidi': (68, dict(
     name='Sandra Navidi', first='Sandra', last='Navidi', url='sandra-navidi',
-    qa='Was passiert an der<br><em>Wall Street?</em>', qb='Und was heißt das<br>für <em>Ihr Unternehmen?</em>',
-    intro='nyse.jpg', label='Keynote Speakerin · USA & Finanzmärkte', small='Gründerin & CEO von BeyondGlobal',
+    qa='Was passiert an der<br><em>Wall Street?</em>', qb='Und was bedeutet<br>das für <em>Sie?</em>',
+    intro='nyse.jpg', label='Keynote Speakerin · USA & Finanzmärkte', small='Gründerin von BeyondGlobal',
     sub='Finanzmärkte, USA und geopolitische Risiken – mit direktem Blick aus New York.',
     chips=['Deutsch / Englisch', 'New York', '30–60 Min.'], chippos='[0,250,420]',
     sta=[['01', 'Juristin', 'Studium in Köln, Master of Laws in New York'], ['02', 'Rechtsanwältin', 'Zugelassen in Deutschland und im Bundesstaat New York'], ['03', 'Investment & Banking', 'General Counsel einer Investmentgesellschaft'],
@@ -254,7 +254,7 @@ SPOTS = {
     knsub='30–60 Min. · Deutsch / Englisch', tags=['Geschäftsführung', 'Finanzentscheider', 'Investoren', 'Familienunternehmen'], tagpos='[0,300,610,830]',
     res='Märkte verstehen. <em>Risiken klarer einschätzen.</em>', endimg=['portrait.jpg', '50% 25%'],
     cap1='USA- und Finanzexpertin · <em>direkt aus New York</em>', cap2='Keynotes, die <em>Märkte und Macht</em> einordnen.',
-    vo=vo([[0.3, "Was passiert an der Wall Street?"], [4.1, "Und was bedeutet das für Ihr Unternehmen?"],
+    vo=vo([[0.3, "Was passiert an der Wall Street?"], [4.1, "Und was bedeutet das für Sie?"],
            [7.9, "Sandra Navidi erklärt Finanzmärkte, die USA und geopolitische Risiken – mit direktem Blick aus New York."],
            [14.4, "Juristin, zugelassen in Deutschland und New York, mit Erfahrung im Investmentbanking."],
            [19.6, "Sie arbeitete eng mit dem Ökonomen Nouriel Roubini – heute berät sie als Gründerin von BeyondGlobal."],
