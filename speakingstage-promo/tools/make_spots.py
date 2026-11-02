@@ -1716,7 +1716,7 @@ SPOTS = {
     cap1='America’s-Cup-Erfahrung und <em>Keynote Speaker</em>', cap2='Keynotes über <em>Teamleistung.</em>',
     vo=vo([[0.3, "Working Together Wins."], [4.1, "Teamleistung bei wechselndem Wind."],
            [7.9, "Dominik Neidhart bringt America's-Cup-Erfahrung auf die Bühne."],
-           [14.4, "Er zeigt, was Unternehmen aus America's-Cup-Situationen über Kommunikation und Vorbereitung lernen."],
+           [14.4, "Er zeigt, was Unternehmen aus America's-Cup-Situationen lernen können."],
            [19.6, "Kompetenz, Vertrauen und Kooperation machen aus Spezialisten ein Spitzenteam."],
            [27.3, "Führung funktioniert nur, wenn alle ihre Rolle und das Ziel verstehen."],
            [34.0, "Vertrauen statt Mikromanagement."],
