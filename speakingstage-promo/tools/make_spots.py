@@ -37,6 +37,7 @@ T = dict(
 
 
 def spot(slug, d, dy):
+    bx, bw = d.get('bx', 843), d.get('bw', 287)
     r = {
         'title': f"<title>{d['name']} – Keynote</title>", 'start': f"<b>{d['name']}</b>", 'music': f'src="assets/{slug}/music.m4a"',
         'mm': f"const MM='assets/{slug}/';", 'comment': f"   {d['name']} · Speaker-Spot (60 s)",
@@ -51,9 +52,9 @@ def spot(slug, d, dy):
         'big': f"s.wk=words(s.k,'{d['big']}');", 'kn': 'const KN=' + json.dumps(d['kn'], ensure_ascii=False).replace('"', "'") + ';',
         'knsub': f"'{d['knsub']}'", 'tags': json.dumps(d['tags'], ensure_ascii=False).replace('"', "'"), 'tagpos': f"{d['tagpos']}[i]",
         'res': f"s.wr=words(s.res,'{d['res']}');", 'url1': f"{{url:'speakingstage.com/speaker/{d['url']}'}}",
-        'glow': f"s.glow=el('div','abs',{{left:'700px',top:'{465+dy}px'",
-        'curpath': f"[[1.4,1300,900],[3.2,843,{497+dy}],[4.5,843,{497+dy}],[5.4,1200,{800+dy}]]",
-        'camzoom': f"[3.6,{{x:1080,y:{600+dy},z:1.55,ry:0,rx:0}}],[4.6,{{x:1080,y:{600+dy},z:1.62}}]",
+        'glow': f"s.glow=el('div','abs',{{left:'{round(bx-bw/2)}px',top:'{465+dy}px'",
+        'curpath': f"[[1.4,1300,900],[3.2,{bx},{497+dy}],[4.5,{bx},{497+dy}],[5.4,1200,{800+dy}]]",
+        'camzoom': f"[3.6,{{x:{bx+237},y:{600+dy},z:1.55,ry:0,rx:0}}],[4.6,{{x:{bx+237},y:{600+dy},z:1.62}}]",
         'end': f"s.wt=words(s.t,'{d['name']}<br>für Ihr Event <em>anfragen.</em>');", 'url2': f"'speakingstage.com/speaker/{d['url']}');",
         'endimg': f"img(MM+'{d['endimg'][0]}',{{left:0,top:0,width:'560px',height:'746px',objectFit:'cover',objectPosition:'{d['endimg'][1]}'}},s.ph);",
         'cap1': f"cap(8.2,13.8,'{d['cap1']}');", 'cap2': f"cap(38.6,42.6,'{d['cap2']}');",
@@ -62,6 +63,9 @@ def spot(slug, d, dy):
     for k, old in T.items():
         assert old in s, k
         s = s.replace(old, r[k])
+    if bw != 287:
+        assert "width:'287px',height:'64px',borderRadius:'14px'" in s
+        s = s.replace("width:'287px',height:'64px',borderRadius:'14px'", f"width:'{bw}px',height:'64px',borderRadius:'14px'")
     if d.get('credit'):
         s = s.replace("  s.cur=cursor(s.world);\n  s.K=keys([[0,{x:960,y:540,z:.92,ry:-10,rx:3}],[6.6,{x:980,y:540,z:1.0,ry:4,rx:0}]]);",
                       f"  el('div','abs',{{left:'200px',top:'940px',font:'500 16px IN',color:'#9a948d'}},s.world,'{d['credit']}');\n  s.cur=cursor(s.world);\n  s.K=keys([[0,{{x:960,y:540,z:.92,ry:-10,rx:3}}],[6.6,{{x:980,y:540,z:1.0,ry:4,rx:0}}]]);")
@@ -285,6 +289,29 @@ SPOTS = {
            [34.0, "Echt, bewegend und nah am Publikum."],
            [38.6, "Ihre Keynotes verbinden Geschichte, Musik und Mut."],
            [43.1, "Für Teams, Führungskräfte, Mitarbeitende und Kulturprogramme."]], 'Patricia Kelly'))),
+ 'anders-indset': (61, dict(
+    name='Anders Indset', first='Anders', last='Indset', url='anders-indset', bx=998, bw=380,
+    qa='Wem gehört<br>die <em>Zukunft?</em>', qb='Dem Menschen – oder<br>der <em>Maschine?</em>',
+    intro='stage1.jpg', label='Keynote Speaker · KI & Leadership', small='Wirtschaftsphilosoph & Autor',
+    sub='Philosophie trifft Künstliche Intelligenz – Fortschritt mit Verantwortung und menschlicher Handlungsfähigkeit.',
+    chips=['Deutsch / Englisch', 'Frankfurt am Main', '30–60 Min.'], chippos='[0,250,510]',
+    sta=[['2012', 'Weiterbildungsunternehmen', 'Heute: Global Institute of Leadership and Technology'], ['2018', 'Thinkers50 Radar', 'Einer der einflussreichsten Zukunftsdenker'], ['7', 'Spiegel-Bestsellerliste', '„Quantenwirtschaft“ · Platz 7 · 2019'],
+         ['Invest', 'Deep-Tech-Investor', 'Neue Technologien früh im Blick'], ['2026', 'The Quantum Economy', 'Neues Buch zu Quantentechnologie und Wirtschaft']],
+    stalabel="'Meilenstein · '+(i+1)+' / 5'", marquee='KÜNSTLICHE INTELLIGENZ  ·  LEADERSHIP  ·  WIKINGER KODEX  ·  QUANTUM ECONOMY  ·  HUMAN AGENCY  ·  ',
+    stg=[['sef.jpg', 'Closing Keynote · Swiss Economic Forum 2024', 0, '50% 40%'], ['stage1.jpg', 'Live auf der Bühne', 2.3, '50% 40%'], ['hands.jpg', 'Energiegeladen, provokant, tiefgründig', 4.4, '50% 35%'], ['portrait2.jpg', 'Wirtschaftsphilosoph, Autor, Unternehmer', 6.5, '50% 30%']],
+    big='Fragen, die<br><em>weiterdenken lassen.</em>',
+    kn=['KI gestalten und menschliche Handlungsfähigkeit bewahren', 'Mit dem Wikinger Kodex Leistung ermöglichen', 'The Quantum Economy menschlich weiterdenken'],
+    knsub='30–60 Min. · Deutsch / Englisch', tags=['Strategiekonferenzen', 'Vorstandsrunden', 'Tech-Events', 'Führungskräfte'], tagpos='[0,320,575,790]',
+    res='Abstand vom Tagesgeschäft. <em>Mut zum Weiterdenken.</em>', endimg=['portrait.jpg', '50% 25%'],
+    cap1='Wirtschaftsphilosoph, Autor und <em>Deep-Tech-Investor</em>', cap2='Keynotes, die <em>Technologie menschlich</em> denken.',
+    vo=vo([[0.3, "Wem gehört die Zukunft?"], [4.1, "Dem Menschen – oder der Maschine?"],
+           [7.9, "Anders Indset verbindet Philosophie mit den großen Technologiefragen unserer Zeit."],
+           [14.4, "Der gebürtige Norweger ist Autor, Unternehmer und Deep-Tech-Investor."],
+           [19.6, "Spiegel-Bestseller, Thinkers-Fifty-Radar – und neu: The Quantum Economy."],
+           [27.3, "Er zeigt, wie Führungskräfte Künstliche Intelligenz nutzen – ohne Verantwortung an Maschinen abzugeben."],
+           [34.0, "Energiegeladen, provokant und tiefgründig."],
+           [38.6, "Seine Keynotes verbinden Technologie mit Verantwortung."],
+           [43.1, "Für Strategiekonferenzen, Vorstandsrunden, Tech-Events und Führungskräfte."]], 'Anders Indset'))),
 }
 
 if __name__ == '__main__':
