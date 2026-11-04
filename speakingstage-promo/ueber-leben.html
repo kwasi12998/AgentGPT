@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Über Leben – Buchvideo</title>
+<style>
+  @font-face{font-family:IN;font-weight:500;src:url(assets/fonts/Inter-Medium.otf)}
+  @font-face{font-family:IN;font-weight:600;src:url(assets/fonts/Inter-SemiBold.otf)}
+  @font-face{font-family:ID;font-weight:500;src:url(assets/fonts/InterDisplay-Medium.otf)}
+  @font-face{font-family:ID;font-weight:600;src:url(assets/fonts/InterDisplay-SemiBold.otf)}
+  @font-face{font-family:ID;font-weight:700;src:url(assets/fonts/InterDisplay-Bold.otf)}
+  :root{--navy:#162131;--ink:#1d2533;--copper:#a7643c;--copperD:#8c5130;--copperL:#d9a074;--cream:#f7f3ee;--sand:#f3ece4;--line:#ebe3d9;--muted:#6f6a64}
+  html,body{margin:0;background:#fff;overflow:hidden}
+  #fit{position:fixed;inset:0;display:grid;place-items:center;background:#fff}
+  #vp{position:relative;width:1080px;height:1920px;overflow:hidden;background:#fff;font-family:IN,Inter,system-ui,sans-serif;color:var(--ink);transform-origin:0 0}
+  .scene{position:absolute;inset:0;perspective:2400px;perspective-origin:540px 960px;overflow:hidden;display:none}
+  .world{position:absolute;left:0;top:0;width:1080px;height:1920px;transform-style:preserve-3d;transform-origin:0 0}
+  .abs{position:absolute}
+  .d{font-family:ID,Inter,system-ui,sans-serif}
+  .card{position:absolute;background:#fff;border:1px solid var(--line);border-radius:30px;box-shadow:0 40px 90px -30px rgba(22,33,49,.25),0 8px 22px rgba(22,33,49,.06)}
+  em{font-style:normal;color:var(--copper)}
+  .dk em{color:var(--copperL)}
+  .big{position:absolute;left:0;width:1080px;text-align:center;font:700 120px/1.02 ID;color:var(--navy);letter-spacing:-.035em}
+  .w{display:inline-block;will-change:transform,opacity}
+  .lbl{font:600 20px IN;letter-spacing:.16em;color:var(--copper);text-transform:uppercase}
+  .num{font-variant-numeric:tabular-nums}
+  .cur{position:absolute;left:0;top:0;width:44px;height:44px;z-index:50;filter:drop-shadow(0 6px 10px rgba(22,33,49,.3))}
+  .rip{position:absolute;border-radius:50%;border:3px solid var(--copper);z-index:49;opacity:0;pointer-events:none}
+  .btn{position:absolute;background:var(--copper);color:#fff;border-radius:999px;font:600 32px IN;display:flex;align-items:center;justify-content:center;gap:12px;box-shadow:0 14px 30px -10px rgba(167,100,60,.6)}
+  .mark{background:var(--navy);-webkit-mask:url(assets/ui/mark.png) center/contain no-repeat;mask:url(assets/ui/mark.png) center/contain no-repeat}
+  .frame{position:absolute;border-radius:30px;overflow:hidden;background:#000;box-shadow:0 60px 120px -30px rgba(22,33,49,.45)}
+  .tag{position:absolute;padding:10px 20px;border-radius:999px;background:rgba(255,255,255,.95);font:600 20px IN;color:var(--navy);white-space:nowrap}
+  .tag i{font-style:normal;color:var(--copper);margin-right:8px}
+  .sub{position:absolute;left:540px;top:1655px;max-width:900px;transform:translate(-50%,-50%);padding:18px 30px;border-radius:22px;background:rgba(255,255,255,.97);box-shadow:0 18px 44px -16px rgba(22,33,49,.35);border:1px solid var(--line);font:600 40px/1.28 ID;color:var(--navy);text-align:center;letter-spacing:-.01em;width:max-content;opacity:0}
+  .src{position:absolute;left:60px;width:960px;top:1838px;text-align:center;font:500 21px/1.3 IN;color:#8a837b;opacity:0}
+  .src.dark{color:#8f99a8}
+  #start{position:fixed;inset:0;display:grid;place-content:center;gap:16px;text-align:center;background:#fff;cursor:pointer;z-index:9;font-family:ID,system-ui}
+  #start b{font:700 56px ID;color:var(--navy)} #start span{font:600 16px IN;letter-spacing:.2em;color:var(--copper)}
+  #start i{justify-self:center;width:84px;height:84px;border-radius:50%;background:var(--copper);display:grid;place-items:center;color:#fff;font-style:normal;font-size:30px}
+  /* Ersatz-Cover, solange keine Cover-Datei hinterlegt ist */
+  .book{position:absolute;border-radius:6px 16px 16px 6px;overflow:hidden;background:linear-gradient(135deg,#1f2d42,#162131 55%,#0f1724);box-shadow:0 70px 120px -30px rgba(22,33,49,.55),0 10px 30px rgba(22,33,49,.2)}
+  .book::before{content:'';position:absolute;left:0;top:0;bottom:0;width:22px;background:linear-gradient(90deg,rgba(0,0,0,.35),rgba(255,255,255,.08) 60%,transparent)}
+  .book img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+</style>
+</head>
+<body>
+<div id="fit"><div id="vp"></div></div>
+<div id="start"><span>SPEAKINGSTAGE</span><b>Über Leben</b><i>▶</i><span>MIT TON · LEERTASTE = PAUSE</span></div>
+<audio id="aud" src="assets/ueber-leben/mix.m4a" preload="auto"></audio>
+<script>
+/* ==================================================================
+   „Über Leben“ · Meckel & Steinacker · Buchvideo 9:16 (85 s)
+   DOM + CSS-3D. render(t) ist eine reine Funktion der Zeit.
+   ?render=1 → Export-Modus (Playwright), ?t=… → Standbild
+   ================================================================== */
+const W=1080,H=1920,FPS=30,DUR=85.0;
+const Q=new URLSearchParams(location.search),RENDER=Q.has('render'),STILL=Q.has('t')?+Q.get('t'):null;
+const vp=document.getElementById('vp');
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x)),lerp=(a,b,t)=>a+(b-a)*t,P=(t,a,b)=>clamp((t-a)/(b-a));
+const rnd=n=>{const s=Math.sin(n*127.1+311.7)*43758.5453;return s-Math.floor(s)};
+const E={lin:x=>x,outC:x=>1-Math.pow(1-x,3),outQ5:x=>1-Math.pow(1-x,5),ioC:x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2,
+  io5:x=>x<.5?16*x*x*x*x*x:1-Math.pow(-2*x+2,5)/2,outX:x=>x>=1?1:1-Math.pow(2,-10*x),
+  outB:x=>{const s=1.5;return 1+(s+1)*Math.pow(x-1,3)+s*Math.pow(x-1,2)},ioS:x=>x*x*(3-2*x)};
+
+/* ---------- DOM-Helfer ---------- */
+function el(tag,cls,style,parent,html){const e=document.createElement(tag);if(cls)e.className=cls;if(style)Object.assign(e.style,style);if(html!=null)e.innerHTML=html;(parent||vp).appendChild(e);return e}
+const px=v=>v+'px';
+function css(e,o){const s=e._s||(e._s={});for(const k in o){const v=o[k];if(s[k]!==v){e.style[k]=v;s[k]=v}}}
+function img(src,style,parent){const i=el('img','abs',style,parent);i.src=src;i.decoding='sync';return i}
+
+/* ---------- Sounddesign-Ereignisse (werden für den Musik-Mix exportiert) ---------- */
+const EV=[];const sfx=(t,type,v=1)=>EV.push({t:+t.toFixed(3),type,v});
+function typeSfx(t0,str,cps){for(let i=0;i<str.length;i++)if(str[i]!==' '||i%3===0)sfx(t0+i/cps,'key',.6+rnd(i)*.4)}
+
+/* ---------- Szenen & Kamera ---------- */
+const SC=[];
+function Scene(t0,t1,build,o={}){const root=el('div','scene',{},vp);const world=el('div','world',{},root);const s={t0,t1,root,world,fi:o.fi||0,fo:o.fo||0};build(s);SC.push(s);return s}
+function keys(list){const out=[];let prev={x:540,y:960,z:1,rx:0,ry:0,rz:0};for(const [t,k] of list){prev={...prev,...k};out.push([t,prev])}return out}
+function interp(t,K,ease=E.io5){if(t<=K[0][0])return K[0][1];for(let i=0;i<K.length-1;i++){const[a,A]=K[i],[b,B]=K[i+1];if(t<b){const p=ease(P(t,a,b)),o={};for(const k in A)o[k]=lerp(A[k],B[k],p);return o}}return K[K.length-1][1]}
+// Kamera auf die Welt anwenden – inklusive Bewegungsunschärfe aus der Geschwindigkeit
+function camera(s,lt,K,ease){const c=interp(lt,K,ease),c2=interp(lt-1/FPS,K,ease);
+  const v=Math.hypot((c.x-c2.x)*c.z,(c.y-c2.y)*c.z)*FPS+Math.abs(c.ry-c2.ry)*FPS*14+Math.abs(c.z-c2.z)*FPS*700;
+  css(s.world,{transform:`translate3d(540px,960px,0) rotateX(${c.rx.toFixed(3)}deg) rotateY(${c.ry.toFixed(3)}deg) rotateZ(${c.rz.toFixed(3)}deg) scale(${c.z.toFixed(4)}) translate3d(${(-c.x).toFixed(2)}px,${(-c.y).toFixed(2)}px,0)`,
+    filter:v>900?`blur(${Math.min(14,(v-900)/650).toFixed(1)}px)`:'none'});return c}
+
+/* ---------- Bausteine ---------- */
+function browser(p,x,y,src,{w=1440,h=900,url='speakingstage.com'}={}){
+  const r=el('div','bw',{left:px(x),top:px(y),width:px(w),height:px(h+48)},p);
+  el('div','bwbar',{},r,`<i></i><i></i><i></i><span class="bwurl">🔒&nbsp; ${url}</span>`);
+  const view=el('div','bwview',{height:px(h)},r);const layer=el('div','layer',{},view);
+  const im=src?img(src,{left:0,top:0,width:px(w)},layer):null;return {r,view,layer,im,x,y}}
+const CURSVG=`<svg width="40" height="40" viewBox="0 0 24 24"><path d="M4.5 2.5l14.5 9-6.3 1.3 3.6 7.1-2.8 1.4-3.6-7.2-5.4 3.9z" fill="#162131" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
+function cursor(p){return {c:el('div','cur',{opacity:0},p,CURSVG),r:el('div','rip',{},p)}}
+// Pfad: [[t,x,y],...], Klicks: [t,...]  (lokale Zeiten)
+function drive(cur,lt,path,clicks=[],vis=[0,1e9]){
+  const K=keys(path.map(([t,x,y])=>[t,{x,y}]));const c=interp(lt,K,E.ioC);
+  let sc=1,last=null;for(const ct of clicks){if(lt>=ct-.12&&lt<ct+.18)sc=lt<ct?lerp(1,.78,P(lt,ct-.12,ct)):lerp(.78,1,P(lt,ct,ct+.18));if(lt>=ct)last=ct}
+  css(cur.c,{opacity:String(clamp(Math.min((lt-vis[0])/.25,(vis[1]-lt)/.25))),transform:`translate(${c.x-6}px,${c.y-4}px) scale(${sc})`});
+  if(last!=null&&lt-last<.7){const q=E.outC(P(lt,last,last+.7)),r=12+q*70;css(cur.r,{opacity:String(1-q),left:px(c.x-r),top:px(c.y-r),width:px(r*2),height:px(r*2)})}else css(cur.r,{opacity:'0'});
+  return c}
+const typed=(str,lt,t0,cps)=>str.slice(0,clamp(Math.floor((lt-t0)*cps),0,str.length));
+const caretOn=(lt,t0,t1)=>lt>=t0&&(lt<t1+.05||Math.floor(lt*2.2)%2===0);
+// Wort-für-Wort-Reveal in einem Element
+function words(e,html){html=html.replace(/<em>(.*?)<\/em>/g,(m,x)=>x.split(' ').map(w=>`<em>${w}</em>`).join(' '));
+  e.innerHTML=html.split(/(<br>|\s+)/).map(w=>w==='<br>'?'<br>':/^\s*$/.test(w)?w:`<span class="w">${w}</span>`).join('');return [...e.querySelectorAll('.w')]}
+function revealWords(ws,lt,t0,step=.09,dur=.55,dy=40){ws.forEach((w,i)=>{const p=E.outQ5(P(lt,t0+i*step,t0+i*step+dur));css(w,{opacity:String(p),transform:`translateY(${(1-p)*dy}px)`,filter:p<1?`blur(${((1-p)*10).toFixed(1)}px)`:'none'})})}
+function fadeUp(e,lt,t0,t1=1e9,dy=30,dur=.55){const a=E.outQ5(P(lt,t0,t0+dur)),b=E.ioC(P(lt,t1-.4,t1)),o=a*(1-b);css(e,{opacity:String(o),transform:`translateY(${((1-a)*dy-b*dy*.6).toFixed(1)}px)`,filter:o<.99?`blur(${((1-o)*8).toFixed(1)}px)`:'none'})}
+
+
+
+/* ---------- Zusatz-Helfer ---------- */
+const UL='assets/ueber-leben/';
+const COVER_SRC=null; // sobald vorhanden: UL+'cover.jpg'
+const fmt=n=>Math.round(n).toLocaleString('de-DE');
+const SVGNS='http://www.w3.org/2000/svg';
+function svg(parent,style,w,h){const e=document.createElementNS(SVGNS,'svg');e.setAttribute('width',w);e.setAttribute('height',h);e.setAttribute('viewBox',`0 0 ${w} ${h}`);e.classList.add('abs');Object.assign(e.style,style);parent.appendChild(e);return e}
+function sv(parent,tag,attrs){const e=document.createElementNS(SVGNS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);parent.appendChild(e);return e}
+function drawPath(p,q){if(p._len==null){p._len=p.getTotalLength();p.style.strokeDasharray=p._len}css(p,{strokeDashoffset:String((p._len*(1-q)).toFixed(1))})}
+function pop(e,lt,t0,dur=.5){const p=E.outB(P(lt,t0,t0+dur));css(e,{opacity:String(P(lt,t0,t0+dur*.3)),transform:`scale(${p.toFixed(3)})`})}
+function book(parent,style){const b=el('div','book',style,parent);
+  if(COVER_SRC){img(COVER_SRC,{left:0,top:0},b)}else{
+    el('div','abs',{left:'60px',right:'40px',top:'70px',font:'600 24px IN',letterSpacing:'.12em',color:'#d8d2ca',textTransform:'uppercase'},b,'Miriam Meckel<br>Léa Steinacker');
+    el('div','abs d',{left:'56px',right:'30px',top:'300px',font:'700 132px/.92 ID',color:'var(--copperL)',letterSpacing:'-.04em'},b,'Über<br>Leben');
+    el('div','abs',{left:'60px',right:'50px',bottom:'80px',font:'500 27px/1.35 IN',color:'#e9e4dd'},b,'Ein Manifest für den Menschen in Zeiten von Superintelligenz')}
+  return b}
+
+/* ---------- Untertitel & Quellen (Bildschirm-Ebene) ---------- */
+// Sprechtext: [Start, Dauer, [[Anzeige, gesprochen?], …]] – Dauer = gemessene Länge der Sprachaufnahme
+const VO=[
+ [3.5,6.70,[['Das Wort ist in der Politik angekommen.'],['Fachleute sagen: Heutige Modelle sind davon noch weit entfernt.']]],
+ [10.6,2.65,[['Die Folgen spürt die Arbeitswelt schon heute.']]],
+ [13.5,7.69,[['Allianz Partners will 1.500 bis 1.800 Stellen abbauen.','Allianz Partners will fünfzehnhundert bis achtzehnhundert Stellen abbauen. '],['Ergo rund 1.000, bis 2030.','Ergo rund tausend, bis zweitausenddreißig.']]],
+ [21.5,7.59,[['Und 35 Prozent der Personalverantwortlichen','Und fünfunddreißig Prozent der Personalverantwortlichen '],['wollen wegen Künstlicher Intelligenz weniger Berufseinsteiger einstellen.']]],
+ [29.6,1.41,[['Und unser Denken?']]],
+ [31.3,10.36,[['Eine Studie mit 666 Menschen zeigt:','Eine Studie mit sechshundertsechsundsechzig Menschen zeigt: '],['Wer Denkarbeit oft an Künstliche Intelligenz abgibt,'],['denkt weniger kritisch.'],['Bei Jüngeren stärker.']]],
+ [42.2,6.47,[['Genau hier setzen Miriam Meckel und Léa Steinacker an –'],['mit ihrem neuen Buch: Über Leben.']]],
+ [49.2,2.34,[['Leben ist mehr als Information.']]],
+ [52.0,3.10,[['Intelligenz ist mehr als Datenverarbeitung.']]],
+ [55.6,2.53,[['Bewusstsein ist mehr als Denken.']]],
+ [59.0,6.30,[['Ihr Rat: nicht den Maschinen ähnlicher werden,'],['sondern sich auf das besinnen, was uns unterscheidet.']]],
+ [70.6,4.69,[['Schon ihr Buch „Alles überall auf einmal“'],['wurde zum Spiegel-Bestseller.']]],
+ [76.0,4.67,[['Beide können Sie auch für Ihr Event anfragen –'],['über speakingstage.com.','über speakingstage punkt com.']]]];
+const CAPS=[];VO.forEach(([t0,d,ch])=>{const w=ch.map(c=>(c[1]||c[0]).length),tot=w.reduce((a,b)=>a+b,0);let acc=0;
+  ch.forEach((c,i)=>{const a=t0+d*acc/tot;acc+=w[i];const b=i===ch.length-1?t0+d+.35:t0+d*acc/tot;CAPS.push({t0:a,t1:b,html:c[0]})})});
+const SRC=[[.2,3.45,'Quelle: DW, 04.10.2026',1],[3.5,10.5,'Quelle: DW, 04.10.2026',1],[10.6,29.3,'Quelle: tagesschau.de, 04.10.2026 · Kienbaum-Umfrage'],
+ [29.5,42.0,'Quelle: Studie M. Gerlich, Swiss Business School, via alice.ch · Video: Hinterland of Things'],
+ [42.2,49.0,'Quelle: Rowohlt-Vorschau'+(COVER_SRC?' · Cover © Rowohlt':'')],[49.3,58.8,'Quelle: Rowohlt-Vorschau'],[59.0,65.3,'Quelle: Rowohlt-Vorschau · Video: OMR'],
+ [65.6,75.5,'Quelle: Rowohlt-Vorschau · Foto Léa Steinacker: Martin Gfrerer']].concat(COVER_SRC?[[76,84.6,'Cover © Rowohlt']]:[]);
+let capLayer;
+function buildOverlay(){capLayer=el('div','abs',{inset:0,zIndex:80,pointerEvents:'none'});
+  CAPS.forEach(c=>{c.e=el('div','sub',{},capLayer,c.html)});SRC.forEach(c=>{c.e=el('div','src'+(c[3]?' dark':''),{},capLayer,c[2])})}
+function drawOverlay(t){CAPS.forEach(c=>{if(t<c.t0-.05||t>c.t1+.05){css(c.e,{display:'none'});return}const o=P(t,c.t0,c.t0+.12)*(1-P(t,c.t1-.1,c.t1));
+    css(c.e,{display:'block',opacity:String(o),transform:`translate(-50%,-50%) translateY(${((1-E.outC(P(t,c.t0,c.t0+.25)))*10).toFixed(1)}px)`})});
+  SRC.forEach(c=>{const o=P(t,c[0],c[0]+.4)*(1-P(t,c[1]-.3,c[1]));css(c.e,{display:o>0?'block':'none',opacity:String(o)})})}
+
+/* ==================================================================
+   Szenen
+   ================================================================== */
+
+/* ---------- 1 · KI → Superintelligenz (0–3.5) ---------- */
+Scene(0,3.5,s=>{s.root.classList.add('dk');css(s.root,{background:'var(--navy)'});
+  s.lb=el('div','abs lbl',{left:0,width:'1080px',textAlign:'center',top:'470px',color:'var(--copperL)'},s.world,'US-Politik · Oktober 2026');
+  s.g=el('div','abs',{left:0,top:0,width:'1080px',height:'1920px',transformOrigin:'540px 840px'},s.world);
+  s.ki=el('div','abs d',{left:0,width:'1080px',textAlign:'center',top:'640px',font:'700 400px/1 ID',color:'#fff',letterSpacing:'-.04em'},s.g,'KI');
+  s.st=el('div','abs',{left:'250px',top:'826px',width:'580px',height:'24px',background:'var(--copper)',borderRadius:'12px',transformOrigin:'0 50%'},s.g);
+  s.su=el('div','big',{top:'610px',fontSize:'104px',color:'var(--copperL)'},s.world);s.wsu=words(s.su,'Superintelligenz');
+  s.hl=el('div','abs d',{left:'90px',width:'900px',top:'1150px',textAlign:'center',font:'600 56px/1.2 ID',color:'#fff'},s.world);
+  s.whl=words(s.hl,'Trump lässt US-Behörden <em>‚Superintelligenz‘</em> statt ‚KI‘ sagen.');
+  s.K=keys([[0,{x:540,y:960,z:1.08,rz:-1}],[3.5,{x:540,y:960,z:1.0,rz:0}]]);
+  s.update=lt=>{camera(s,lt,s.K,E.outC);fadeUp(s.lb,lt,.05);
+    const a=E.outQ5(P(lt,0,.5)),m=E.io5(P(lt,1.05,1.6));
+    css(s.ki,{opacity:String(a),transform:`scale(${(1.25-.25*a).toFixed(3)})`});
+    css(s.st,{transform:`scaleX(${E.outQ5(P(lt,.6,.95)).toFixed(3)})`});
+    css(s.g,{opacity:String(1-.78*m),transform:`translateY(${(m*150).toFixed(1)}px) scale(${(1-.42*m).toFixed(3)})`});
+    revealWords(s.wsu,lt,1.2,.1,.6,60);revealWords(s.whl,lt,1.6,.07,.5,30);
+    css(s.world,{opacity:String(1-P(lt,3.15,3.5))})};
+});
+sfx(.05,'bloom',.6);sfx(.6,'hit',.8);sfx(1.15,'whoosh',.7);sfx(1.25,'impact',.35);
+
+/* ---------- 2 · Politik vs. Fachleute (3.5–10.7) ---------- */
+Scene(3.5,10.7,s=>{s.root.classList.add('dk');css(s.root,{background:'var(--navy)'});
+  s.t=el('div','abs d',{left:'80px',width:'920px',top:'300px',font:'700 96px/1.04 ID',color:'#fff',letterSpacing:'-.03em'},s.world);s.wt=words(s.t,'Das Wort ist in der <em>Politik</em> angekommen.');
+  s.card=el('div','abs',{left:'60px',top:'780px',width:'960px',height:'560px',borderRadius:'34px',background:'rgba(255,255,255,.05)',border:'1px solid rgba(255,255,255,.14)'},s.world);
+  s.cl=el('div','abs lbl',{left:'56px',top:'56px',color:'var(--copperL)'},s.card,'Einschätzung von Fachleuten');
+  s.q=el('div','abs d',{left:'56px',top:'100px',width:'860px',font:'600 50px/1.15 ID',color:'#fff'},s.card);s.wq=words(s.q,'Heutige Modelle sind davon <em>noch weit entfernt.</em>');
+  s.sg=svg(s.card,{left:0,top:0},960,560);
+  s.l1=sv(s.sg,'line',{x1:110,y1:380,x2:270,y2:380,stroke:'#d9a074','stroke-width':8,'stroke-linecap':'round'});
+  s.l2=sv(s.sg,'line',{x1:290,y1:380,x2:800,y2:380,stroke:'rgba(255,255,255,.55)','stroke-width':5,'stroke-dasharray':'14 14'});
+  s.n1=sv(s.sg,'circle',{cx:110,cy:380,r:24,fill:'#d9a074'});
+  s.n2=sv(s.sg,'circle',{cx:850,cy:380,r:38,fill:'none',stroke:'#fff','stroke-width':4,'stroke-dasharray':'8 7'});
+  s.br=sv(s.sg,'path',{d:'M290 330 L290 312 L800 312 L800 330',fill:'none',stroke:'#d9a074','stroke-width':3});
+  s.bt=el('div','abs',{left:'420px',top:'266px',padding:'6px 18px',borderRadius:'999px',background:'var(--copper)',font:'600 22px IN',color:'#fff'},s.card,'noch weit entfernt');
+  s.a1=el('div','abs',{left:'50px',top:'440px',font:'600 28px IN',color:'#fff'},s.card,'Heutige Modelle');
+  s.a2=el('div','abs',{right:'40px',top:'440px',font:'600 28px IN',color:'var(--copperL)',textAlign:'right'},s.card,'Superintelligenz');
+  s.K=keys([[0,{x:540,y:960,z:.96,ry:-6,rx:3}],[3,{x:540,y:960,z:1,ry:0,rx:0}],[7.2,{x:540,y:980,z:1.04,ry:4}]]);
+  s.update=lt=>{camera(s,lt,s.K);revealWords(s.wt,lt,.1,.12,.6,50);
+    const c=E.outQ5(P(lt,2.6,3.3));css(s.card,{opacity:String(c),transform:`translateY(${((1-c)*80).toFixed(0)}px) rotateX(${((1-c)*-20).toFixed(1)}deg)`});
+    fadeUp(s.cl,lt,2.8);revealWords(s.wq,lt,3.0,.09,.55,30);
+    css(s.n1,{opacity:String(P(lt,3.6,3.8))});css(s.l1,{opacity:String(P(lt,3.7,3.8))});drawPath(s.l1,E.outC(P(lt,3.7,4.2)));
+    css(s.l2,{opacity:String(P(lt,4.2,4.3)),clipPath:`inset(0 ${((1-E.ioC(P(lt,4.2,5.4)))*100).toFixed(1)}% 0 0)`});
+    pop(s.n2,lt,5.3);css(s.n2,{transformOrigin:'850px 380px',transformBox:'view-box'});
+    css(s.br,{opacity:String(P(lt,5.6,5.9))});pop(s.bt,lt,5.75);fadeUp(s.a1,lt,3.8);fadeUp(s.a2,lt,5.4);
+    css(s.world,{opacity:String(1-P(lt,6.9,7.2))})};
+});
+sfx(3.5,'whoosh',.5);sfx(6.1,'pop',.5);sfx(7.1,'node',.6);sfx(8.8,'chime',.5);sfx(9.25,'pop',.5);
+
+/* ---------- 3 · Arbeitswelt in Zahlen (10.3–29.5) ---------- */
+Scene(10.3,29.5,s=>{css(s.root,{background:'#fff'});
+  s.lb=el('div','abs lbl',{left:'80px',top:'150px'},s.world,'Arbeitswelt · heute');
+  s.h=el('div','abs d',{left:'76px',top:'192px',width:'940px',font:'700 78px/1.04 ID',color:'var(--navy)',letterSpacing:'-.03em'},s.world);s.wh=words(s.h,'Die Folgen spürt die <em>Arbeitswelt</em> schon heute.');
+  const card=(top,h,dark)=>el('div','card',{left:'60px',top:px(top),width:'960px',height:px(h),background:dark?'var(--navy)':'#fff',borderColor:dark?'var(--navy)':'var(--line)'},s.world);
+  const dots=(c,n,hl,top)=>Array.from({length:n},(_,i)=>el('div','abs',{left:px(56+i*24.2),top:px(top),width:'16px',height:'16px',borderRadius:'50%',background:i>=n-hl?'var(--copperL)':'var(--navy)'},c));
+  // A · Allianz Partners
+  s.A=card(450,390);el('div','abs lbl',{left:'56px',top:'48px'},s.A,'Allianz Partners');
+  el('div','abs',{right:'48px',top:'46px',font:'500 20px IN',color:'#8a837b'},s.A,'<span style="color:var(--navy)">●</span> = 50 Stellen');
+  s.An=el('div','abs d num',{left:'50px',top:'86px',font:'700 124px/1 ID',color:'var(--copper)',letterSpacing:'-.04em'},s.A,'0');
+  s.Ad=el('div','abs',{left:'58px',top:'226px',font:'600 34px IN',color:'var(--navy)'},s.A,'Stellen sollen wegfallen');
+  s.Ap=dots(s.A,36,6,300);
+  s.Ar=el('div','abs',{left:px(56+30*24.2-4),top:'330px',font:'500 19px IN',color:'var(--copper)'},s.A,'Spanne bis 1.800');
+  // B · Ergo
+  s.B=card(880,390);el('div','abs lbl',{left:'56px',top:'48px'},s.B,'Ergo');
+  s.Bn=el('div','abs d num',{left:'50px',top:'86px',font:'700 124px/1 ID',color:'var(--copper)',letterSpacing:'-.04em'},s.B,'0');
+  s.Bd=el('div','abs',{left:'58px',top:'226px',font:'600 34px IN',color:'var(--navy)'},s.B,'Stellen, bis 2030');
+  s.Bp=dots(s.B,20,0,300);
+  s.Bs=svg(s.B,{left:'560px',top:'270px'},360,80);
+  s.Bl=sv(s.Bs,'line',{x1:12,y1:38,x2:340,y2:38,stroke:'#a7643c','stroke-width':4,'stroke-linecap':'round'});
+  sv(s.Bs,'circle',{cx:12,cy:38,r:9,fill:'#162131'});s.Be=sv(s.Bs,'circle',{cx:340,cy:38,r:11,fill:'#a7643c'});
+  s.Bt1=el('div','abs',{left:'556px',top:'330px',font:'600 20px IN',color:'#8a837b'},s.B,'heute');s.Bt2=el('div','abs',{left:'872px',top:'330px',font:'700 20px IN',color:'var(--copper)'},s.B,'2030');
+  // C · 35 %
+  s.C=card(1310,430,true);el('div','abs lbl',{left:'400px',top:'60px',color:'var(--copperL)'},s.C,'Kienbaum-Umfrage');
+  s.Cs=svg(s.C,{left:'40px',top:'60px'},310,310);
+  sv(s.Cs,'circle',{cx:155,cy:155,r:120,fill:'none',stroke:'rgba(255,255,255,.12)','stroke-width':40});
+  s.Ca=sv(s.Cs,'circle',{cx:155,cy:155,r:120,fill:'none',stroke:'#d9a074','stroke-width':40,transform:'rotate(-90 155 155)','stroke-dasharray':`0 ${2*Math.PI*120}`});
+  s.Cc=el('div','abs d num',{left:'40px',width:'310px',top:'180px',textAlign:'center',font:'700 64px ID',color:'#fff'},s.C,'0 %');
+  s.Cn=el('div','abs d num',{left:'396px',top:'100px',font:'700 120px/1 ID',color:'var(--copperL)',letterSpacing:'-.04em'},s.C,'35 %');
+  s.Ct=el('div','abs',{left:'400px',top:'240px',width:'520px',font:'600 31px/1.3 IN',color:'#fff'},s.C);s.wct=words(s.Ct,'der Personalverantwortlichen wollen wegen KI <em>weniger Berufseinsteiger</em> einstellen.');
+  s.K=keys([[0,{x:540,y:900,z:.96}],[3.0,{x:540,y:900,z:1}],[7.5,{x:540,y:920,z:1}],[8.3,{x:540,y:1080,z:1}],[10.8,{x:540,y:1090}],[11.5,{x:540,y:1320}],[17.2,{x:540,y:1330,z:1.02}],[18.7,{x:540,y:1090,z:.84}]]);
+  s.update=lt=>{camera(s,lt,s.K);css(s.root,{opacity:String(P(lt,0,.4))});fadeUp(s.lb,lt,.25);revealWords(s.wh,lt,.35,.09,.55,40);
+    const enter=(c,t0)=>{const q=E.outQ5(P(lt,t0,t0+.7));css(c,{opacity:String(clamp(q*1.6)),transform:`translateY(${((1-q)*120).toFixed(0)}px) rotateX(${((1-q)*-28).toFixed(1)}deg)`})};
+    enter(s.A,3.0);const a=E.outC(P(lt,3.3,4.6));s.An.textContent=`${fmt(1500*a)}–${fmt(1800*a)}`;fadeUp(s.Ad,lt,3.6);
+    s.Ap.forEach((d,i)=>pop(d,lt,3.7+i*.03,.35));fadeUp(s.Ar,lt,5.0);
+    enter(s.B,7.7);const b=E.outC(P(lt,8.0,9.2));s.Bn.textContent='≈ '+fmt(1000*b);fadeUp(s.Bd,lt,8.2);
+    s.Bp.forEach((d,i)=>pop(d,lt,8.4+i*.035,.35));drawPath(s.Bl,E.ioC(P(lt,9.0,10.0)));pop(s.Be,lt,9.9);css(s.Be,{transformOrigin:'340px 38px',transformBox:'view-box'});fadeUp(s.Bt1,lt,9.0);fadeUp(s.Bt2,lt,10.0);
+    enter(s.C,11.1);const c=E.outC(P(lt,11.5,12.9));css(s.Ca,{strokeDasharray:`${(2*Math.PI*120*.35*c).toFixed(1)} ${2*Math.PI*120}`});s.Cc.textContent=fmt(35*c)+' %';
+    fadeUp(s.Cn,lt,11.6);revealWords(s.wct,lt,11.9,.07,.5,24)};
+});
+sfx(10.3,'swoosh',.7);sfx(13.3,'whoosh',.6);[13.9,14.2,14.5].forEach(t=>sfx(t,'tick',.45));sfx(18.0,'whoosh',.6);[18.6,18.9].forEach(t=>sfx(t,'tick',.45));sfx(20.2,'pop',.5);
+sfx(21.4,'whoosh',.7);sfx(21.9,'node',.6);sfx(23.2,'chime',.55);
+
+/* ---------- 4 · Und unser Denken? (29.3–42.2) ---------- */
+Scene(29.3,42.2,s=>{css(s.root,{background:'var(--cream)'});
+  s.q=el('div','big',{top:'820px',fontSize:'124px',transformOrigin:'540px 60px'},s.world);s.wq=words(s.q,'Und unser <em>Denken?</em>');
+  s.fr=el('div','frame',{left:'60px',top:'330px',width:'960px',height:'540px'},s.world);
+  s.v1=img(UL+'va1.jpg',{left:0,top:0,width:'960px',height:'540px',objectFit:'cover'},s.fr);
+  s.v2=img(UL+'va2.jpg',{left:0,top:0,width:'960px',height:'540px',objectFit:'cover',opacity:0},s.fr);
+  el('div','tag',{left:'26px',bottom:'24px'},s.fr,'<i>▶</i>Video · Hinterland of Things');
+  s.C=el('div','card',{left:'60px',top:'920px',width:'960px',height:'585px'},s.world);
+  el('div','abs lbl',{left:'50px',top:'44px'},s.C,'Studie · Swiss Business School');
+  s.n=el('div','abs d num',{left:'44px',top:'76px',font:'700 120px/1 ID',color:'var(--copper)',letterSpacing:'-.04em'},s.C,'0');
+  s.nl=el('div','abs',{left:'290px',top:'124px',font:'600 36px IN',color:'var(--navy)'},s.C,'Teilnehmende');
+  s.cv=el('canvas','abs',{left:'50px',top:'216px',width:'864px',height:'110px'},s.C);s.cv.width=864;s.cv.height=110;s.cx=s.cv.getContext('2d');s.drawn=-1;
+  const bar=(top,label,col)=>{const r={};r.l=el('div','abs',{left:'50px',top:px(top),font:'600 27px IN',color:'var(--navy)'},s.C,label);
+    r.t=el('div','abs',{left:'50px',top:px(top+44),width:'760px',height:'18px',borderRadius:'9px',background:'#efe7de'},s.C);
+    r.f=el('div','abs',{left:0,top:0,height:'18px',borderRadius:'9px',background:col,width:'0'},r.t);
+    r.a=el('div','abs d',{left:'836px',top:px(top+24),font:'700 46px ID',color:col},s.C,'');return r};
+  s.b1=bar(350,'Denkarbeit an KI abgeben','var(--copper)');s.b2=bar(436,'Kritisches Denken','var(--navy)');
+  s.sch=el('div','abs',{right:'48px',top:'356px',font:'500 18px IN',color:'#9a938b'},s.C,'schematisch');
+  s.bd=el('div','abs',{left:'50px',top:'520px',padding:'9px 22px',borderRadius:'999px',background:'var(--copper)',color:'#fff',font:'600 24px IN',transformOrigin:'0 50%'},s.C,'Bei Jüngeren stärker ↘');
+  s.K=keys([[0,{x:540,y:960,z:1}],[12.9,{x:540,y:960,z:1.03}]]);
+  s.update=lt=>{camera(s,lt,s.K,E.ioS);css(s.root,{opacity:String(P(lt,0,.35))});
+    revealWords(s.wq,lt,.3,.14,.6,60);const m=E.io5(P(lt,1.7,2.5));css(s.q,{transform:`translateY(${(-650*m).toFixed(1)}px) scale(${(1-.4*m).toFixed(3)})`});
+    const f=E.outQ5(P(lt,2.0,2.8));css(s.fr,{opacity:String(clamp(f*2)),transform:`translateZ(${((1-f)*-700).toFixed(0)}px) rotateY(${((1-f)*-25).toFixed(1)}deg)`});
+    css(s.v1,{transform:`scale(${(1.04+lt*.012).toFixed(4)})`});css(s.v2,{opacity:String(E.ioC(P(lt,6.4,7.1))),transform:`scale(${(1.1-(lt-6.4)*.01).toFixed(4)})`});
+    const c=E.outQ5(P(lt,2.2,2.9));css(s.C,{opacity:String(clamp(c*1.6)),transform:`translateY(${((1-c)*120).toFixed(0)}px) rotateX(${((1-c)*-25).toFixed(1)}deg)`});
+    const k=E.outC(P(lt,2.4,3.8));s.n.textContent=fmt(666*k);fadeUp(s.nl,lt,2.7);
+    const nd=Math.floor(666*E.ioC(P(lt,2.6,4.4)));if(nd!==s.drawn){s.drawn=nd;const x=s.cx;x.clearRect(0,0,864,110);for(let i=0;i<666;i++){const cc=i%74,rr=Math.floor(i/74);x.fillStyle=i<nd?(rnd(i)<.5?'#a7643c':'#162131'):'#ece4da';x.beginPath();x.arc(5+cc*11.6,6+rr*12,4.4,0,7);x.fill()}}
+    fadeUp(s.b1.l,lt,5.9);fadeUp(s.b1.t,lt,5.95);css(s.b1.f,{width:px(760*.86*E.outC(P(lt,6.1,7.1)))});css(s.b1.a,{opacity:String(P(lt,6.9,7.1))});s.b1.a.textContent='↑';
+    fadeUp(s.b2.l,lt,6.2);fadeUp(s.b2.t,lt,6.25);css(s.b2.f,{width:px(760*lerp(.86*E.outC(P(lt,6.4,7.2)),.38,E.ioC(P(lt,9.4,10.4))))});css(s.b2.a,{opacity:String(P(lt,10.2,10.4))});s.b2.a.textContent='↓';
+    fadeUp(s.sch,lt,6.0);pop(s.bd,lt,11.0,.5);
+    css(s.world,{opacity:String(1-P(lt,12.6,12.9))})};
+});
+sfx(29.3,'swoosh',.7);sfx(31.3,'whoosh',.6);sfx(31.5,'node',.5);[35.4,35.7].forEach(t=>sfx(t,'tick',.45));sfx(38.8,'hit',.5);sfx(40.3,'pop',.6);
+
+/* ---------- 5 · Das Buch (42.0–49.3) ---------- */
+Scene(42.0,49.3,s=>{css(s.root,{background:'radial-gradient(120% 70% at 50% 45%,#fff 0%,#f7f3ee 70%,#f1e9df 100%)'});
+  s.lb=el('div','abs lbl',{left:0,width:'1080px',textAlign:'center',top:'150px'},s.world,'Das neue Buch');
+  s.nm=el('div','abs d',{left:0,width:'1080px',textAlign:'center',top:'190px',font:'700 58px ID',color:'var(--navy)',letterSpacing:'-.02em'},s.world);s.wn=words(s.nm,'Miriam Meckel & Léa Steinacker');
+  s.sh=el('div','abs',{left:'270px',top:'1150px',width:'540px',height:'60px',borderRadius:'50%',background:'radial-gradient(closest-side,rgba(22,33,49,.35),transparent)'},s.world);
+  s.bk=book(s.world,{left:'260px',top:'310px',width:'560px',height:'840px'});
+  s.t=el('div','big',{top:'1235px',fontSize:'104px'},s.world);s.wt=words(s.t,'Über <em>Leben.</em>');
+  s.p=el('div','abs',{left:'330px',width:'420px',top:'1390px',padding:'14px 0',textAlign:'center',borderRadius:'999px',background:'var(--navy)',color:'#fff',font:'600 28px IN'},s.world,'Rowohlt · ab 19.02.2027');
+  s.K=keys([[0,{x:540,y:900,z:.9}],[2.4,{x:540,y:860,z:1.0}],[7.3,{x:540,y:880,z:1.06}]]);
+  s.update=lt=>{camera(s,lt,s.K);css(s.root,{opacity:String(P(lt,0,.35))});fadeUp(s.lb,lt,.2);revealWords(s.wn,lt,.4,.1,.55,30);
+    const b=E.outQ5(P(lt,.3,1.5));css(s.bk,{opacity:String(clamp(b*2)),transform:`translateZ(${((1-b)*-600).toFixed(0)}px) rotateY(${(lerp(-48,-10,b)+lt*.9).toFixed(2)}deg) rotateX(${((1-b)*8).toFixed(1)}deg) scale(${(1+lt*.006).toFixed(4)})`});
+    css(s.sh,{opacity:String(b)});revealWords(s.wt,lt,5.3,.15,.6,50);pop(s.p,lt,5.9,.55);
+    css(s.world,{opacity:String(1-P(lt,7.0,7.3))})};
+});
+sfx(42.0,'whoosh',.8);sfx(42.4,'bloom',.6);sfx(47.3,'hit',.6);sfx(47.9,'pop',.6);
+
+/* ---------- 6 · Mehr als … (49.1–59.0) ---------- */
+const MEHR=[['Leben','Information',.1],['Intelligenz','Datenverarbeitung',2.9],['Bewusstsein','Denken',6.5]];
+Scene(49.1,59.0,s=>{css(s.root,{background:'#fff'});
+  s.lb=el('div','abs lbl',{left:'80px',top:'170px'},s.world,'Über Leben · Kernthesen');
+  s.h=el('div','abs d',{left:'76px',top:'210px',font:'700 80px ID',color:'var(--navy)',letterSpacing:'-.03em'},s.world);s.wh=words(s.h,'Der Mensch ist <em>mehr.</em>');
+  s.rows=MEHR.map(([a,b,t0],i)=>{const Y=380+i*390,r={t0};
+    r.bg=el('div','card',{left:'60px',top:px(Y),width:'960px',height:'350px'},s.world);
+    r.sg=svg(r.bg,{left:0,top:0},360,350);
+    r.o=sv(r.sg,'circle',{cx:180,cy:175,r:60,fill:'rgba(167,100,60,.08)',stroke:'#a7643c','stroke-width':6});
+    r.i=sv(r.sg,'circle',{cx:180,cy:175,r:58,fill:'#162131'});
+    r.a=el('div','abs d',{left:'380px',top:'62px',font:'700 72px ID',color:'var(--copper)',letterSpacing:'-.03em'},r.bg,a);
+    r.m=el('div','abs',{left:'384px',top:'152px',font:'600 30px IN',color:'#8a837b'},r.bg,'ist mehr als');
+    r.b=el('div','abs d',{left:'380px',top:'198px',font:'700 56px ID',color:'var(--navy)',letterSpacing:'-.02em'},r.bg,b);return r});
+  s.K=keys([[0,{x:540,y:960,z:.97,ry:-3}],[9.9,{x:540,y:980,z:1.02,ry:3}]]);
+  s.update=lt=>{camera(s,lt,s.K,E.ioS);css(s.root,{opacity:String(P(lt,0,.35))});fadeUp(s.lb,lt,.1);revealWords(s.wh,lt,.2,.12,.55,40);
+    s.rows.forEach(r=>{const q=E.outQ5(P(lt,r.t0,r.t0+.6));css(r.bg,{opacity:String(clamp(q*1.5)),transform:`translateX(${((1-q)*160).toFixed(0)}px) rotateY(${((1-q)*20).toFixed(1)}deg)`});
+      r.o.setAttribute('r',(60+100*E.outB(P(lt,r.t0+.5,r.t0+1.4))).toFixed(1));fadeUp(r.a,lt,r.t0+.2);fadeUp(r.m,lt,r.t0+.6);fadeUp(r.b,lt,r.t0+1.0)});
+    css(s.world,{opacity:String(1-P(lt,9.6,9.9))})};
+});
+MEHR.forEach(([,,t0])=>{sfx(49.1+t0,'whoosh',.5);sfx(49.1+t0+.6,'bloom',.35);sfx(49.1+t0+1.0,'pop',.5)});
+
+/* ---------- 7 · Ihr Rat (58.9–65.6) ---------- */
+Scene(58.9,65.6,s=>{css(s.root,{background:'#fff'});
+  s.f1=el('div','frame',{left:'60px',top:'170px',width:'460px',height:'520px'},s.world);img(UL+'vb_mm.jpg',{left:0,top:0,width:'460px',height:'520px',objectFit:'cover'},s.f1);
+  s.f2=el('div','frame',{left:'560px',top:'170px',width:'460px',height:'520px'},s.world);img(UL+'vb_ls.jpg',{left:0,top:0,width:'460px',height:'520px',objectFit:'cover'},s.f2);
+  [s.f1,s.f2].forEach(f=>el('div','tag',{left:'20px',bottom:'20px',fontSize:'18px'},f,'<i>▶</i>Video · OMR'));
+  s.lb=el('div','abs lbl',{left:0,width:'1080px',textAlign:'center',top:'760px'},s.world,'Ihr Rat');
+  s.sg=svg(s.world,{left:0,top:0},1080,1920);
+  s.p1=sv(s.sg,'path',{d:'M540 900 C540 990 285 990 285 1080',fill:'none',stroke:'#b9b1a7','stroke-width':6,'stroke-linecap':'round'});
+  s.p2=sv(s.sg,'path',{d:'M540 900 C540 990 795 990 795 1080',fill:'none',stroke:'#a7643c','stroke-width':8,'stroke-linecap':'round'});
+  s.nd=el('div','abs',{left:'420px',top:'820px',width:'240px',height:'80px',borderRadius:'999px',background:'var(--navy)',color:'#fff',font:'700 34px/80px ID',textAlign:'center'},s.world,'Mensch');
+  s.L=el('div','card',{left:'60px',top:'1090px',width:'450px',height:'300px',boxShadow:'none',background:'#faf8f5'},s.world);
+  s.Lt=el('div','abs d',{left:'40px',top:'110px',width:'370px',font:'700 40px/1.15 ID',color:'#8f877e'},s.L,'Den Maschinen ähnlicher werden');
+  s.Lx=el('div','abs',{left:'40px',top:'34px',width:'56px',height:'56px',borderRadius:'50%',background:'#e7ded3',color:'#8f877e',font:'700 32px/56px IN',textAlign:'center'},s.L,'✕');
+  s.Ls=el('div','abs',{left:'36px',top:'176px',width:'376px',height:'5px',background:'#a39a90',transformOrigin:'0 50%'},s.L);
+  s.R=el('div','card',{left:'570px',top:'1090px',width:'450px',height:'300px',background:'var(--navy)',borderColor:'var(--navy)'},s.world);
+  s.Rt=el('div','abs d',{left:'40px',top:'110px',width:'380px',font:'700 40px/1.15 ID',color:'#fff'},s.R,'Sich besinnen, was uns <span style="color:var(--copperL)">unterscheidet</span>');
+  s.Rx=el('div','abs',{left:'40px',top:'34px',width:'56px',height:'56px',borderRadius:'50%',background:'var(--copper)',color:'#fff',font:'700 32px/56px IN',textAlign:'center'},s.R,'✓');
+  s.K=keys([[0,{x:540,y:960,z:.95,rx:4}],[6.7,{x:540,y:960,z:1.02,rx:0}]]);
+  s.update=lt=>{camera(s,lt,s.K,E.ioS);css(s.root,{opacity:String(P(lt,0,.35))});
+    [s.f1,s.f2].forEach((f,i)=>{const q=E.outQ5(P(lt,.05+i*.15,.85+i*.15));css(f,{opacity:String(clamp(q*2)),transform:`translateY(${((1-q)*-80).toFixed(0)}px) rotateZ(${((1-q)*(i?4:-4)).toFixed(2)}deg)`});css(f.firstChild,{transform:`scale(${(1.05+lt*.01).toFixed(4)})`})});
+    fadeUp(s.lb,lt,.3);pop(s.nd,lt,.5);drawPath(s.p1,E.ioC(P(lt,.9,1.5)));css(s.p1,{opacity:String(P(lt,.9,.95))});
+    const l=E.outQ5(P(lt,1.3,1.9));css(s.L,{opacity:String(l),transform:`translateY(${((1-l)*60).toFixed(0)}px)`});
+    pop(s.Lx,lt,2.3);css(s.Ls,{transform:`scaleX(${E.outC(P(lt,2.4,2.8)).toFixed(3)})`});css(s.L,{filter:`saturate(${(1-P(lt,2.4,2.8)).toFixed(2)})`});
+    drawPath(s.p2,E.ioC(P(lt,2.8,3.4)));css(s.p2,{opacity:String(P(lt,2.8,2.85))});
+    const r=E.outB(P(lt,3.2,3.8));css(s.R,{opacity:String(P(lt,3.2,3.4)),transform:`scale(${r.toFixed(3)})`,boxShadow:`0 40px 90px -30px rgba(22,33,49,.4),0 0 0 ${(P(lt,4.2,4.5)*(1-P(lt,4.6,5.2))*10).toFixed(1)}px rgba(167,100,60,.45)`});
+    pop(s.Rx,lt,4.2);css(s.world,{opacity:String(1-P(lt,6.4,6.7))})};
+});
+sfx(58.9,'swoosh',.7);sfx(59.4,'pop',.5);sfx(60.2,'whoosh',.4);sfx(61.2,'tick',.6);sfx(61.7,'whoosh',.5);sfx(62.1,'pop',.6);sfx(63.1,'chime',.7);
+
+/* ---------- 8 · Die Autorinnen (65.4–75.8) ---------- */
+Scene(65.4,75.8,s=>{css(s.root,{background:'var(--cream)'});
+  const ph=(x,src,pos)=>{const f=el('div','frame',{left:px(x),top:'170px',width:'460px',height:'600px'},s.world);f.im=img(UL+src,{left:0,top:0,width:'460px',height:'600px',objectFit:'cover',objectPosition:pos},f);return f};
+  s.f1=ph(60,'mm.jpg','50% 20%');s.f2=ph(560,'ls.jpg','50% 25%');
+  el('div','abs',{right:'16px',bottom:'12px',font:'500 15px IN',color:'rgba(255,255,255,.85)'},s.f2,'Foto: Martin Gfrerer');
+  s.n1=el('div','abs d',{left:'64px',top:'800px',font:'700 50px ID',color:'var(--navy)',letterSpacing:'-.02em'},s.world,'Miriam Meckel');
+  s.n2=el('div','abs d',{left:'564px',top:'800px',font:'700 50px ID',color:'var(--navy)',letterSpacing:'-.02em'},s.world,'Léa Steinacker');
+  const bio=(x,top,t)=>el('div','abs',{left:px(x),top:px(top),width:'440px',font:'500 27px/1.3 IN',color:'#5f5953',paddingLeft:'22px',borderLeft:'4px solid var(--copper)'},s.world,t);
+  s.bs=[bio(64,870,'Professorin in St. Gallen'),bio(64,920,'frühere Chefredakteurin WirtschaftsWoche'),bio(564,870,'Promotion zu den sozialen Folgen von KI')];
+  s.sg=svg(s.world,{left:0,top:0},1080,1920);
+  s.cn=sv(s.sg,'path',{d:'M290 1010 L290 1075 L790 1075 L790 1010',fill:'none',stroke:'#a7643c','stroke-width':4,'stroke-linejoin':'round'});
+  s.ada=el('div','abs',{left:'300px',width:'480px',top:'1043px',height:'64px',borderRadius:'999px',background:'#fff',border:'2px solid var(--copper)',font:'600 28px/60px IN',color:'var(--navy)',textAlign:'center'},s.world,'Gemeinsam: <b style="color:var(--copper)">ada Learning</b>');
+  s.bc=el('div','card',{left:'60px',top:'1170px',width:'960px',height:'300px'},s.world);
+  s.seal=el('div','abs',{left:'50px',top:'50px',width:'200px',height:'200px',borderRadius:'50%',background:'var(--copper)',color:'#fff',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',font:'700 26px/1.1 ID',textAlign:'center',boxShadow:'0 0 0 8px #f6eee6'},s.bc,'<span style="font-size:34px">★</span>SPIEGEL-<br>Bestseller');
+  el('div','abs lbl',{left:'300px',top:'64px'},s.bc,'Bereits erschienen');
+  s.bt=el('div','abs d',{left:'296px',top:'102px',width:'620px',font:'700 54px/1.08 ID',color:'var(--navy)',letterSpacing:'-.02em'},s.bc);s.wbt=words(s.bt,'„Alles überall auf einmal“');
+  s.K=keys([[0,{x:540,y:940,z:.92,ry:-6}],[10.4,{x:540,y:960,z:1.0,ry:3}]]);
+  s.update=lt=>{camera(s,lt,s.K,E.ioS);css(s.root,{opacity:String(P(lt,0,.35))});
+    [s.f1,s.f2].forEach((f,i)=>{const q=E.outQ5(P(lt,.1+i*.2,.9+i*.2));css(f,{opacity:String(clamp(q*2)),transform:`translateZ(${((1-q)*-600).toFixed(0)}px) rotateY(${((1-q)*(i?30:-30)).toFixed(1)}deg)`});css(f.im,{transform:`scale(${(1.08-lt*.006).toFixed(4)})`})});
+    fadeUp(s.n1,lt,.7);fadeUp(s.n2,lt,.9);s.bs.forEach((b,i)=>fadeUp(b,lt,1.3+i*.35));
+    css(s.cn,{opacity:String(P(lt,2.4,2.45))});drawPath(s.cn,E.ioC(P(lt,2.4,3.1)));pop(s.ada,lt,2.9,.55);
+    const c=E.outQ5(P(lt,5.0,5.7));css(s.bc,{opacity:String(clamp(c*1.5)),transform:`translateY(${((1-c)*120).toFixed(0)}px) rotateX(${((1-c)*-25).toFixed(1)}deg)`});
+    const sp=E.outB(P(lt,5.5,6.1));css(s.seal,{opacity:String(P(lt,5.5,5.65)),transform:`scale(${sp.toFixed(3)}) rotate(${((1-sp)*-40).toFixed(1)}deg)`});revealWords(s.wbt,lt,5.4,.12,.55,30);
+    css(s.world,{opacity:String(1-P(lt,10.1,10.4))})};
+});
+sfx(65.4,'swoosh',.7);sfx(65.6,'whoosh',.5);[66.7,67.05,67.4].forEach(t=>sfx(t,'tick',.4));sfx(67.8,'node',.6);sfx(68.3,'pop',.6);sfx(70.4,'whoosh',.6);sfx(70.95,'hit',.6);
+
+/* ---------- 9 · Anfrage (75.6–85) ---------- */
+Scene(75.6,85.01,s=>{css(s.root,{background:'#fff'});
+  s.sh=el('div','abs',{left:'340px',top:'720px',width:'400px',height:'44px',borderRadius:'50%',background:'radial-gradient(closest-side,rgba(22,33,49,.3),transparent)'},s.world);
+  s.bk=book(s.world,{left:'350px',top:'150px',width:'380px',height:'570px'});
+  s.bk.querySelectorAll('div').forEach(d=>{d.style.zoom='.68'});
+  s.t=el('div','big',{top:'800px',fontSize:'104px'},s.world);s.wt=words(s.t,'Keynote <em>anfragen.</em>');
+  s.s=el('div','abs',{left:'90px',width:'900px',top:'935px',textAlign:'center',font:'500 32px/1.4 IN',color:'#6f6a64'},s.world,'Miriam Meckel &amp; Léa Steinacker für Ihr Event – unverbindlich über SpeakingStage.');
+  s.btn=el('div','btn',{left:'130px',top:'1070px',width:'820px',height:'108px'},s.world,'Keynote anfragen: speakingstage.com');
+  s.u=el('div','abs',{left:0,width:'1080px',top:'1215px',textAlign:'center',font:'600 27px/1.6 IN',color:'var(--navy)'},s.world,'speakingstage.com/speaker/miriam-meckel<br>speakingstage.com/speaker/lea-steinacker');
+  s.mk=el('div','abs mark',{left:'400px',top:'1350px',width:'42px',height:'46px'},s.world);s.wm=el('div','abs d',{left:'454px',top:'1350px',font:'700 40px ID',color:'var(--navy)'},s.world,'SpeakingStage');
+  s.cur=cursor(s.world);
+  s.K=keys([[0,{x:540,y:940,z:.94,rx:3}],[9.4,{x:540,y:960,z:1.0,rx:0}]]);
+  s.update=lt=>{camera(s,lt,s.K,E.ioS);css(s.root,{opacity:String(P(lt,0,.35))});
+    const b=E.outQ5(P(lt,.1,1.1));css(s.bk,{opacity:String(clamp(b*2)),transform:`translateY(${((1-b)*-120).toFixed(0)}px) rotateY(${(lerp(-35,-12,b)+lt*.8).toFixed(2)}deg)`});css(s.sh,{opacity:String(b)});
+    revealWords(s.wt,lt,.5,.14,.6,50);fadeUp(s.s,lt,1.1);const q=E.outB(P(lt,1.5,2.1));css(s.btn,{opacity:String(P(lt,1.5,1.65)),transform:`scale(${(q*(1-.04*Math.sin(Math.PI*P(lt,3.2,3.5)))).toFixed(3)})`});
+    fadeUp(s.u,lt,2.0);fadeUp(s.mk,lt,2.3);fadeUp(s.wm,lt,2.35);drive(s.cur,lt,[[2.2,900,1500],[3.0,640,1130],[4.4,640,1130],[5.4,880,1460]],[3.3],[2.2,5.4]);
+    css(s.world,{opacity:String(1-P(lt,8.9,9.4))})};
+});
+sfx(75.6,'swoosh',.7);sfx(76.0,'bloom',.6);sfx(78.9,'click');sfx(79.2,'chime',.6);
+
+buildOverlay();
+
+/* ---------- Render ---------- */
+function render(t){t=clamp(t,0,DUR);for(const s of SC){const on=t>=s.t0&&t<s.t1;css(s.root,{display:on?'block':'none'});if(on)s.update(t-s.t0,t)}drawOverlay(t)}
+window.SFX=EV.sort((a,b)=>a.t-b.t);window.DUR=DUR;
+async function settle(){await Promise.all([...document.images].filter(i=>!i.complete).map(i=>new Promise(r=>{i.onload=i.onerror=r})));await Promise.all([...vp.querySelectorAll('img')].filter(i=>i.offsetParent!==null).map(i=>i.decode().catch(()=>{})))}
+window.renderAt=async t=>{render(t);await settle();await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))};
+function fitView(){if(RENDER)return;const s=Math.min(innerWidth/W,innerHeight/H);vp.style.transform=`scale(${s})`;vp.parentElement.style.cssText+=`;width:${W*s}px;height:${H*s}px`;document.getElementById('fit').style.cssText='position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#fff'}
+addEventListener('resize',fitView);
+const aud=document.getElementById('aud');let playing=false;
+function loop(){if(!playing)return;render(aud.currentTime);if(aud.ended){playing=false;return}requestAnimationFrame(loop)}
+document.getElementById('start').onclick=()=>{document.getElementById('start').style.display='none';playing=true;aud.currentTime=0;aud.play();loop()};
+addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();if(playing){playing=false;aud.pause()}else{playing=true;aud.play();loop()}}});
+document.fonts.ready.then(()=>{fitView();if(RENDER||STILL!==null){document.getElementById('start').style.display='none'}render(STILL??0);window.__ready=true});
+</script>
+</body>
+</html>

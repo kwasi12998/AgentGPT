@@ -1,7 +1,7 @@
 const {chromium}=require('playwright');const {spawn}=require('child_process');
 (async()=>{const [out,from,to]=[process.argv[2],+process.argv[3],+process.argv[4]];const TIMES=process.argv[5]?JSON.parse(require('fs').readFileSync(process.argv[5])):null;
 const ff=spawn('ffmpeg',['-y','-v','error','-f','image2pipe','-c:v','mjpeg','-framerate','30','-i','-','-c:v','libx264','-preset','medium','-crf','17','-pix_fmt','yuv420p',out],{stdio:['pipe','inherit','inherit']});
-const br=await chromium.launch();const pg=await br.newPage({viewport:{width:1920,height:1080}});
+const br=await chromium.launch();const pg=await br.newPage({viewport:{width:+(process.env.VW||1920),height:+(process.env.VH||1080)}});
 pg.on('pageerror',e=>console.log('ERR',e.message));
 await pg.goto('http://localhost:8766/speakingstage-promo/'+(process.env.PAGE||'promo.html')+'?render=1');await pg.waitForFunction('window.__ready',null,{timeout:60000});
 const t0=Date.now();
