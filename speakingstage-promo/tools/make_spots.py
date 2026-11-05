@@ -69,6 +69,13 @@ def spot(slug, d, dy):
     if d.get('credit'):
         s = s.replace("  s.cur=cursor(s.world);\n  s.K=keys([[0,{x:960,y:540,z:.92,ry:-10,rx:3}],[6.6,{x:980,y:540,z:1.0,ry:4,rx:0}]]);",
                       f"  el('div','abs',{{left:'200px',top:'940px',font:'500 16px IN',color:'#9a948d'}},s.world,'{d['credit']}');\n  s.cur=cursor(s.world);\n  s.K=keys([[0,{{x:960,y:540,z:.92,ry:-10,rx:3}}],[6.6,{{x:980,y:540,z:1.0,ry:4,rx:0}}]]);")
+    if d.get('seq'):
+        # Bühnenkarten mit Bildfolgen (Videoclip als JPG-Sequenz, 30 fps): {Kartenname: [Ordner, Bildanzahl]}
+        a, b = "    const im=img(MM+f,", "      css(im,{transform:`scale(${(1.04+(lt-t0)*.025).toFixed(4)})`})});"
+        assert a in s and b in s
+        s = s.replace('const STG=', 'const SEQ=' + json.dumps(d['seq'], ensure_ascii=False).replace('"', "'") + ';\nconst STG=', 1)
+        s = s.replace(a, "    const im=img(MM+(SEQ[f]?SEQ[f][0]+'/001.jpg':f),")
+        s = s.replace(b, "      const sq=SEQ[STG[i][0]];if(sq){const k=1+clamp(Math.floor((lt-t0+.05)*30),0,sq[1]-1),u=MM+sq[0]+'/'+String(k).padStart(3,'0')+'.jpg';if(im._u!==u){im.src=u;im._u=u}}\n" + b)
     open(f'{slug}.html', 'w', encoding='utf8').write(s)
     json.dump(d['vo'], open(f'tools/voiceover_{slug}.json', 'w', encoding='utf8'), ensure_ascii=False, indent=1)
     print('ok', slug)
@@ -2481,6 +2488,30 @@ SPOTS = {
            [34.0, "Die Rolle der USA und die Folgen für Europa."],
            [38.6, "Seine Keynotes ordnen Weltpolitik für Unternehmen ein."],
            [43.1, "Für Geschäftsleitungen, Strategie, Wirtschaftsverbände und internationale Firmen."]], 'Karl-Theodor zu Guttenberg'))),
+ 'katja-ahrens': (159, dict(
+    name='Katja Ahrens', first='Katja', last='Ahrens', url='katja-ahrens', bx=998, bw=380,
+    qa='Views sind der<br><em>falsche KPI.</em>', qb='TikTok ist kein<br><em>Social Media.</em>',
+    intro='intro.jpg', label='Keynote Speakerin · TikTok & LinkedIn', small='Unternehmerin & Autorin',
+    sub='TikTok, LinkedIn und digitale Sichtbarkeit für den Mittelstand – mit Plattformverständnis und klaren Kennzahlen.',
+    chips=['Deutsch / Englisch', 'Heikendorf', '30–60 Min.'], chippos='[0,250,415]',
+    sta=[['2019', 'Gründerin havendo GmbH', 'Agentur für digitale Sichtbarkeit · bei Kiel'], ['Buch', 'Fachbuch TikTok-Marketing', '„Auf den Punkt“ · O’Reilly / dpunkt.verlag · 2026'], ['BMWE', 'Vorbildunternehmerin', 'Initiative „FRAUEN unternehmen“'],
+         ['500+', 'Teilnehmende geschult', 'Social-Media-Schulungen · über 40 Unternehmen'], ['3', 'Keynotes', 'TikTok · LinkedIn · Digitale Möglichkeiten']],
+    stalabel="'Profil · '+(i+1)+' / 5'", marquee='TIKTOK  ·  LINKEDIN  ·  SEO  ·  GOOGLE ADS  ·  DIGITALE SICHTBARKEIT  ·  MITTELSTAND  ·  ',
+    stg=[['reel1', 'Live auf der Bühne', 0, '50% 50%'], ['stage2.jpg', 'Vor vollem Saal', 2.3, '50% 8%'], ['reel2', 'Social Media für Kunden- und Mitarbeitergewinnung', 4.4, '50% 50%'], ['stage3.jpg', 'Klare Kennzahlen statt leerer Views', 6.5, '50% 55%']],
+    seq={'reel1': ['reel1', 91], 'reel2': ['reel2', 84]},
+    big='Orientierung statt<br><em>Buzzwords.</em>',
+    kn=['Warum TikTok kein Social Media ist – und Views der falsche KPI sind', 'LinkedIn 2026 professionell als Firma nutzen', 'Inspiration statt Theorie – Digitale Möglichkeiten greifbar machen'],
+    knsub='30–60 Min. · Deutsch / Englisch', tags=['Kongress', 'Kundenevent', 'Vertriebstagung', 'Führungskräftetagung'],
+    res='Klare Kanäle. Echte Kennzahlen. <em>Mehr Sichtbarkeit.</em>', endimg=['portrait.jpg', '50% 20%'],
+    cap1='Unternehmerin, Autorin und <em>Keynote Speakerin</em>', cap2='Keynotes über <em>TikTok, LinkedIn und Sichtbarkeit.</em>',
+    vo=vo([[0.3, "Views sind der falsche Maßstab."], [4.1, "TikTok ist kein klassisches Social Media."],
+           [7.9, "Katja Ahrens ist Gründerin der Agentur havendo und Speakerin für digitale Sichtbarkeit."],
+           [14.4, "Ihr Fachbuch: TikTok-Marketing – auf den Punkt."],
+           [19.6, "Das Bundeswirtschaftsministerium führt sie als Vorbildunternehmerin."],
+           [27.3, "Sie zeigt, welcher Kanal passt, welche Kennzahl zählt und welcher Inhalt wirkt."],
+           [34.0, "Orientierung statt Buzzwords."],
+           [38.6, "Ihre Keynotes bringen Plattformlogik in die Praxis."],
+           [43.1, "Für Kongresse, Kundenevents, Vertriebstagungen und Führungskräfte."]], 'Katja Ahrens'))),
 }
 
 if __name__ == '__main__':
