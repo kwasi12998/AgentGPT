@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SpeakingStage – So einfach geht's</title>
+<style>
+  @font-face{font-family:IN;font-weight:500;src:url(assets/fonts/Inter-Medium.otf)}
+  @font-face{font-family:IN;font-weight:600;src:url(assets/fonts/Inter-SemiBold.otf)}
+  @font-face{font-family:ID;font-weight:500;src:url(assets/fonts/InterDisplay-Medium.otf)}
+  @font-face{font-family:ID;font-weight:600;src:url(assets/fonts/InterDisplay-SemiBold.otf)}
+  @font-face{font-family:ID;font-weight:700;src:url(assets/fonts/InterDisplay-Bold.otf)}
+  :root{--navy:#162131;--ink:#1d2533;--copper:#a7643c;--copperD:#8c5130;--copperL:#d9a074;--cream:#f7f3ee;--sand:#f3ece4;--line:#ebe3d9;--muted:#6f6a64}
+  html,body{margin:0;background:#fff;overflow:hidden}
+  #fit{position:fixed;inset:0;display:grid;place-items:center;background:#fff}
+  #vp{position:relative;width:1920px;height:1080px;overflow:hidden;background:#fff;font-family:IN,Inter,system-ui,sans-serif;color:var(--ink);transform-origin:0 0}
+  .scene{position:absolute;inset:0;perspective:2400px;perspective-origin:960px 540px;overflow:hidden;display:none}
+  .world{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-style:preserve-3d;transform-origin:0 0}
+  .abs{position:absolute}
+  .d{font-family:ID,Inter,system-ui,sans-serif}
+  .bw{position:absolute;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 60px 140px -30px rgba(22,33,49,.30),0 14px 34px rgba(22,33,49,.10);border:1px solid var(--line)}
+  .bwbar{height:48px;background:#f7f2ec;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;padding:0 18px;position:relative}
+  .bwbar i{width:12px;height:12px;border-radius:50%;background:#e3d7ca;display:block}
+  .bwurl{position:absolute;left:50%;top:9px;transform:translateX(-50%);background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 22px;font:500 15px IN;color:#6b6157;white-space:nowrap}
+  .bwview{position:relative;overflow:hidden}
+  .layer{position:absolute;left:0;top:0;width:100%}
+  .card{position:absolute;background:#fff;border:1px solid var(--line);border-radius:26px;box-shadow:0 40px 90px -30px rgba(22,33,49,.25),0 8px 22px rgba(22,33,49,.06)}
+  .chip{display:inline-block;padding:7px 14px;border-radius:999px;background:#f6eee6;color:#7a4a2c;font:500 15px IN;margin:0 6px 6px 0;border:1px solid #efe1d3}
+  .cap{position:absolute;left:50%;top:960px;transform:translate(-50%,-50%);background:#fff;border:1px solid var(--line);box-shadow:0 20px 50px -18px rgba(22,33,49,.28);border-radius:999px;padding:18px 38px;font:600 36px ID;color:var(--navy);white-space:nowrap;opacity:0;letter-spacing:-.01em}
+  em{font-style:normal;color:var(--copper)}
+  .cap em{font-style:normal;color:var(--copper)}
+  .cap.dark{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .cap.dark em{color:var(--copperL)}
+  .big{position:absolute;left:0;width:1920px;text-align:center;font:700 140px/1.02 ID;color:var(--navy);letter-spacing:-.035em}
+  .big em{font-style:normal;color:var(--copper)}
+  .w{display:inline-block;will-change:transform,opacity}
+  .cur{position:absolute;left:0;top:0;width:40px;height:40px;z-index:50;filter:drop-shadow(0 6px 10px rgba(22,33,49,.3))}
+  .rip{position:absolute;border-radius:50%;border:3px solid var(--copper);z-index:49;opacity:0;pointer-events:none}
+  .caret{display:inline-block;width:3px;height:1.05em;background:var(--copper);vertical-align:-.15em;margin-left:2px}
+  .btn{position:absolute;background:var(--copper);color:#fff;border-radius:999px;font:600 22px IN;display:flex;align-items:center;justify-content:center;gap:12px;box-shadow:0 14px 30px -10px rgba(167,100,60,.6)}
+  .lbl{font:600 15px IN;letter-spacing:.16em;color:var(--copper);text-transform:uppercase}
+  .mark{background:var(--navy);-webkit-mask:url(assets/ui/mark.png) center/contain no-repeat;mask:url(assets/ui/mark.png) center/contain no-repeat}
+  #start{position:fixed;inset:0;display:grid;place-content:center;gap:16px;text-align:center;background:#fff;cursor:pointer;z-index:9;font-family:ID,system-ui}
+  #start b{font:700 56px ID;color:var(--navy)} #start span{font:600 16px IN;letter-spacing:.2em;color:var(--copper)}
+  #start i{justify-self:center;width:84px;height:84px;border-radius:50%;background:var(--copper);display:grid;place-items:center;color:#fff;font-style:normal;font-size:30px}
+</style>
+</head>
+<body>
+<div id="fit"><div id="vp"></div></div>
+<div id="start"><span>SPEAKINGSTAGE</span><b>So einfach geht's.</b><i>▶</i><span>MIT TON · LEERTASTE = PAUSE</span></div>
+<audio id="aud" src="assets/music.m4a" preload="auto"></audio>
+<script src="assets/manifest.js"></script>
+<script>
+/* ==================================================================
+   SpeakingStage · Erklärvideo (3:00)
+   DOM + CSS-3D. render(t) ist eine reine Funktion der Zeit.
+   ?render=1 → Export-Modus (Playwright), ?t=… → Standbild
+   ================================================================== */
+const W=1920,H=1080,FPS=30,DUR=180;
+const Q=new URLSearchParams(location.search),RENDER=Q.has('render'),STILL=Q.has('t')?+Q.get('t'):null;
+const vp=document.getElementById('vp');
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x)),lerp=(a,b,t)=>a+(b-a)*t,P=(t,a,b)=>clamp((t-a)/(b-a));
+const rnd=n=>{const s=Math.sin(n*127.1+311.7)*43758.5453;return s-Math.floor(s)};
+const E={lin:x=>x,outC:x=>1-Math.pow(1-x,3),outQ5:x=>1-Math.pow(1-x,5),ioC:x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2,
+  io5:x=>x<.5?16*x*x*x*x*x:1-Math.pow(-2*x+2,5)/2,outX:x=>x>=1?1:1-Math.pow(2,-10*x),
+  outB:x=>{const s=1.5;return 1+(s+1)*Math.pow(x-1,3)+s*Math.pow(x-1,2)},ioS:x=>x*x*(3-2*x)};
+
+/* ---------- DOM-Helfer ---------- */
+function el(tag,cls,style,parent,html){const e=document.createElement(tag);if(cls)e.className=cls;if(style)Object.assign(e.style,style);if(html!=null)e.innerHTML=html;(parent||vp).appendChild(e);return e}
+const px=v=>v+'px';
+function css(e,o){const s=e._s||(e._s={});for(const k in o){const v=o[k];if(s[k]!==v){e.style[k]=v;s[k]=v}}}
+function img(src,style,parent){const i=el('img','abs',style,parent);i.src=src;i.decoding='sync';return i}
+const SP=n=>`assets/sp/${n}.jpg`;
+const NAME=Object.fromEntries(SPK.map(s=>[s.slug,s.name]));
+
+/* ---------- Sounddesign-Ereignisse (werden für den Musik-Mix exportiert) ---------- */
+const EV=[];const sfx=(t,type,v=1)=>EV.push({t:+t.toFixed(3),type,v});
+function typeSfx(t0,str,cps){for(let i=0;i<str.length;i++)if(str[i]!==' '||i%3===0)sfx(t0+i/cps,'key',.6+rnd(i)*.4)}
+
+/* ---------- Szenen & Kamera ---------- */
+const SC=[];
+function Scene(t0,t1,build,o={}){const root=el('div','scene',{},vp);const world=el('div','world',{},root);const s={t0,t1,root,world,fi:o.fi||0,fo:o.fo||0};build(s);SC.push(s);return s}
+function keys(list){const out=[];let prev={x:960,y:540,z:1,rx:0,ry:0,rz:0};for(const [t,k] of list){prev={...prev,...k};out.push([t,prev])}return out}
+function interp(t,K,ease=E.io5){if(t<=K[0][0])return K[0][1];for(let i=0;i<K.length-1;i++){const[a,A]=K[i],[b,B]=K[i+1];if(t<b){const p=ease(P(t,a,b)),o={};for(const k in A)o[k]=lerp(A[k],B[k],p);return o}}return K[K.length-1][1]}
+// Kamera auf die Welt anwenden – inklusive Bewegungsunschärfe aus der Geschwindigkeit
+function camera(s,lt,K,ease){const c=interp(lt,K,ease),c2=interp(lt-1/FPS,K,ease);
+  const v=Math.hypot((c.x-c2.x)*c.z,(c.y-c2.y)*c.z)*FPS+Math.abs(c.ry-c2.ry)*FPS*14+Math.abs(c.z-c2.z)*FPS*700;
+  css(s.world,{transform:`translate3d(960px,540px,0) rotateX(${c.rx.toFixed(3)}deg) rotateY(${c.ry.toFixed(3)}deg) rotateZ(${c.rz.toFixed(3)}deg) scale(${c.z.toFixed(4)}) translate3d(${(-c.x).toFixed(2)}px,${(-c.y).toFixed(2)}px,0)`,
+    filter:v>900?`blur(${Math.min(14,(v-900)/650).toFixed(1)}px)`:'none'});return c}
+
+/* ---------- Bausteine ---------- */
+function browser(p,x,y,src,{w=1440,h=900,url='speakingstage.com'}={}){
+  const r=el('div','bw',{left:px(x),top:px(y),width:px(w),height:px(h+48)},p);
+  el('div','bwbar',{},r,`<i></i><i></i><i></i><span class="bwurl">🔒&nbsp; ${url}</span>`);
+  const view=el('div','bwview',{height:px(h)},r);const layer=el('div','layer',{},view);
+  const im=src?img(src,{left:0,top:0,width:px(w)},layer):null;return {r,view,layer,im,x,y}}
+const CURSVG=`<svg width="40" height="40" viewBox="0 0 24 24"><path d="M4.5 2.5l14.5 9-6.3 1.3 3.6 7.1-2.8 1.4-3.6-7.2-5.4 3.9z" fill="#162131" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
+function cursor(p){return {c:el('div','cur',{opacity:0},p,CURSVG),r:el('div','rip',{},p)}}
+// Pfad: [[t,x,y],...], Klicks: [t,...]  (lokale Zeiten)
+function drive(cur,lt,path,clicks=[],vis=[0,1e9]){
+  const K=keys(path.map(([t,x,y])=>[t,{x,y}]));const c=interp(lt,K,E.ioC);
+  let sc=1,last=null;for(const ct of clicks){if(lt>=ct-.12&&lt<ct+.18)sc=lt<ct?lerp(1,.78,P(lt,ct-.12,ct)):lerp(.78,1,P(lt,ct,ct+.18));if(lt>=ct)last=ct}
+  css(cur.c,{opacity:String(clamp(Math.min((lt-vis[0])/.25,(vis[1]-lt)/.25))),transform:`translate(${c.x-6}px,${c.y-4}px) scale(${sc})`});
+  if(last!=null&&lt-last<.7){const q=E.outC(P(lt,last,last+.7)),r=12+q*70;css(cur.r,{opacity:String(1-q),left:px(c.x-r),top:px(c.y-r),width:px(r*2),height:px(r*2)})}else css(cur.r,{opacity:'0'});
+  return c}
+const typed=(str,lt,t0,cps)=>str.slice(0,clamp(Math.floor((lt-t0)*cps),0,str.length));
+const caretOn=(lt,t0,t1)=>lt>=t0&&(lt<t1+.05||Math.floor(lt*2.2)%2===0);
+// Wort-für-Wort-Reveal in einem Element
+function words(e,html){html=html.replace(/<em>(.*?)<\/em>/g,(m,x)=>x.split(' ').map(w=>`<em>${w}</em>`).join(' '));
+  e.innerHTML=html.split(/(<br>|\s+)/).map(w=>w==='<br>'?'<br>':/^\s*$/.test(w)?w:`<span class="w">${w}</span>`).join('');return [...e.querySelectorAll('.w')]}
+function revealWords(ws,lt,t0,step=.09,dur=.55,dy=40){ws.forEach((w,i)=>{const p=E.outQ5(P(lt,t0+i*step,t0+i*step+dur));css(w,{opacity:String(p),transform:`translateY(${(1-p)*dy}px)`,filter:p<1?`blur(${((1-p)*10).toFixed(1)}px)`:'none'})})}
+function fadeUp(e,lt,t0,t1=1e9,dy=30,dur=.55){const a=E.outQ5(P(lt,t0,t0+dur)),b=E.ioC(P(lt,t1-.4,t1)),o=a*(1-b);css(e,{opacity:String(o),transform:`translateY(${((1-a)*dy-b*dy*.6).toFixed(1)}px)`,filter:o<.99?`blur(${((1-o)*8).toFixed(1)}px)`:'none'})}
+
+/* ---------- Untertitel (Bildschirm-Ebene) ---------- */
+const CAPS=[];function cap(t0,t1,html,dark=false){CAPS.push({t0,t1,html,dark})}
+let capLayer;
+function buildCaps(){capLayer=el('div','abs',{inset:0,zIndex:80,pointerEvents:'none'});CAPS.forEach(c=>{c.e=el('div','cap'+(c.dark?' dark':''),{},capLayer,c.html)})}
+function drawCaps(t){CAPS.forEach(c=>{if(t<c.t0-.1||t>c.t1+.1){css(c.e,{display:'none'});return}const a=E.outQ5(P(t,c.t0,c.t0+.5)),b=E.ioC(P(t,c.t1-.35,c.t1)),o=a*(1-b);
+  css(c.e,{display:'block',opacity:String(o),transform:`translate(-50%,-50%) translateY(${((1-a)*36-b*16).toFixed(1)}px) scale(${(.96+.04*a).toFixed(3)})`,filter:o<.99?`blur(${((1-o)*10).toFixed(1)}px)`:'none'})})}
+
+/* ==================================================================
+   AKT I · Kaltstart (0–13)
+   ================================================================== */
+const S1T=[['Wir brauchen einen Keynote Speaker.',.7,19],[' Für 300 Gäste.',3.3,16],[' In acht Wochen.',4.6,16]];
+S1T.forEach(([s,t,c])=>typeSfx(t,s,c));
+Scene(0,7.2,s=>{
+  const note=el('div','card',{left:'200px',top:'340px',width:'1520px',height:'400px'},s.world);
+  el('div','abs',{left:'56px',top:'40px',font:'600 22px IN',color:'#9a8f84',letterSpacing:'.02em'},note,'Notizen · Jahrestagung 2027');
+  el('div','abs',{left:'56px',top:'84px',width:'1408px',height:'1px',background:'var(--line)'},note);
+  s.tx=el('div','abs d',{left:'56px',top:'130px',width:'1400px',font:'600 74px/1.18 ID',color:'var(--navy)',letterSpacing:'-.02em'},note);
+  s.K=keys([[0,{x:960,y:560,z:.92,ry:-12,rx:6}],[5.9,{x:1010,y:560,z:1.12,ry:2,rx:1}],[7.2,{x:960,y:520,z:1.9,ry:8,rx:-4}]]);
+  s.update=lt=>{camera(s,lt,s.K,E.ioS);let txt='',last=0;S1T.forEach(([str,t0,c])=>{txt+=typed(str,lt,t0,c);if(lt>t0)last=t0+str.length/c});
+    s.tx.innerHTML=txt.replace('Keynote Speaker','<span style="color:var(--copper)">Keynote Speaker</span>')+(caretOn(lt,0,last)?'<span class="caret"></span>':'');
+    css(s.root,{opacity:String(1-P(lt,6.5,7.2))})};
+});
+Scene(7,13.2,s=>{
+  s.a=el('div','big',{top:'440px'},s.world);s.wa=words(s.a,'Klingt einfach.');
+  s.b=el('div','big',{top:'440px'},s.world);s.wb=words(s.b,'Ist es <em>selten.</em>');
+  s.K=keys([[0,{z:.96,rx:4}],[5,{z:1.06,rx:-2}],[6.2,{z:2.4,y:500}]]);
+  s.update=lt=>{camera(s,lt,s.K,E.ioS);revealWords(s.wa,lt,.25,.14,.7,60);css(s.a,{opacity:String(1-P(lt,2.4,2.8)),transform:`translateY(${-P(lt,2.4,2.8)*80}px)`});
+    revealWords(s.wb,lt,2.75,.16,.7,60);css(s.root,{opacity:String(1-P(lt,5.7,6.2))})};
+});
+sfx(7.25,'pop',.5);sfx(9.8,'pop',.6);
+
+/* ==================================================================
+   AKT II · Das Problem (13–34)
+   ================================================================== */
+Scene(13,21.3,s=>{
+  const cols=14,rows=13,cw=210,ch=268,g=26;s.cards=[];
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){const k=(r*cols+c)*7%SPK.length,sp=SPK[k];
+    const e=el('div','card',{left:px(c*(cw+g)-cols*(cw+g)/2+960),top:px(r*(ch+g)-200),width:px(cw),height:px(ch),borderRadius:'18px',overflow:'hidden'},s.world);
+    img(SP(sp.slug),{left:0,top:0,width:px(cw),height:px(cw),objectFit:'cover'},e);
+    el('div','abs',{left:'14px',top:px(cw+12),font:'600 17px IN',color:'var(--navy)',whiteSpace:'nowrap',overflow:'hidden',width:px(cw-28)},e,sp.name);
+    el('div','abs',{left:'14px',top:px(cw+36),font:'500 13px IN',color:'#9a8f84'},e,'Keynote Speaker');s.cards.push(e)}
+  s.veil=el('div','abs',{inset:'0',background:'radial-gradient(ellipse 62% 42% at 50% 50%,rgba(255,255,255,.96) 0%,rgba(255,255,255,.85) 45%,rgba(255,255,255,0) 100%)'},s.root);
+  s.big=el('div','big',{top:'380px',fontSize:'128px',textShadow:'0 0 60px #fff,0 0 30px #fff'},s.root);s.wb=words(s.big,'Hunderte Profile.<br>Alle klingen gut.');
+  s.big2=el('div','big',{top:'450px',fontSize:'104px',textShadow:'0 0 60px #fff,0 0 30px #fff'},s.root);s.wb2=words(s.big2,'Aber welcher passt<br>zu <em>Ihrem</em> Event?');
+  s.K=keys([[0,{x:960,y:3100,z:.5,rx:58,rz:-14}],[4.6,{x:960,y:1800,z:.62,rx:52,rz:-6}],[8.3,{x:1000,y:700,z:.78,rx:40,rz:6}]]);
+  s.update=lt=>{camera(s,lt,s.K,E.ioS);
+    s.cards.forEach((e,i)=>{const j=P(lt,4.8+rnd(i)*1.5,6.5+rnd(i)*1.5);css(e,{transform:`translateZ(${(Math.sin(lt*2+i)*30*j).toFixed(1)}px) rotateY(${(j*rnd(i+5)*120*(i%2?1:-1)).toFixed(1)}deg)`,opacity:String(1-j*.65)})});
+    css(s.world,{opacity:String(1-.5*P(lt,4.8,6))});css(s.veil,{opacity:String(P(lt,.4,1.0))});
+    revealWords(s.wb,lt,.6,.12,.6,50);css(s.big,{opacity:String(1-P(lt,4.2,4.6))});
+    revealWords(s.wb2,lt,4.75,.11,.6,50);css(s.root,{opacity:String(1-P(lt,7.9,8.3))})};
+});
+sfx(13.2,'whoosh',.7);sfx(17.75,'pop',.5);
+
+Scene(21,28.8,s=>{
+  // drei schwebende Problem-Karten im Raum
+  const A=el('div','card',{left:'240px',top:'300px',width:'720px',height:'470px'},s.world);
+  el('div','abs',{left:'40px',top:'38px',width:'86px',height:'86px',borderRadius:'50%',background:'#eee6dd'},A);
+  el('div','abs',{left:'148px',top:'48px',width:'300px',height:'22px',borderRadius:'11px',background:'#e8dfd5'},A);
+  el('div','abs',{left:'148px',top:'86px',width:'210px',height:'16px',borderRadius:'8px',background:'#f0e9e1'},A);
+  el('div','abs',{left:'40px',top:'170px',width:'640px',height:'1px',background:'var(--line)'},A);
+  el('div','abs',{left:'40px',top:'206px',font:'600 20px IN',color:'#9a8f84',letterSpacing:'.08em'},A,'HONORAR');
+  el('div','abs d',{left:'40px',top:'240px',font:'700 64px ID',color:'var(--navy)'},A,'auf Anfrage');
+  s.qa=el('div','abs d',{left:'560px',top:'210px',width:'110px',height:'110px',borderRadius:'50%',background:'var(--copper)',color:'#fff',font:'700 70px/110px ID',textAlign:'center'},A,'?');
+  el('div','abs',{left:'40px',top:'370px',width:'250px',height:'18px',borderRadius:'9px',background:'#f0e9e1'},A);
+  el('div','abs',{left:'40px',top:'402px',width:'380px',height:'18px',borderRadius:'9px',background:'#f0e9e1'},A);
+  s.ta=el('div','abs d',{left:'1010px',top:'440px',width:'640px',font:'700 78px/1.05 ID',color:'var(--navy)',letterSpacing:'-.03em'},s.world,'Was kostet<br>das eigentlich?');
+  // Kalender
+  const B=el('div','card',{left:'2080px',top:'180px',width:'640px',height:'600px',transform:'translateZ(-200px)'},s.world);
+  el('div','abs d',{left:'40px',top:'34px',font:'700 40px ID',color:'var(--navy)'},B,'Juni 2027');
+  const days='MO DI MI DO FR SA SO'.split(' ');days.forEach((d,i)=>el('div','abs',{left:px(46+i*80),top:'110px',font:'600 15px IN',color:'#9a8f84'},B,d));
+  for(let i=0;i<30;i++){const c=(i+1)%7,r=Math.floor((i+1)/7);el('div','abs',{left:px(36+c*80),top:px(150+r*84),width:'64px',height:'64px',borderRadius:'50%',font:'600 24px/64px IN',textAlign:'center',color:i===17?'var(--copper)':'var(--ink)'},B,String(i+1))}
+  s.ring=el('div','abs',{left:px(36+((18)%7)*80-8),top:px(150+Math.floor(18/7)*84-8),width:'80px',height:'80px',borderRadius:'50%',border:'5px solid var(--copper)'},B);
+  s.qb=el('div','abs',{left:'420px',top:'40px',padding:'10px 18px',borderRadius:'999px',background:'#fbefe6',color:'var(--copper)',font:'600 20px IN'},B,'verfügbar?');
+  s.tb=el('div','abs d',{left:'2780px',top:'330px',width:'700px',font:'700 78px/1.05 ID',color:'var(--navy)',letterSpacing:'-.03em',transform:'translateZ(-200px)'},s.world,'Ist der Termin<br>überhaupt frei?');
+  // Mail
+  const Cc=el('div','card',{left:'3900px',top:'320px',width:'760px',height:'480px',transform:'translateZ(120px)'},s.world);
+  el('div','abs',{left:'40px',top:'36px',font:'600 18px IN',color:'#9a8f84'},Cc,'Von: Geschäftsführung');
+  el('div','abs',{left:'40px',top:'68px',font:'600 18px IN',color:'#9a8f84'},Cc,'An: Event-Team');
+  el('div','abs',{left:'40px',top:'110px',width:'680px',height:'1px',background:'var(--line)'},Cc);
+  s.subj=el('div','abs d',{left:'40px',top:'140px',width:'680px',font:'700 48px/1.12 ID',color:'var(--navy)'},Cc,'');
+  for(let i=0;i<4;i++)el('div','abs',{left:'40px',top:px(290+i*36),width:px([620,560,600,320][i]),height:'16px',borderRadius:'8px',background:'#f0e9e1'},Cc);
+  s.tc=el('div','abs d',{left:'4740px',top:'420px',width:'720px',font:'700 78px/1.05 ID',color:'var(--navy)',letterSpacing:'-.03em',transform:'translateZ(120px)'},s.world,'Und wie begründe<br>ich das intern?');
+  s.K=keys([[0,{x:960,y:540,z:.9,ry:16,rx:4}],[2.1,{x:990,y:540,z:1.0,ry:6}],[2.55,{x:2780,y:500,z:1.0,ry:-10,rx:-2}],[4.75,{x:2810,y:500,z:1.06,ry:-3}],[5.2,{x:4560,y:560,z:1.0,ry:12,rx:3}],[7.4,{x:4600,y:560,z:1.08,ry:4}],[7.8,{x:4600,y:560,z:.4,ry:0}]]);
+  s.update=lt=>{camera(s,lt,s.K);
+    css(s.qa,{transform:`rotate(${(Math.sin(lt*5)*14).toFixed(1)}deg) scale(${E.outB(P(lt,.5,1.0)).toFixed(3)})`});
+    fadeUp(s.ta,lt,.65);
+    const rp=E.outB(P(lt,3.1,3.6));css(s.ring,{transform:`scale(${rp.toFixed(3)})`,opacity:String(P(lt,3.1,3.2))});css(s.qb,{transform:`scale(${E.outB(P(lt,3.4,3.9)).toFixed(3)})`});
+    fadeUp(s.tb,lt,3.0);
+    s.subj.textContent=typed('Warum genau dieser Speaker?',lt,5.6,26);fadeUp(s.tc,lt,5.5);
+    css(s.root,{opacity:String(1-P(lt,7.4,7.8))})};
+});
+typeSfx(26.6,'Warum genau dieser Speaker?',26);sfx(21.5,'pop',.6);sfx(23.55,'whoosh',.8);sfx(24.1,'pop',.6);sfx(26.2,'whoosh',.8);
+
+Scene(28.5,34.5,s=>{
+  s.dot=el('div','abs',{left:'930px',top:'510px',width:'60px',height:'60px',borderRadius:'50%',background:'var(--copper)'},s.world);
+  s.parts=[];for(let i=0;i<70;i++){const a=rnd(i)*Math.PI*2,r=900+rnd(i+3)*700,e=img(SP(SPK[(i*11)%SPK.length].slug),{left:'0',top:'0',width:'120px',height:'120px',borderRadius:'18px',objectFit:'cover',boxShadow:'0 10px 30px rgba(22,33,49,.2)'},s.world);s.parts.push([e,a,r,rnd(i+9)])}
+  s.a=el('div','big',{top:'200px',fontSize:'84px',color:'#8a837b',fontWeight:'600'},s.world);s.wa=words(s.a,'Die Frage ist nicht, wer bekannt ist.');
+  s.b=el('div','big',{top:'700px',fontSize:'150px'},s.world);s.wb=words(s.b,'Sondern, wer <em>passt.</em>');
+  s.K=keys([[0,{z:1.25,ry:-6}],[3,{z:1.0,ry:0}],[6,{z:1.04}]]);
+  s.update=lt=>{camera(s,lt,s.K,E.ioS);
+    s.parts.forEach(([e,a,r,d])=>{const p=E.ioC(P(lt,d*.5,1.3+d*.5)),rr=r*(1-p);css(e,{transform:`translate(${(960-60+Math.cos(a+p*1.5)*rr).toFixed(1)}px,${(540-60+Math.sin(a+p*1.5)*rr).toFixed(1)}px) scale(${(1-p*.9).toFixed(3)}) rotate(${((1-p)*90*(d-.5)).toFixed(1)}deg)`,opacity:String(p>.97?0:1)})});
+    const pu=1+.35*E.outC(P(lt,1.75,2.0))*(1-P(lt,2.0,2.6))+.3*Math.max(0,Math.sin((lt-5)*8))*P(lt,5,5.2)*(1-P(lt,5.3,5.6));css(s.dot,{transform:`scale(${pu.toFixed(3)})`});
+    revealWords(s.wa,lt,.9,.1,.6,40);revealWords(s.wb,lt,3.2,.16,.7,60);
+    css(s.root,{opacity:String(P(lt,0,.3))})};
+});
+sfx(28.6,'swirl',.8);sfx(30.3,'impact',.5);sfx(31.7,'pop',.7);
+
+/* ==================================================================
+   AKT III · SpeakingStage (34–48)
+   ================================================================== */
+Scene(34.5,41.5,s=>{
+  s.circ=el('div','abs',{left:'870px',top:'450px',width:'180px',height:'180px',borderRadius:'50%',background:'var(--copper)'},s.world);
+  s.mk=el('div','abs mark',{left:'905px',top:'480px',width:'110px',height:'120px',background:'#fff'},s.world);
+  s.wm=el('div','abs d',{left:'1080px',top:'468px',font:'700 132px/1 ID',color:'var(--navy)',letterSpacing:'-.035em',whiteSpace:'nowrap'},s.world,'SpeakingStage');
+  s.x1=el('div','big',{top:'640px',fontSize:'70px',fontWeight:'600'},s.world);s.w1=words(s.x1,'Der passende Speaker soll nicht nur gut klingen.');
+  s.x2=el('div','big',{top:'740px',fontSize:'70px',fontWeight:'600',color:'var(--copper)'},s.world);s.w2=words(s.x2,'Er muss zu Ihrem Event passen.');
+  s.K=keys([[0,{z:1.3}],[2.5,{z:1.0,ry:0}],[5.8,{z:1.04,ry:-3}],[7,{z:3,y:560,ry:0}]]);
+  s.update=lt=>{camera(s,lt,s.K);
+    const cg=E.outB(P(lt,0,.55)),sh=E.io5(P(lt,.95,1.7)),up=E.io5(P(lt,2.3,3.0));
+    const dx=-sh*480,dy=-up*190,sc=lerp(1,.62,up);
+    css(s.circ,{transform:`translate(${dx}px,${dy}px) scale(${(cg*sc).toFixed(3)})`});css(s.mk,{transform:`translate(${dx}px,${dy}px) scale(${(E.outB(P(lt,.25,.75))*sc).toFixed(3)})`});
+    const wp=E.io5(P(lt,1.05,1.9));css(s.wm,{clipPath:`inset(0 ${((1-wp)*100).toFixed(1)}% 0 0)`,transform:`translate(${dx+(1-wp)*-60}px,${dy}px) scale(${sc})`,transformOrigin:'-150px 60px'});
+    revealWords(s.w1,lt,3.0,.07,.6,36);revealWords(s.w2,lt,4.0,.09,.6,36);css(s.root,{opacity:String(1-P(lt,6.5,7))})};
+});
+sfx(34.5,'bloom',1);sfx(35.5,'whoosh',.5);
+
+Scene(41,48.6,s=>{
+  s.ph=img('assets/ui/hero_keynote.jpg',{left:'-80px',top:'-60px',width:'2080px',height:'1200px',objectFit:'cover'},s.world);
+  s.sh=el('div','abs',{left:'-80px',top:'-60px',width:'2080px',height:'1200px',background:'linear-gradient(180deg,rgba(22,33,49,.15),rgba(22,33,49,.65))'},s.world);
+  s.l1=el('div','big',{top:'380px',fontSize:'92px',color:'#fff'},s.world);s.w1=words(s.l1,'SpeakingStage ist Ihre kuratierte');
+  s.l2=el('div','big',{top:'490px',fontSize:'92px',color:'#fff'},s.world);s.w2=words(s.l2,'Keynote-Speaker-Vermittlung.');
+  s.l3=el('div','big',{top:'640px',fontSize:'44px',color:'var(--copperL)',fontWeight:'600',letterSpacing:'0'},s.world);s.w3=words(s.l3,'Persönlich ausgewählt für Ihr Event.');
+  s.B=browser(s.world,240,40,'assets/ui/home.jpg');
+  s.K=keys([[0,{x:960,y:540,z:1.0,ry:0}],[3.6,{x:960,y:540,z:1.08,ry:-3}],[4.6,{x:960,y:300,z:1.32,ry:0,rx:0}],[6.8,{x:960,y:520,z:.9,ry:-16,rx:8}],[7.6,{x:960,y:520,z:.9,ry:-16,rx:8}]]);
+  s.update=lt=>{camera(s,lt,s.K);revealWords(s.w1,lt,.4,.08,.6,40);revealWords(s.w2,lt,.75,.08,.6,40);revealWords(s.w3,lt,1.6,.06,.6,30);
+    const f=P(lt,3.7,4.4);[s.l1,s.l2,s.l3].forEach(e=>css(e,{opacity:String(1-f)}));css(s.ph,{opacity:String(1-P(lt,4.2,4.9))});css(s.sh,{opacity:String(1-P(lt,4.0,4.6))});
+    css(s.B.r,{opacity:String(P(lt,3.9,4.5))});css(s.root,{opacity:String(P(lt,0,.5))})};
+});
+cap(45.8,48.3,'So einfach geht\'s – in <em>fünf Schritten.</em>');sfx(41.1,'bloom',.6);sfx(45,'whoosh',.8);
+
+/* ==================================================================
+   Kapitelkarten
+   ================================================================== */
+const CH=[['01','Beschreiben','Erzählen Sie in einem Satz, was Ihr Event braucht.',48],['02','Entdecken','Passende Speaker – jeweils mit kurzer Begründung.',67],['03','Vergleichen','Profile, Videos und Themen auf einen Blick.',88],['04','Anfragen','Unverbindlich – und persönlich begleitet.',112],['05','Entscheiden','Verbindlich wird es erst, wenn alles passt.',132]];
+function chapterCard(i){const [n,title,sub,T]=CH[i];
+  Scene(T-.5,T+3.1,s=>{
+    css(s.root,{zIndex:'40'});const panel=el('div','abs',{left:0,top:0,width:'1920px',height:'1080px',background:'#fff'},s.root);s.root.insertBefore(panel,s.world);s.panel=panel;
+    const steps=el('div','abs',{left:'0',top:'210px',width:'1920px',textAlign:'center'},s.world);
+    s.pills=CH.map(([nn,tt],k)=>el('span','',{display:'inline-block',margin:'0 8px',padding:'12px 24px',borderRadius:'999px',font:'600 20px IN',border:'1.5px solid '+(k===i?'var(--copper)':'var(--line)'),background:k===i?'var(--copper)':'#fff',color:k===i?'#fff':(k<i?'var(--copper)':'#9a8f84')},steps,(k<i?'✓ ':'')+nn+' '+tt));
+    s.num=el('div','abs d',{left:'0',top:'370px',width:'1920px',textAlign:'center',font:'700 220px/1 ID',color:'var(--copper)',letterSpacing:'-.04em'},s.world,n);
+    s.tt=el('div','big',{top:'600px',fontSize:'150px'},s.world);s.wt=words(s.tt,title);
+    s.st=el('div','big',{top:'800px',fontSize:'44px',fontWeight:'500',color:'#7d756d',letterSpacing:'-.01em'},s.world);s.ws=words(s.st,sub);
+    s.K=keys([[0,{z:1.06,ry:8}],[3.6,{z:1.0,ry:-4}]]);
+    s.update=lt=>{const pin=E.io5(P(lt,0,.55)),pout=E.io5(P(lt,3.0,3.6));
+      css(s.root,{clipPath:`inset(0 ${(pout*100).toFixed(2)}% 0 ${((1-pin)*100).toFixed(2)}%)`});camera(s,lt,s.K,E.ioS);
+      s.pills.forEach((p,k)=>{const q=E.outQ5(P(lt,.35+k*.05,.85+k*.05));css(p,{opacity:String(q),transform:`translateY(${(1-q)*20}px)`})});
+      const nq=E.outB(P(lt,.4,1.0));css(s.num,{opacity:String(P(lt,.4,.6)),transform:`scale(${nq.toFixed(3)})`});
+      revealWords(s.wt,lt,.65,.1,.7,70);revealWords(s.ws,lt,1.1,.05,.6,30);
+      const out=P(lt,2.75,3.05);[s.num,s.tt,s.st].forEach(e=>{if(out>0)css(e,{opacity:String(1-out)})})};
+  });sfx(T-.5,'swoosh',.8);sfx(T+.45,'chime',.7);sfx(T+2.55,'swoosh',.5)}
+
+/* ==================================================================
+   KAPITEL 01 · Beschreiben (48–67)
+   ================================================================== */
+const BRIEF='Keynote zu KI und Change für 150 Führungskräfte eines Automobilzulieferers in München, Juni 2027';
+Scene(48,67.2,s=>{
+  const B=browser(s.world,240,60,'assets/ui/home.jpg');s.B=B;const L=B.layer;
+  el('div','abs',{left:'350px',top:'364px',width:'700px',height:'74px',background:'#fff'},L);
+  s.inp=el('div','abs',{left:'388px',top:'369px',width:'640px',font:'500 19.5px/29px IN',color:'#1d2533'},L);
+  s.glow=el('div','abs',{left:'334px',top:'348px',width:'772px',height:'104px',borderRadius:'26px',border:'3px solid var(--copper)',boxShadow:'0 0 0 8px rgba(167,100,60,.15)',opacity:0},L);
+  s.bar=el('div','abs',{left:'360px',top:'446px',height:'3px',width:'0',background:'var(--copper)',borderRadius:'2px'},L);
+  s.steps=[[330,458,250],[590,458,262],[852,458,262]].map(([x,y,w])=>el('div','abs',{left:px(x),top:px(y),width:px(w),height:'62px',borderRadius:'14px',border:'2.5px solid var(--copper)',background:'rgba(167,100,60,.06)',opacity:0},L));
+  s.cur=cursor(L);
+  s.K=keys([[0,{x:960,y:520,z:.9,ry:-16,rx:8}],[2.6,{x:960,y:520,z:.98,ry:-6,rx:3}],[4.1,{x:640,y:470,z:1.85,ry:0,rx:0}],[7,{x:760,y:470,z:1.95,ry:-2}],[10.2,{x:880,y:480,z:1.95,ry:3}],[11.3,{x:1000,y:480,z:1.6,ry:0}],[11.55,{x:1000,y:480,z:1.7}],[12.2,{x:760,y:520,z:1.55,ry:-6,rx:4}],[14.9,{x:1060,y:530,z:1.55,ry:6,rx:4}],[16.8,{x:960,y:540,z:.98,ry:12,rx:6}],[19.2,{x:960,y:540,z:.94,ry:16,rx:8}]]);
+  s.update=lt=>{camera(s,lt,s.K);
+    drive(s.cur,lt,[[2.6,1250,760],[4.2,700,405],[4.9,700,405],[6.0,1150,560],[10.5,1150,560],[11.3,1066,412],[13,1066,412],[14,1300,700]],[4.4,11.5],[2.6,14]);
+    const tx=typed(BRIEF,lt,4.75,18);s.inp.innerHTML=(tx.length?tx:'<span style="color:#9a958f">z. B. Keynote zu KI und Change …</span>')+(caretOn(lt,4.6,4.75+BRIEF.length/18)&&lt<11.5?'<span class="caret"></span>':'');
+    css(s.glow,{opacity:String(P(lt,4.4,4.7)*(1-P(lt,11.6,12)))});css(s.bar,{width:px(E.ioC(P(lt,11.6,12.4))*680),opacity:String(1-P(lt,12.4,12.7))});
+    s.steps.forEach((e,i)=>{const t0=12.6+i*1.0;css(e,{opacity:String(P(lt,t0,t0+.25)),transform:`scale(${(.92+.08*E.outB(P(lt,t0,t0+.5))).toFixed(3)})`})})};
+});
+typeSfx(48+4.75,BRIEF,18);sfx(52.4,'click');sfx(59.5,'click');sfx(60.6,'tick');sfx(61.6,'tick');sfx(62.6,'tick');
+cap(50.9,54.4,'Starten Sie mit <em>einem Satz.</em>');cap(54.7,58.6,'Anlass, Publikum, Thema, Ort und Termin – <em>in Ihren Worten.</em>');
+cap(60.4,63.4,'Die KI gleicht Ihre Angaben mit <em>über 150 Profilen</em> ab.');cap(63.7,66.7,'Sie erhalten passende Speaker – <em>jeweils mit Begründung.</em>');
+
+/* ==================================================================
+   KAPITEL 02 · Entdecken (67–88)
+   ================================================================== */
+const RES=[['christoph-burkhardt','Christoph Burkhardt',['KI','Innovation'],'Schwerpunkt KI & Innovation – passt zu Thema und Führungspublikum.','DE / EN'],
+  ['benjamin-talin','Benjamin Talin',['KI','Digitale Transformation'],'Bringt KI und Transformation praxisnah auf die Bühne – ideal für einen Auftakt.','DE / EN'],
+  ['anders-indset','Anders Indset',['KI','Leadership'],'Verbindet KI mit Führungsfragen – Impulse für Führung im Wandel.','DE / EN']];
+Scene(67,88.2,s=>{
+  const pan=el('div','card',{left:'190px',top:'120px',width:'1540px',height:'860px',borderRadius:'32px'},s.world);s.pan=pan;
+  el('div','abs d',{left:'56px',top:'44px',font:'700 46px ID',color:'var(--navy)'},pan,'<span style="color:var(--copper)">✦</span> Passende Speaker für Ihr Event');
+  const chips=el('div','abs',{left:'56px',top:'116px',width:'1400px'},pan);['KI & Change','150 Führungskräfte','Automobilzulieferer','München','Juni 2027'].forEach(c=>el('span','chip',{},chips,c));
+  s.rc=RES.map(([slug,name,tags,why,lang],i)=>{const c=el('div','card',{left:px(56+i*486),top:'190px',width:'456px',height:'630px',borderRadius:'22px',overflow:'hidden',boxShadow:'0 24px 60px -24px rgba(22,33,49,.3)'},pan);
+    img(SP(slug+'_hd'),{left:0,top:0,width:'456px',height:'290px',objectFit:'cover',objectPosition:'50% 25%'},c);
+    el('div','abs',{right:'16px',top:'246px',padding:'6px 12px',borderRadius:'999px',background:'#fff',font:'600 14px IN',color:'var(--navy)'},c,'▶ Video');
+    el('div','abs d',{left:'26px',top:'312px',font:'700 30px ID',color:'var(--navy)'},c,name);
+    const bk=el('div','abs',{right:'24px',top:'318px'},c,'<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#162131" stroke-width="2" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4z"/></svg>');
+    const tg=el('div','abs',{left:'26px',top:'360px',width:'420px'},c);tags.concat(lang).forEach(t=>el('span','chip',{},tg,t));
+    const why_=el('div','abs',{left:'22px',top:'420px',width:'372px',padding:'18px 20px',borderRadius:'16px',background:'#faf3ec',border:'1.5px solid #efdccb'},c);
+    el('div','lbl',{fontSize:'13px'},why_,'Passt, weil');const wt=el('div','',{font:'500 19px/1.38 IN',color:'var(--ink)',marginTop:'8px',minHeight:'78px'},why_,'');
+    el('div','abs',{left:'26px',top:'586px',font:'600 18px IN',color:'var(--copper)'},c,'Profil ansehen ↗');
+    return {c,wt,why,box:why_}});
+  // Teil B: echtes Raster
+  const B=browser(s.world,240,60,'assets/ui/home.jpg');s.B=B;
+  s.chip=el('div','abs',{left:'342px',top:'852px',width:'91px',height:'33px',borderRadius:'999px',background:'var(--copper)',color:'#fff',font:'600 14.5px/33px IN',textAlign:'center',opacity:0},B.layer,'Leadership');
+  s.cur=cursor(B.layer);
+  s.K=keys([[0,{x:960,y:560,z:.86,ry:18,rx:10}],[3.2,{x:960,y:560,z:.9,ry:9,rx:5}],[4.5,{x:960,y:550,z:.96,ry:0,rx:0}],[6.2,{x:440,y:760,z:1.5,ry:-4}],[8.3,{x:930,y:760,z:1.5,ry:3}],[10.4,{x:1420,y:760,z:1.5,ry:6}],[12.4,{x:960,y:560,z:.86,ry:-8,rx:6}],
+    [12.6,{x:960,y:520,z:.84,rx:24,ry:0}],[15.5,{x:960,y:520,z:.84,rx:26,ry:-8}],[17.0,{x:700,y:330,z:1.3,rx:6,ry:3}],[18.4,{x:620,y:300,z:1.55,rx:0,ry:0}],[21.2,{x:960,y:540,z:.98,ry:-12,rx:4}]]);
+  s.update=lt=>{camera(s,lt,s.K);
+    const pA=1-P(lt,12.3,12.9);css(pan,{opacity:String(pA),display:pA>0?'block':'none'});css(B.r,{opacity:String(P(lt,12.4,12.9)),display:lt>12.3?'block':'none'});
+    s.rc.forEach((r,i)=>{const p=E.outQ5(P(lt,2.6+i*.3,3.6+i*.3));css(r.c,{opacity:String(clamp(p*1.5)),transform:`translateZ(${((1-p)*-900).toFixed(0)}px) rotateY(${((1-p)*-35).toFixed(1)}deg) translateY(${(1-p)*80}px)`});
+      r.wt.textContent=typed(r.why,lt,4.0+i*.35,60);css(r.box,{boxShadow:(lt>5.2+i*2.1&&lt<7.6+i*2.1)?'0 0 0 4px rgba(167,100,60,.35)':'none'})});
+    const sc=interp(lt-12.5,keys([[0,{y:700}],[3.2,{y:2300}],[4.8,{y:760}]]),E.io5).y;css(B.layer,{transform:`translateY(${-sc}px)`});
+    drive(s.cur,lt,[[15.6,1100,1300],[17.3,388,868],[18.6,388,868],[19.6,900,1100]],[17.6],[15.6,20.5]);css(s.chip,{opacity:String(P(lt,17.65,17.8))})};
+});
+sfx(69.6,'pop',.6);sfx(69.9,'pop',.6);sfx(70.2,'pop',.6);sfx(79.5,'whoosh',.9);sfx(82.7,'whoosh',.6);sfx(84.6,'click');
+cap(69.8,73.2,'Kuratiert statt endlos: <em>eine begründete Auswahl.</em>');cap(73.5,78.8,'Sie sehen auf einen Blick, <em>warum</em> ein Profil passt.');
+cap(80.2,83.6,'Oder selbst entdecken: <em>über 150 geprüfte Profile.</em>');cap(84.6,87.8,'Filtern nach <em>Thema, Sprache und Stadt.</em>');
+
+/* ==================================================================
+   KAPITEL 03 · Vergleichen (88–112)
+   ================================================================== */
+const MONT=[['kahn','Oliver Kahn',.0],['lucy','Lucy Larbi',1.5],['s16','Jochen Schweizer',5.5],['s03','Annabell Whitney',6.1],['s32','Sandra Navidi',6.7],['s25','Nina Ruge',7.3],['s04','Carsten K. Rath',7.9],['s17','Karl-Theodor zu Guttenberg',8.5]];
+Scene(88,112.3,s=>{
+  const B=browser(s.world,240,60,'assets/ui/kahn.jpg');s.B=B;
+  s.mk=el('div','abs',{left:'1150px',top:'238px',width:'34px',height:'34px',borderRadius:'8px',background:'var(--copper)',opacity:0},B.layer);
+  s.chk=el('div','abs',{left:'110px',top:'1080px',width:'820px',height:'720px',borderRadius:'26px',border:'3px solid var(--copper)',opacity:0},B.layer);
+  s.cur=cursor(B.layer);
+  // Video-Player (Bildschirm-Ebene der Szene)
+  s.pl=el('div','abs',{left:0,top:0,width:'1920px',height:'1080px',background:'#000',overflow:'hidden',zIndex:5,opacity:0,borderRadius:'24px'},s.root);
+  s.vimg=img('assets/stage/s26.jpg',{left:0,top:0,width:'1920px',height:'1080px',objectFit:'cover'},s.pl);
+  s.vgr=el('div','abs',{left:0,top:'700px',width:'1920px',height:'380px',background:'linear-gradient(180deg,transparent,rgba(0,0,0,.55))'},s.pl);
+  s.vname=el('div','abs',{left:'64px',top:'940px',padding:'12px 22px',borderRadius:'999px',background:'rgba(255,255,255,.95)',font:'600 24px IN',color:'var(--navy)'},s.pl,'');
+  s.vbar=el('div','abs',{left:'64px',top:'1030px',height:'5px',width:'0',background:'var(--copper)',borderRadius:'3px'},s.pl);
+  // Vergleich
+  const cmp=el('div','card',{left:'200px',top:'110px',width:'1520px',height:'860px',borderRadius:'32px',opacity:0},s.world);s.cmp=cmp;
+  el('div','abs d',{left:'56px',top:'44px',font:'700 44px ID',color:'var(--navy)'},cmp,'Merkliste <span style="color:var(--copper)">· 3 Speaker vergleichen</span>');
+  const rowsL=['Themen','Sprachen','Standort','Vortragsvideo'];rowsL.forEach((r,k)=>el('div','abs lbl',{left:'56px',top:px(486+k*86),color:'#9a8f84',fontSize:'14px'},cmp,r));
+  const data=[['oliver-kahn','Oliver Kahn','Leadership · Resilienz','DE','München'],['jochen-schweizer','Jochen Schweizer','Business','DE / EN','Taufkirchen'],['caroline-bosbach','Caroline Bosbach','Politik · Zukunft & Trends','DE / EN','Bergisch Gladbach']];
+  s.cols=data.map(([slug,n,th,la,st],i)=>{const c=el('div','abs',{left:px(300+i*400),top:'130px',width:'370px',height:'700px'},cmp);
+    img(SP(slug+'_hd'),{left:0,top:0,width:'370px',height:'250px',objectFit:'cover',objectPosition:'50% 22%',borderRadius:'18px'},c);
+    el('div','abs d',{left:'4px',top:'272px',font:'700 30px ID',color:'var(--navy)'},c,n);
+    [th,la,st,'<span style="color:var(--copper)">✓ verfügbar im Profil</span>'].forEach((v,k)=>el('div','abs',{left:'4px',top:px(352+k*86),width:'360px',font:'500 21px IN',color:'var(--ink)'},c,v));return c});
+  for(let k=0;k<4;k++)el('div','abs',{left:'56px',top:px(530+k*86),width:'1408px',height:'1px',background:'var(--line)'},cmp);
+  s.K=keys([[0,{x:960,y:560,z:.88,ry:-18,rx:8}],[2.8,{x:960,y:540,z:.95,ry:-8,rx:3}],[4.4,{x:1150,y:400,z:1.45,ry:0,rx:0}],[5.6,{x:1150,y:420,z:1.5,ry:2}],[6.8,{x:470,y:660,z:2.0,ry:4}],[7.4,{x:470,y:660,z:2.1}],
+    [16.6,{x:470,y:660,z:2.0}],[17.4,{x:960,y:560,z:1.0,ry:-6}],[18.6,{x:540,y:500,z:1.3,ry:4,rx:2}],[19.8,{x:540,y:520,z:1.32}],[20.3,{x:960,y:540,z:.9,ry:-14,rx:6}],[22.0,{x:960,y:540,z:.95,ry:-4,rx:2}],[24.3,{x:960,y:540,z:1.0,ry:6,rx:3}]]);
+  s.update=lt=>{camera(s,lt,s.K);
+    const sc=interp(lt,keys([[0,{y:0}],[5.0,{y:0}],[6.2,{y:320}],[16.8,{y:320}],[17.6,{y:880}]]),E.io5).y;css(B.layer,{transform:`translateY(${-sc}px)`});
+    drive(s.cur,lt,[[2.8,1300,700],[4.0,1166,253],[4.9,1166,253],[5.8,600,900],[6.9,210,864],[7.5,210,864]],[4.3,7.2],[2.8,7.6]);
+    css(s.mk,{opacity:String(P(lt,4.35,4.5)*.0)});
+    css(s.chk,{opacity:String(P(lt,17.9,18.3)*(1-P(lt,19.9,20.2)))});
+    // Player öffnen/schließen
+    const po=E.io5(P(lt,7.3,8.0)),pc=E.io5(P(lt,16.3,16.9)),pv=po*(1-pc);
+    const x0=700,y0=395,w0=520,h0=290;css(s.pl,{opacity:String(clamp(pv*4)),left:px(lerp(x0,0,pv)),top:px(lerp(y0,0,pv)),width:px(lerp(w0,1920,pv)),height:px(lerp(h0,1080,pv)),borderRadius:px(lerp(18,0,pv)),display:pv>0?'block':'none'});
+    const vt=lt-7.7;let cur=MONT[0];for(const m of MONT)if(vt>=m[2])cur=m;
+    if(cur[0]==='lucy'){const n=clamp(Math.floor((vt-1.5)*30),0,119);s.vimg.src=`assets/lucy/f${String(n+1).padStart(4,'0')}.jpg`}else s.vimg.src=cur[0]==='kahn'?'assets/sp/oliver-kahn_hd.jpg':`assets/stage/${cur[0]}.jpg`;
+    const ks=vt-cur[2];css(s.vimg,{width:'1920px',height:'1080px',transform:`scale(${(1.04+ks*.03).toFixed(4)}) translateX(${(Math.sin(cur[2]*3)*ks*8).toFixed(1)}px)`});
+    s.vname.textContent=cur[1];css(s.vbar,{width:px(clamp(vt/8.6)*1792)});
+    css(cmp,{opacity:String(P(lt,20.2,20.7)),transform:`translateZ(${((1-E.outQ5(P(lt,20.2,21.2)))*-700).toFixed(0)}px) rotateX(${((1-E.outQ5(P(lt,20.2,21.2)))*20).toFixed(1)}deg)`});
+    css(B.r,{opacity:String(1-P(lt,20.0,20.5))});
+    s.cols.forEach((c,i)=>{const q=E.outQ5(P(lt,20.6+i*.2,21.4+i*.2));css(c,{opacity:String(q),transform:`translateY(${(1-q)*60}px)`})})};
+});
+sfx(92.3,'click');sfx(95.2,'click');sfx(95.4,'whoosh',.7);sfx(104.3,'whoosh',.5);sfx(108.2,'pop',.6);sfx(108.6,'pop',.5);sfx(108.8,'pop',.5);
+for(const m of MONT)if(m[2]>=5.5)sfx(88+7.7+m[2],'tick',.5);
+cap(90.9,94.6,'Jedes Profil: <em>Themen, Formate, Zielgruppen</em> – auf einen Blick.');
+cap(96.3,101.0,'Echte Vortragsvideos. <em>Echte Bühnen.</em>',true);cap(101.4,104.2,'Sehen Sie, wie ein Speaker wirkt – <em>bevor Sie anfragen.</em>',true);
+cap(105.2,107.9,'Schnell prüfen: <em>Themenfit, Wirkung, Referenzen.</em>');cap(108.6,111.9,'Favoriten merken und vergleichen – <em>ganz ohne Login.</em>');
+
+/* ==================================================================
+   KAPITEL 04 · Anfragen (112–132)
+   ================================================================== */
+const FORM=[['Anlass & Format','Jahrestagung – Keynote zum Auftakt',3.0],['Publikum','150 Führungskräfte, Automobilzulieferer',5.2],['Thema & gewünschte Wirkung','KI und Change – Mut zur Veränderung',7.4],['Termin & Ort','Juni 2027 · München',9.6]];
+Scene(112,132.3,s=>{
+  const f=el('div','card',{left:'390px',top:'40px',width:'1140px',height:'1000px',borderRadius:'32px'},s.world);s.f=f;
+  el('div','abs d',{left:'70px',top:'52px',font:'700 52px ID',color:'var(--navy)'},f,'Speaker-Auswahl anfragen');
+  el('div','abs',{left:'70px',top:'124px',font:'500 22px IN',color:'#7d756d'},f,'Wir prüfen Passung, Verfügbarkeit und Konditionen persönlich.');
+  s.fields=FORM.map(([l,v,t0],i)=>{const y=190+i*128;el('div','abs lbl',{left:'70px',top:px(y),fontSize:'14px'},f,l);
+    const box=el('div','abs',{left:'70px',top:px(y+30),width:'1000px',height:'66px',borderRadius:'16px',border:'1.5px solid var(--line)',background:'#fdfbf9'},f);
+    const tx=el('div','abs',{left:'24px',top:'18px',font:'500 23px IN',color:'var(--ink)'},box,'');return {box,tx,v,t0}});
+  el('div','abs lbl',{left:'70px',top:'702px',fontSize:'14px'},f,'Budgetrahmen');
+  s.bud=['Noch offen','Grob bekannt','Fest eingeplant'].map((b,i)=>el('div','abs',{left:px(70+i*230),top:'734px',padding:'14px 26px',borderRadius:'999px',border:'1.5px solid var(--line)',font:'600 20px IN',color:'var(--ink)',background:'#fff'},f,b));
+  el('div','abs',{left:'70px',top:'816px',font:'500 19px IN',color:'#8a837b'},f,'✓ Unverbindlich &nbsp;&nbsp; ✓ Keine öffentlichen Listenpreise &nbsp;&nbsp; ✓ Persönliche Rückmeldung');
+  s.btn=el('div','btn',{left:'70px',top:'876px',width:'1000px',height:'80px',fontSize:'24px'},f,'Anfrage unverbindlich senden →');
+  s.plane=el('div','abs',{left:0,top:0,font:'700 70px IN',color:'var(--copper)',zIndex:6,opacity:0},s.root,'➤');
+  s.trail=el('div','abs',{left:0,top:0,width:'1920px',height:'1080px',zIndex:5},s.root,'<svg width="1920" height="1080"><path id="tp" d="" fill="none" stroke="#a7643c" stroke-width="4" stroke-dasharray="2 16" stroke-linecap="round"/></svg>');
+  s.tp=s.trail.querySelector('path');
+  const ok=el('div','card',{left:'560px',top:'270px',width:'800px',height:'540px',borderRadius:'32px',opacity:0,textAlign:'center'},s.world);s.ok=ok;
+  s.okc=el('div','abs',{left:'330px',top:'60px',width:'140px',height:'140px',borderRadius:'50%',background:'var(--copper)',color:'#fff',font:'700 80px/140px ID'},ok,'✓');
+  el('div','abs d',{left:'0',top:'240px',width:'800px',font:'700 50px ID',color:'var(--navy)'},ok,'Danke – Ihre Anfrage ist da.');
+  el('div','abs',{left:'80px',top:'320px',width:'640px',font:'500 24px/1.5 IN',color:'#7d756d'},ok,'Wir melden uns persönlich und klären mit Ihnen die nächsten Schritte.');
+  s.cur=cursor(s.world);
+  s.K=keys([[0,{x:960,y:560,z:.86,ry:16,rx:8}],[2.8,{x:960,y:540,z:.92,ry:6,rx:3}],[3.1,{x:900,y:290,z:1.45,ry:0,rx:0}],[5.3,{x:900,y:418}],[7.5,{x:900,y:546}],[9.7,{x:900,y:674}],[11.2,{x:760,y:770,z:1.5}],[12.5,{x:960,y:900,z:1.38}],[13.25,{x:960,y:900,z:1.5}],[14.0,{x:960,y:560,z:.98,ry:-6}],[20.3,{x:960,y:540,z:1.06,ry:6}]]);
+  s.update=lt=>{camera(s,lt,s.K);
+    s.fields.forEach(F=>{const on=lt>=F.t0-.2&&lt<F.t0+2;F.tx.innerHTML=typed(F.v,lt,F.t0,24)+(on?'<span class="caret"></span>':'');css(F.box,{borderColor:on?'var(--copper)':'var(--line)',boxShadow:on?'0 0 0 6px rgba(167,100,60,.12)':'none'})});
+    const bsel=lt>11.75;css(s.bud[0],{background:bsel?'var(--copper)':'#fff',color:bsel?'#fff':'var(--ink)',borderColor:bsel?'var(--copper)':'var(--line)'});
+    drive(s.cur,lt,[[2.6,1500,700],[3.0,980,290],[5.0,1200,420],[11.0,1200,600],[11.6,560,794],[12.0,560,794],[12.8,960,956],[13.6,960,956],[14.4,1500,1000]],[11.75,13.25],[2.6,14.3]);
+    const sent=P(lt,13.3,13.7);css(s.btn,{background:sent>0?'#162131':'var(--copper)',transform:`scale(${(1-.04*Math.sin(Math.PI*P(lt,13.15,13.45))).toFixed(3)})`});s.btn.textContent=lt>13.4?'✓ Gesendet':'Anfrage unverbindlich senden →';
+    const pp=P(lt,13.6,15.0);if(pp>0&&pp<1){const e=E.ioC(pp),x0=960,y0=880,x1=2050,y1=-120,cx=1700,cy=1000;const bx=(1-e)*(1-e)*x0+2*(1-e)*e*cx+e*e*x1,by=(1-e)*(1-e)*y0+2*(1-e)*e*cy+e*e*y1;
+      css(s.plane,{opacity:'1',transform:`translate(${bx-35}px,${by-40}px) rotate(${(-25-e*20).toFixed(1)}deg)`});let d='';for(let k=0;k<=24;k++){const q=e*k/24;const qx=(1-q)*(1-q)*x0+2*(1-q)*q*cx+q*q*x1,qy=(1-q)*(1-q)*y0+2*(1-q)*q*cy+q*q*y1;d+=(k?'L':'M')+qx.toFixed(0)+' '+qy.toFixed(0)}s.tp.setAttribute('d',d);css(s.trail,{opacity:'1'})}
+    else{css(s.plane,{opacity:'0'});css(s.trail,{opacity:String(lt>15?1-P(lt,15,15.6):0)})}
+    css(s.f,{opacity:String(1-P(lt,14.6,15.2)),transform:`translateZ(${(-P(lt,14.6,15.4)*500).toFixed(0)}px)`});
+    const oq=E.outB(P(lt,15.2,15.9));css(s.ok,{opacity:String(P(lt,15.2,15.5)),transform:`scale(${(.85+.15*oq).toFixed(3)})`});css(s.okc,{transform:`scale(${E.outB(P(lt,15.5,16.1)).toFixed(3)})`})};
+});
+FORM.forEach(([l,v,t0])=>typeSfx(112+t0,v,24));sfx(123.75,'click');sfx(125.25,'click');sfx(125.6,'plane',1);sfx(127.5,'chime',.9);
+cap(115.0,118.8,'Kurz beschreiben, <em>was Sie brauchen.</em>');cap(119.1,122.9,'Termin, Format und Budget <em>dürfen noch offen sein.</em>');
+cap(123.2,126.4,'Ein Klick. <em>Unverbindlich.</em>');cap(127.7,131.8,'Ihre Anfrage ist <em>noch keine Buchung.</em>',true);
+
+/* ==================================================================
+   KAPITEL 05 · Entscheiden (132–150)
+   ================================================================== */
+const STEPS=[['Fit-Check','Thema, Publikum und gewünschte Wirkung werden persönlich eingeordnet.'],['Verfügbarkeit','Für Ihren konkreten Termin geprüft – nicht pauschal versprochen.'],['Kuratierte Auswahl','Eine Shortlist mit Begründung statt einer langen Liste.'],['Individuelles Angebot','Honorar, Reise und Konditionen nachvollziehbar zusammengeführt.'],['Ihre Entscheidung','Verbindlich erst nach Ihrer Annahme.']];
+Scene(132,150.3,s=>{
+  const X=i=>300+i*820;
+  s.track=el('div','abs',{left:px(X(0)),top:'716px',width:px(X(4)-X(0)),height:'6px',background:'var(--line)',borderRadius:'3px'},s.world);
+  s.fill=el('div','abs',{left:px(X(0)),top:'716px',width:'0',height:'6px',background:'var(--copper)',borderRadius:'3px'},s.world);
+  s.nodes=STEPS.map(([t,d],i)=>{const last=i===4;const n=el('div','abs',{left:px(X(i)-48),top:'671px',width:'96px',height:'96px',borderRadius:'50%',background:'#fff',border:'4px solid var(--line)',font:'700 40px/88px ID',textAlign:'center',color:'#c9bdb0'},s.world,String(i+1));
+    const c=el('div','card',{left:px(X(i)-290),top:'330px',width:'580px',height:'330px',background:last?'var(--navy)':'#fff',borderColor:last?'var(--navy)':'var(--line)'},s.world);
+    el('div','lbl',{position:'absolute',left:'44px',top:'44px',color:last?'var(--copperL)':'var(--copper)'},c,'Schritt '+(i+1));
+    el('div','abs d',{left:'44px',top:'84px',width:'500px',font:'700 48px/1.1 ID',color:last?'#fff':'var(--navy)'},c,t);
+    el('div','abs',{left:'44px',top:last?'160px':'210px',width:'500px',font:'500 24px/1.45 IN',color:last?'#d8d2ca':'#6f6a64'},c,d);
+    return {n,c}});
+  // Angebot
+  const doc=el('div','card',{left:'3020px',top:'150px',width:'640px',height:'800px',borderRadius:'22px',opacity:0},s.world);s.doc=doc;
+  el('div','abs mark',{left:'50px',top:'50px',width:'40px',height:'44px'},doc);el('div','abs d',{left:'104px',top:'52px',font:'700 30px ID',color:'var(--navy)'},doc,'SpeakingStage');
+  el('div','abs d',{left:'50px',top:'130px',font:'700 56px ID',color:'var(--navy)'},doc,'Ihr Angebot');
+  ['Speaker-Honorar','Vorbereitung & Briefing','Reise & Übernachtung','Aufzeichnung & Nutzungsrechte','Konditionen & Fristen'].forEach((r,k)=>{el('div','abs',{left:'50px',top:px(240+k*74),font:'500 23px IN',color:'var(--ink)'},doc,r);el('div','abs',{left:'440px',top:px(246+k*74),width:'150px',height:'18px',borderRadius:'9px',background:'#efe7de'},doc);el('div','abs',{left:'50px',top:px(286+k*74),width:'540px',height:'1px',background:'var(--line)'},doc)});
+  s.acc=el('div','btn',{left:'50px',top:'640px',width:'540px',height:'84px',fontSize:'26px'},doc,'Angebot annehmen');
+  s.stamp=el('div','abs d',{left:'120px',top:'300px',padding:'18px 34px',border:'6px solid #162131',color:'#162131',borderRadius:'18px',font:'700 52px ID',transform:'rotate(-12deg)',opacity:0,background:'rgba(255,255,255,.85)'},doc,'✓ Verbindlich gebucht');
+  s.cur=cursor(s.world);
+  s.K=keys([[0,{x:300,y:600,z:.8,rx:28,ry:-22}],[3.0,{x:330,y:590,z:1.15,rx:16,ry:-10}],[5.4,{x:1150,y:590,z:1.15,rx:16,ry:-6}],[7.8,{x:1970,y:590,z:1.15,rx:16,ry:-2}],[10.2,{x:2790,y:590,z:1.15,rx:16,ry:2}],[12.6,{x:3580,y:590,z:1.12,rx:12,ry:4}],[14.2,{x:3340,y:550,z:1.02,rx:4,ry:-4}],[15.8,{x:3340,y:700,z:1.35,rx:0,ry:0}],[18.3,{x:3340,y:560,z:1.0,ry:6}]]);
+  s.update=lt=>{camera(s,lt,s.K);
+    css(s.fill,{width:px(clamp((lt-3)/9.6)*(X(4)-X(0)))});
+    s.nodes.forEach(({n,c},i)=>{const t0=3.0+i*2.4,on=lt>=t0;css(n,{background:on?(i===4?'var(--navy)':'var(--copper)'):'#fff',borderColor:on?(i===4?'var(--navy)':'var(--copper)'):'var(--line)',color:on?'#fff':'#c9bdb0',transform:`scale(${(1+.18*Math.sin(Math.PI*P(lt,t0,t0+.4))).toFixed(3)})`});n.textContent=on?'✓':String(i+1);
+      const q=E.outQ5(P(lt,t0-.6,t0+.3));css(c,{opacity:String(q*(i===4?1-P(lt,13.6,14.1):1)),transform:`translateY(${(1-q)*80}px) rotateX(${((1-q)*-30).toFixed(1)}deg)`})});
+    const dq=E.outQ5(P(lt,13.8,14.8));css(s.doc,{opacity:String(P(lt,13.8,14.2)),transform:`rotateY(${((1-dq)*70).toFixed(1)}deg) translateZ(${((1-dq)*-300).toFixed(0)}px)`});
+    drive(s.cur,lt,[[14.8,3700,1000],[15.9,3340,830],[16.5,3340,830],[17.3,3600,900]],[16.3],[14.8,17.8]);
+    css(s.acc,{background:lt>16.35?'#162131':'var(--copper)'});const st=E.outB(P(lt,16.45,16.85));css(s.stamp,{opacity:String(P(lt,16.45,16.6)),transform:`rotate(-12deg) scale(${(2-st).toFixed(3)})`})};
+});
+for(let i=0;i<5;i++)sfx(135+i*2.4,'node',.8);sfx(145.8,'whoosh',.6);sfx(148.3,'click');sfx(148.45,'stamp',1);
+cap(134.9,138.8,'Wir prüfen persönlich, <em>wer wirklich passt.</em>');cap(139.2,142.9,'Verfügbarkeit und Konditionen – <em>für Ihren Termin.</em>');
+cap(143.3,146.4,'Verbindlich wird es <em>erst nach Ihrer Annahme.</em>',true);cap(146.8,149.9,'Sie entscheiden – <em>wenn alles passt.</em>');
+
+/* ==================================================================
+   AKT V · Vertrauen (150–164)
+   ================================================================== */
+Scene(150,164.3,s=>{
+  s.ph=img('assets/ui/kevin.jpg',{left:'200px',top:'240px',width:'560px',height:'560px',borderRadius:'36px',objectFit:'cover',boxShadow:'0 50px 100px -30px rgba(22,33,49,.35)'},s.world);
+  s.lb=el('div','abs lbl',{left:'860px',top:'270px'},s.world,'Persönlich gegründet');
+  s.q=el('div','abs d',{left:'860px',top:'320px',width:'900px',font:'600 54px/1.22 ID',color:'var(--navy)',letterSpacing:'-.02em'},s.world);s.wq=words(s.q,'„Ich möchte, dass Veranstalter sich bei der Speaker-Auswahl <em>gut beraten und sicher</em> fühlen.“');
+  s.au=el('div','abs',{left:'860px',top:'690px',font:'600 26px IN',color:'#6f6a64'},s.world,'Kevin Kwasniok · Gründer von SpeakingStage');
+  // Säulen
+  const P3=[['◎','Nachvollziehbar geprüft','Profilangaben werden auf Vollständigkeit und Plausibilität geprüft.'],['☺','Persönlich begleitet','Sie wissen bei jedem Schritt, an wen Sie sich wenden können.'],['◇','Transparent im Angebot','Leistungen und Kosten klar im individuellen Angebot.']];
+  s.pc=P3.map(([ic,t,d],i)=>{const c=el('div','card',{left:px(2300+i*560),top:'260px',width:'520px',height:'420px',opacity:0},s.world);
+    el('div','abs',{left:'40px',top:'40px',width:'72px',height:'72px',borderRadius:'20px',background:'#f6eee6',color:'var(--copper)',font:'700 38px/72px IN',textAlign:'center'},c,ic);
+    el('div','abs d',{left:'40px',top:'140px',width:'440px',font:'700 40px/1.1 ID',color:'var(--navy)'},c,t);el('div','abs',{left:'40px',top:'250px',width:'440px',font:'500 22px/1.5 IN',color:'#6f6a64'},c,d);return c});
+  s.phone=el('div','abs',{left:'2440px',top:'740px',whiteSpace:'nowrap',padding:'22px 36px',borderRadius:'999px',background:'var(--navy)',color:'#fff',font:'600 32px IN',opacity:0,boxShadow:'0 30px 60px -20px rgba(22,33,49,.5)'},s.world,'📞&nbsp; 04504 – 7791650 <span style="color:var(--copperL);font-weight:500;font-size:24px">&nbsp; Persönliche Beratung</span>');
+  s.ex=img('assets/ui/expose.jpg',{left:'3360px',top:'690px',width:'230px',borderRadius:'12px',opacity:0,boxShadow:'0 30px 60px -20px rgba(22,33,49,.4)'},s.world);
+  s.exl=el('div','abs',{left:'3610px',top:'760px',width:'300px',font:'600 22px/1.4 IN',color:'var(--navy)',opacity:0},s.world,'Exposé als PDF –<br><span style="color:#7d756d;font-weight:500">für Ihre interne Abstimmung</span>');
+  s.K=keys([[0,{x:960,y:540,z:.9,ry:14,rx:4}],[6.2,{x:980,y:530,z:1.04,ry:-4,rx:0}],[7.3,{x:3080,y:520,z:.9,ry:-14,rx:6}],[10.6,{x:3080,y:560,z:.92,ry:-4,rx:3}],[11.6,{x:3080,y:640,z:.95,ry:4,rx:0}],[14.3,{x:3080,y:620,z:.98,ry:8}]]);
+  s.update=lt=>{camera(s,lt,s.K);css(s.ph,{opacity:String(P(lt,.1,.6)),transform:`rotateY(${(14-lt*2).toFixed(1)}deg)`});fadeUp(s.lb,lt,.3);revealWords(s.wq,lt,.6,.12,.6,30);fadeUp(s.au,lt,2.9);
+    s.pc.forEach((c,i)=>{const q=E.outQ5(P(lt,7.4+i*.35,8.4+i*.35));css(c,{opacity:String(q),transform:`rotateY(${((1-q)*80).toFixed(1)}deg)`})});
+    const pq=E.outB(P(lt,10.8,11.4));css(s.phone,{opacity:String(P(lt,10.8,11.0)),transform:`scale(${pq.toFixed(3)}) rotate(${(lt>11.4&&lt<12.6?Math.sin(lt*40)*2.2:0).toFixed(1)}deg)`});
+    const xq=E.outQ5(P(lt,11.6,12.4));css(s.ex,{opacity:String(xq),transform:`translateY(${(1-xq)*80}px) rotate(${((1-xq)*-10+2).toFixed(1)}deg)`});fadeUp(s.exl,lt,12.0)};
+});
+sfx(157.4,'whoosh',.7);for(let i=0;i<3;i++)sfx(157.5+i*.35,'pop',.5);sfx(161.4,'ring',1);sfx(161.7,'pop',.5);
+cap(157.8,160.6,'Geprüft. Begleitet. <em>Transparent.</em>');cap(161.0,164.0,'Persönlich erreichbar – <em>auch am Telefon.</em>');
+
+/* ==================================================================
+   AKT VI · Finale (164–180)
+   ================================================================== */
+const FIN=['s16','s26','s32','s03','s05','s15','s22','s28','s33','s12','s19'];
+Scene(164,169.4,s=>{
+  s.cards=FIN.map((f,i)=>{const c=el('div','abs',{left:'260px',top:'150px',width:'1400px',height:'788px',borderRadius:'28px',overflow:'hidden',boxShadow:'0 60px 120px -30px rgba(22,33,49,.45)',background:'#000'},s.world);
+    img(`assets/stage/${f}.jpg`,{left:0,top:0,width:'1400px',height:'788px',objectFit:'cover'},c);const st=STAGE.find(x=>x.f===f);
+    el('div','abs',{left:'32px',bottom:'30px',padding:'10px 20px',borderRadius:'999px',background:'rgba(255,255,255,.95)',font:'600 22px IN',color:'var(--navy)'},c,st?st.name:'');return c});
+  s.K=keys([[0,{z:.92,ry:-8}],[5.4,{z:1.0,ry:8}]]);
+  s.update=lt=>{camera(s,lt,s.K,E.lin);s.cards.forEach((c,i)=>{const t0=i*.47,q=E.outQ5(P(lt,t0,t0+.45));const vis=lt>=t0-.05;
+    css(c,{display:vis?'block':'none',transform:`translateZ(${((1-q)*900).toFixed(0)}px) rotateZ(${((rnd(i)-.5)*7*q).toFixed(2)}deg) rotateY(${((1-q)*(i%2?20:-20)).toFixed(1)}deg)`,opacity:String(clamp(q*3))})});
+    css(s.root,{opacity:String(1-P(lt,5.0,5.4))})};
+});
+FIN.forEach((f,i)=>sfx(164+i*.47,'hit',.6+.04*i));
+Scene(169,175,s=>{
+  s.n=el('div','abs d',{left:'0',top:'130px',width:'1920px',textAlign:'center',font:'700 640px/1 ID',letterSpacing:'-.05em',color:'transparent',backgroundImage:'url(assets/ui/mosaic.jpg)',backgroundSize:'1500px auto',backgroundPosition:'center',WebkitBackgroundClip:'text',backgroundClip:'text'},s.world,'150+');
+  s.s1=el('div','big',{top:'810px',fontSize:'56px',fontWeight:'600',color:'#7d756d',letterSpacing:'-.01em'},s.world);s.w1=words(s.s1,'geprüfte Speaker-Profile für Ihr Event');
+  s.cl=el('div','big',{top:'400px',fontSize:'140px'},s.root);s.wc=words(s.cl,'Weniger suchen.<br><em>Sicherer entscheiden.</em>');
+  s.K=keys([[0,{z:5.5,y:470,ry:0}],[1.6,{z:1.0,y:540,ry:-6}],[3.3,{z:.96,ry:4}],[3.9,{z:.7,y:300,ry:0}]]);
+  s.update=lt=>{camera(s,lt,s.K);revealWords(s.w1,lt,1.2,.06,.6,30);css(s.world,{opacity:String(1-P(lt,3.4,3.9))});revealWords(s.wc,lt,3.7,.12,.7,60);css(s.root,{opacity:String(1-P(lt,5.6,6))})};
+});
+sfx(169,'bloom',1);sfx(172.7,'impact',.6);
+Scene(175,180.1,s=>{
+  s.mk=el('div','abs mark',{left:'640px',top:'300px',width:'100px',height:'110px'},s.world);
+  s.wm=el('div','abs d',{left:'766px',top:'296px',font:'700 112px/1 ID',color:'var(--navy)',letterSpacing:'-.035em'},s.world,'SpeakingStage');
+  s.t=el('div','big',{top:'470px',fontSize:'46px',fontWeight:'500',color:'#6f6a64',letterSpacing:'-.01em'},s.world);s.wt=words(s.t,'Den passenden Speaker finden – persönlich ausgewählt für Ihr Event.');
+  s.btn=el('div','btn',{left:'560px',top:'600px',width:'800px',height:'100px',fontSize:'30px'},s.world,'Speaker-Auswahl unverbindlich anfragen →');
+  s.u=el('div','big',{top:'760px',fontSize:'36px',fontWeight:'600',color:'var(--navy)',letterSpacing:'0'},s.world,'speakingstage.com &nbsp;<span style="color:var(--copper)">·</span>&nbsp; 04504 – 7791650');
+  s.cur=cursor(s.world);
+  s.K=keys([[0,{z:1.1,ry:-6}],[5,{z:1.0,ry:2}]]);
+  s.update=lt=>{camera(s,lt,s.K,E.ioS);const m=E.outB(P(lt,.1,.7));css(s.mk,{transform:`scale(${m.toFixed(3)})`});const wp=E.io5(P(lt,.4,1.2));css(s.wm,{clipPath:`inset(0 ${((1-wp)*100).toFixed(1)}% 0 0)`});
+    revealWords(s.wt,lt,1.0,.05,.6,30);const bq=E.outB(P(lt,1.6,2.2));css(s.btn,{transform:`scale(${(bq*(1-.04*Math.sin(Math.PI*P(lt,2.95,3.25)))).toFixed(3)})`,opacity:String(P(lt,1.6,1.8))});fadeUp(s.u,lt,2.2);
+    drive(s.cur,lt,[[2.2,1500,900],[3.0,1100,650],[4.2,1100,650],[5,1400,950]],[3.1],[2.2,4.8]);css(s.root,{opacity:String(P(lt,0,.4))})};
+});
+sfx(175.1,'bloom',.8);sfx(178.1,'click');
+
+CH.forEach((_,i)=>chapterCard(i));
+buildCaps();
+
+/* ---------- Render ---------- */
+function render(t){t=clamp(t,0,DUR);for(const s of SC){const on=t>=s.t0&&t<s.t1;css(s.root,{display:on?'block':'none'});if(on)s.update(t-s.t0,t)}drawCaps(t)}
+window.SFX=EV.sort((a,b)=>a.t-b.t);window.DUR=DUR;
+async function settle(){await Promise.all([...document.images].filter(i=>!i.complete).map(i=>new Promise(r=>{i.onload=i.onerror=r})));await Promise.all([...vp.querySelectorAll('img')].filter(i=>i.offsetParent!==null).map(i=>i.decode().catch(()=>{})))}
+window.renderAt=async t=>{render(t);await settle();await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))};
+function fitView(){if(RENDER)return;const s=Math.min(innerWidth/W,innerHeight/H);vp.style.transform=`scale(${s})`;vp.parentElement.style.cssText+=`;width:${W*s}px;height:${H*s}px`;document.getElementById('fit').style.cssText='position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#fff'}
+addEventListener('resize',fitView);
+const aud=document.getElementById('aud');let playing=false;
+function loop(){if(!playing)return;render(aud.currentTime);if(aud.ended){playing=false;return}requestAnimationFrame(loop)}
+document.getElementById('start').onclick=()=>{document.getElementById('start').style.display='none';playing=true;aud.currentTime=0;aud.play();loop()};
+addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();if(playing){playing=false;aud.pause()}else{playing=true;aud.play();loop()}}});
+document.fonts.ready.then(()=>{fitView();if(RENDER||STILL!==null){document.getElementById('start').style.display='none'}render(STILL??0);window.__ready=true});
+</script>
+</body>
+</html>
